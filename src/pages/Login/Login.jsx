@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
-import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import "./login.css";
-import { login } from "../../apis/AuthAPI";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -14,18 +14,41 @@ export default function Login() {
   const navigate = useNavigate();
 
   const onLoginButtonClick = async (e) => {
-    login({ username, password })
-      .then((response) => {
-        localStorage.clear();
-        localStorage.setItem("tokenType", response.tokenType);
-        localStorage.setItem("accessToken", response.accessToken);
-        localStorage.setItem("refreshToken", response.refreshToken);
-        navigate("/mypage");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    e.preventDefault(); // Prevent default form submission
+
+    const formData = {
+      username,
+      password,
+    };
+
+    try {
+      // Send login request
+      const response = await axios.post(
+        "http://localhost:8080/api/user/login",
+        formData
+      );
+      // Set Authorization header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.payload.access_token}`;
+
+      console.log(response);
+      console.log(response.data);
+
+      localStorage.setItem("access_token", response.data.payload.access_token);
+      localStorage.setItem(
+        "refresh_token",
+        response.data.payload.refresh_token
+      );
+
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      // Optionally handle the error, e.g., show a notification or set an error state
+      alert("Login failed. Please check your credentials.");
+    }
   };
+
   useEffect(() => {
     // 쿠키에서 저장된 아이디 가져오기
     const rememberId = Cookies.get("rememberId");

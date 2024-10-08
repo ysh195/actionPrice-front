@@ -2,21 +2,36 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const RegistrationForm = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    verificationCode: "",
-  });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const newErrors = {};
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "Email is invalid";
+    }
+
+    if (!username) {
+      newErrors.password = "Username is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Username must be at least 6 characters";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    return newErrors;
   };
 
   const handleSendCode = async (e) => {
@@ -25,9 +40,9 @@ const RegistrationForm = () => {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
         {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
+          username,
+          email,
+          password,
         }
       );
 
@@ -47,10 +62,10 @@ const RegistrationForm = () => {
       const response = await axios.post(
         "http://localhost:8080/api/user/checkVerificationCode",
         {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          verificationCode: formData.verificationCode,
+          username,
+          password,
+          email,
+          verificationCode,
         }
       );
 
@@ -66,29 +81,51 @@ const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isVerified) {
-      alert("Please verify your email before submitting.");
-      return;
-    }
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      // Submit form if no errors
 
-    try {
-      // Replace with your registration API endpoint
-      const response = await axios.post(
-        "http://localhost:8080/api/user/register",
-        {
-          username: formData.username,
-          password: formData.password,
-          email: formData.email,
-        }
-      );
+      const formData = {
+        username,
+        password,
+        email,
+        verificationCode,
+      };
 
-      if (response.status === 201) {
-        alert("Registration successful!");
-        // Optionally reset the form or redirect the user
+      if (!isVerified) {
+        alert("Please verify your email before submitting.");
+        return;
       }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      alert("Registration failed. Please try again.");
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/api/user/register",
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("Registration successful:", response.data);
+        window.location.href = "api/user/login";
+
+        if (response.status === 201) {
+          alert("Registration successful!");
+          // Optionally reset the form or redirect the user
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          setErrorMessage(error.response.data);
+        } else {
+          setErrorMessage("등록 중 오류가 발생했습니다.");
+        }
+        console.error("Error during registration:", error);
+        alert("Registration failed. Please try again.");
+      }
+      console.log("Form submitted:", { email, password });
+      setErrorMessage({});
+    } else {
+      setErrorMessage(validationErrors);
     }
   };
 
@@ -100,8 +137,8 @@ const RegistrationForm = () => {
           type="text"
           id="username"
           name="username"
-          value={formData.username}
-          onChange={handleChange}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
       </div>
@@ -112,8 +149,8 @@ const RegistrationForm = () => {
           type="password"
           id="password"
           name="password"
-          value={formData.password}
-          onChange={handleChange}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
       </div>
@@ -124,8 +161,8 @@ const RegistrationForm = () => {
           type="email"
           id="email"
           name="email"
-          value={formData.email}
-          onChange={handleChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
@@ -137,8 +174,8 @@ const RegistrationForm = () => {
             type="text"
             id="verificationCode"
             name="verificationCode"
-            value={formData.verificationCode}
-            onChange={handleChange}
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
             required
           />
         </div>

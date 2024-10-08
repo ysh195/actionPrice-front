@@ -103,7 +103,7 @@ export const dropMenu = [
   },
   {
     title: "Login",
-    path: "/user/login",
+    path: "api/user/login",
     subMenu: [
       { title: "MyPage", path: "/mypage" },
       { title: "Logout" },

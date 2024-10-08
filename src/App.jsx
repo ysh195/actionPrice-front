@@ -4,17 +4,16 @@ import Home from "./pages/Home/Home";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Category from "./components/Category";
 
-
 import "./App.css";
 
 import DynamicDropdown from "./components/CategoryDetails/DynamicDropdown";
 import Login from "./pages/Login/Login";
 
 import MyPage from "./pages/MyPage/MyPage";
-import Register from "./pages/Register/register";
 
 import Header from "./layouts/Header/Header";
 import RegistrationForm from "./pages/Register/RegistrationForm";
+
 
 function App() {
   const { pathname } = useLocation();
@@ -28,9 +27,11 @@ function App() {
 
         <Route path="api/user/login" exact element={<Login />} />
 
-        {/* <Route path="/user/register" exact element={<Register />} /> */}
+        {/* <Route path="api/user/register" exact element={<Register />} /> */}
 
         <Route path="api/user/register" exact element={<RegistrationForm />} />
+
+        {/* <Route path="api/user/register" exact element={<Reg2 />} /> */}
 
         <Route path="api/mypage" exact element={<MyPage />} />
 
