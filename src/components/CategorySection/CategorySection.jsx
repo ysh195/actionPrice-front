@@ -2,6 +2,7 @@
 import React from "react";
 import { category_list } from "../../assets/assest";
 import "./CategorySection.css";
+import { Link } from "react-router-dom";
 
 const CategorySection = ({ category, setCategory }) => {
   return (
@@ -10,11 +11,14 @@ const CategorySection = ({ category, setCategory }) => {
       <div className="categ-container">
         {category_list.map((category, index) => (
           <div key={index} className="categ-card">
-            <img
-              src={category.image}
-              alt={category.title}
-              className="categ-img"
-            />
+            <Link to={"/category-details/" + category}>
+              <img
+                src={category.image}
+                alt={category.title}
+                className="categ-img"
+              />
+            </Link>
+
             <div className="categ-info">
               <p className="categ-name">{category.title}</p>
 

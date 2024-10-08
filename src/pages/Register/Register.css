@@ -1,0 +1,158 @@
+  .form {
+    width: 400px;
+    margin: auto;
+    padding: 36px 48px 48px 48px;
+    background-color: #f2efee;
+  
+    border-radius: 11px;
+    box-shadow: 0 2.4rem 4.8rem rgba(0, 0, 0, 0.15);
+  }
+  
+  .login-title {
+    padding: 15px;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .login-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 16px;
+  }
+  
+  .login-form label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .login-form input {
+    width: 100%;
+    padding: 1.2rem;
+    border-radius: 9px;
+    border: none;
+  }
+  
+  .login-form input:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(253, 242, 233, 0.5);
+  }
+  
+  .btn--form {
+    background-color: #f48982;
+    color: #fdf2e9;
+    align-self: end;
+    padding: 8px;
+  }
+  
+  .btn,
+  .btn:link,
+  .btn:visited {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 9px;
+    border: none;
+  
+    cursor: pointer;
+    font-family: inherit;
+  
+    transition: all 0.3s;
+  }
+  
+  .btn-login:hover {
+    outline: 1px solid #f48982;
+  }
+  
+  .btn--form:hover {
+    background-color: #fdf2e9;
+    color: #f48982;
+  }
+  
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.formContainer {
+  background-color: white;
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  border: 1px solid #ff4c24;
+  background-color: #fff4f2;
+  padding: 20px 35px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.logo {
+  color: #ff4c24;
+  font-size: 24px;
+  font-weight: bold;
+}
+.title {
+  color: #ff4c24;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.register-input {
+  padding: 15px 25px;
+  border: 1px solid tomato;
+  border-radius: 10px;
+}
+
+.register-input:focus {
+  outline: none;
+}
+
+.register-input::placeholder {
+  color: rgb(175 175 175);
+}
+
+.register-button {
+  background-color: tomato;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.register-button:hover {
+   background-color: #85847d;
+
+}
+
+.have-account {
+  color: #49557E;
+  margin-top: 10px;
+}
+
+.move-link {
+  color: #49557E;
+  margin-left: 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.move-link:hover {
+  color: #ff4c24;
+} */
