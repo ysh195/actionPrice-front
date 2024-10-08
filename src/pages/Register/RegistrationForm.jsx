@@ -25,7 +25,9 @@ const RegistrationForm = () => {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
         {
+          username: formData.username,
           email: formData.email,
+          password: formData.password,
         }
       );
 
@@ -45,7 +47,9 @@ const RegistrationForm = () => {
       const response = await axios.post(
         "http://localhost:8080/api/user/checkVerificationCode",
         {
+          username: formData.username,
           email: formData.email,
+          password: formData.password,
           verificationCode: formData.verificationCode,
         }
       );
