@@ -13,6 +13,7 @@ import MyPage from "./pages/MyPage/MyPage";
 
 import Header from "./layouts/Header/Header";
 import RegistrationForm from "./pages/Register/RegistrationForm";
+import Reg2 from "./pages/Register/Reg2";
 
 
 function App() {
@@ -29,9 +30,9 @@ function App() {
 
         {/* <Route path="api/user/register" exact element={<Register />} /> */}
 
-        <Route path="api/user/register" exact element={<RegistrationForm />} />
+        {/* <Route path="api/user/register" exact element={<RegistrationForm />} /> */}
 
-        {/* <Route path="api/user/register" exact element={<Reg2 />} /> */}
+        <Route path="api/user/register" exact element={<Reg2 />} />
 
         <Route path="api/mypage" exact element={<MyPage />} />
 

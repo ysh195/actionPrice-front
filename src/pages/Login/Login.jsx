@@ -30,15 +30,15 @@ export default function Login() {
       // Set Authorization header
       axios.defaults.headers.common[
         "Authorization"
-      ] = `Bearer ${response.data.payload.access_token}`;
+      ] = `Bearer ${response.data.access_token}`;
 
       console.log(response);
       console.log(response.data);
 
-      localStorage.setItem("access_token", response.data.payload.access_token);
+      localStorage.setItem("access_token", response.data.access_token);
       localStorage.setItem(
         "refresh_token",
-        response.data.payload.refresh_token
+        response.data.refresh_token
       );
 
       navigate("/");
@@ -117,7 +117,7 @@ export default function Login() {
         </button>
         <p className="have-account">
           계정이 없으신가요?
-          <Link className="move-link" to="/user/register">
+          <Link className="move-link" to="/api/user/register">
             회원가입 하세요
           </Link>
         </p>

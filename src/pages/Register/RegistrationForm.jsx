@@ -21,9 +21,9 @@ const RegistrationForm = () => {
     }
 
     if (!username) {
-      newErrors.password = "Username is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Username must be at least 6 characters";
+      newErrors.username = "Username is required";
+    } else if (username.length < 6) {
+      newErrors.username = "Username must be at least 6 characters";
     }
 
     if (!password) {
@@ -36,6 +36,12 @@ const RegistrationForm = () => {
 
   const handleSendCode = async (e) => {
     e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrorMessage(validationErrors);
+      return;
+    }
+    
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
