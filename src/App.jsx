@@ -12,9 +12,10 @@ import Login from "./pages/Login/Login";
 import MyPage from "./pages/MyPage/MyPage";
 
 import Header from "./layouts/Header/Header";
-import RegistrationForm from "./pages/Register/RegistrationForm";
-import Reg2 from "./pages/Register/Reg2";
 
+import Register from "./pages/Register/Register";
+
+import RegistrationForm from "./pages/Register/RegistrationForm";
 
 function App() {
   const { pathname } = useLocation();
@@ -30,9 +31,7 @@ function App() {
 
         {/* <Route path="api/user/register" exact element={<Register />} /> */}
 
-        {/* <Route path="api/user/register" exact element={<RegistrationForm />} /> */}
-
-        <Route path="api/user/register" exact element={<Reg2 />} />
+        <Route path="api/user/register" exact element={<RegistrationForm />} />
 
         <Route path="api/mypage" exact element={<MyPage />} />
 

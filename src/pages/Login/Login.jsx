@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 
-import Cookies from "js-cookie";
-import "./login.css";
+import "./form.css";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState();
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,34 +31,28 @@ export default function Login() {
       ] = `Bearer ${response.data.access_token}`;
 
       console.log(response);
-      console.log(response.data);
+      console.log(response.data); //access /refresh token
+      console.log(response.config.data); //userdata
 
       localStorage.setItem("access_token", response.data.access_token);
-      localStorage.setItem(
-        "refresh_token",
-        response.data.refresh_token
-      );
+      localStorage.setItem("refresh_token", response.data.refresh_token);
 
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
       // Optionally handle the error, e.g., show a notification or set an error state
-      alert("Login failed. Please check your credentials.");
+      alert("Login failed. Please check your login information.");
     }
   };
-
-  useEffect(() => {
-    // 쿠키에서 저장된 아이디 가져오기
-    const rememberId = Cookies.get("rememberId");
-    console.log(`쿠키 rememberId : ${rememberId}`);
-    setRememberMe(rememberId);
-  }, []);
+  const handleToggle = () => {
+    setRememberMe((prev) => !prev);
+  };
 
   return (
     <div className="form">
-      <h2 className="login-title">Login</h2>
+      <h2 className="form-title">Login</h2>
 
-      <form id="userLoginForm" className="login-form">
+      <form id="userLoginForm" className="auth-form">
         <div>
           <input
             type="text"
