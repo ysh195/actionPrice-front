@@ -1,66 +1,64 @@
-import React, { useState } from "react";
-
-import { Link } from "react-router-dom";
-import "./register.css";
+import React, { useRef, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const RegistrationForm = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    verificationCode: "",
-  });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [agreedPersonal, setAgreedPersonal] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const verificationCodeRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleSendCode = async (e) => {
     e.preventDefault();
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      setEmailError("Invalid email format.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
-        {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }
+        { username, email, password }
       );
+
       if (response.status === 200) {
         setIsCodeSent(true);
         alert("Verification code sent to your email!");
       }
     } catch (error) {
-      console.error("Error sending verification code:", error);
-      alert("Failed to send verification code. Please try again.");
+      console.error("Error sending verification code:", error.response.data);
+      alert(error.response.data);
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/checkVerificationCode",
-        {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          verificationCode: formData.verificationCode,
-        }
+        { username, email, password, verificationCode }
       );
+      console.log(response);
 
       if (response.status === 200) {
         setIsVerified(true);
-        alert("Email verified successfully!");
+        alert(response.data);
       }
     } catch (error) {
       console.error("Error verifying code:", error);
@@ -68,135 +66,133 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const onRegisterButtonClickHandler = async (e) => {
     e.preventDefault();
+
+    if (!username) {
+      setUsernameError("Username is required.");
+      return;
+    }
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters.");
+      return;
+    }
+    if (!agreedPersonal) {
+      alert("You must agree to the terms.");
+      return;
+    }
+
+    const formData = {
+      username,
+      password,
+      email,
+      verificationCode,
+    };
+
     if (!isVerified) {
       alert("Please verify your email before submitting.");
       return;
     }
+
     try {
-      // Replace with your registration API endpoint
       const response = await axios.post(
-        "http://localhost:8080/api/user/userRegisterForm",
+        "http://localhost:8080/api/user/register",
+        formData,
         {
-          username: formData.username,
-          password: formData.password,
-          email: formData.email,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
+      console.log(response);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         alert("Registration successful!");
-        // Optionally reset the form or redirect the user
+        navigate("/api/user/login");
       }
     } catch (error) {
+      setErrorMessage(
+        error.response?.data || "Registration failed. Please try again."
+      );
       console.error("Error during registration:", error);
-      alert("Registration failed. Please try again.");
     }
   };
 
-  // const submit = async (e) => {
-  //   e.preventDefault();
-  //   await axios.post("http://localhost:8080/api/user/register", {
-  //     username,
-  //     email,
-  //     password,
-  //   });
-  // };
-
   return (
-    <div className="form">
-      <h2 className="login-title">회원가입</h2>
+    <form onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}>
+      <div>
+        <input
+          ref={usernameRef}
+          type="text"
+          placeholder="Enter your username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        {usernameError && <p>{usernameError}</p>}
+      </div>
 
-      <form
-        id="userRegisterForm"
-        className="login-form"
-        onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}
-      >
-        <div>
-          <input
-            type="text"
-            id="username"
-            autoFocus
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            placeholder="username"
-            required
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            autoComplete="password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
+      <div>
+        <input
+          ref={passwordRef}
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {passwordError && <p>{passwordError}</p>}
+      </div>
 
+      <div>
+        <input
+          ref={emailRef}
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {emailError && <p>{emailError}</p>}
+      </div>
+
+      {isCodeSent && (
         <div>
           <input
+            ref={verificationCodeRef}
             type="text"
-            id="verification"
-            name="verification code"
-            placeholder="verification code"
-            required
-            onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="Enter verification code"
             value={verificationCode}
-          />
-        </div>
-        <div>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Email"
-            autoComplete="email"
+            onChange={(e) => setVerificationCode(e.target.value)}
+            hidden={!isCodeSent} // Disabled until code is sent
             required
-            value={formData.email}
-            onChange={handleChange}
           />
         </div>
-        {isCodeSent && (
+      )}
+
+      <button type="submit">
+        {isCodeSent ? "Verify Code" : "Send Verification Code"}
+      </button>
+
+      {isVerified && (
+        <>
           <div>
-            <label htmlFor="verificationCode">Verification Code:</label>
             <input
-              type="text"
-              id="verificationCode"
-              name="verificationCode"
-              value={formData.verificationCode}
-              onChange={handleChange}
-              required
+              type="checkbox"
+              checked={agreedPersonal}
+              onChange={() => setAgreedPersonal(!agreedPersonal)}
             />
+            <span>I agree to the terms</span>
           </div>
-        )}
-        <button type="submit" className="btn btn--form btn-login">
-          {isCodeSent ? "Verify Code" : "Send Verification Code"}
-        </button>
-        {isVerified && (
-          <div>
-            <button
-              className="btn btn--form btn-login"
-              type="submit"
-              onClick={handleSubmit}
-            >
-              회원가입
-            </button>
-          </div>
-        )}
-        <p className="have-account">
-          이미 계정이 있으신가요?
-          <Link className="move-link" to="/user/login">
-            로그인
-          </Link>
-        </p>
-      </form>
-    </div>
+          <button onClick={onRegisterButtonClickHandler} type="button">
+            Register
+          </button>
+        </>
+      )}
+
+      <div>
+        <span>Already have an account? </span>
+        <span onClick={() => navigate("/login")}>Login</span>
+      </div>
+    </form>
   );
 };
 
-export default Register;
+export default RegistrationForm;

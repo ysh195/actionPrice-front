@@ -1,202 +1,280 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import "../Login/Form.css";
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState("");
+
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const validateForm = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const newErrors = {};
-    if (!email) {
-      newErrors.email = "Email is required";
-    } else if (!emailRegex.test(email)) {
-      newErrors.email = "Email is invalid";
-    }
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const verificationCodeRef = useRef(null);
+  const navigate = useNavigate();
 
+  //error messages
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [verificationCodeError, setVerificationCodeError] = useState("");
+
+  const handleUsernameChange = (e) => {
+    const username = e.target.value;
     if (!username) {
-      newErrors.username = "Username is required";
+      setUsernameError("Username is required.");
     } else if (username.length < 6) {
-      newErrors.username = "Username must be at least 6 characters";
+      setUsernameError("Username must be at least 6 characters.");
+    } else {
+      setUsernameError("");
     }
+    setUsername(username);
+  };
 
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
     if (!password) {
-      newErrors.password = "Password is required";
+      setPasswordError("Password is required.");
     } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      setPasswordError("Password must be at least 8 characters.");
+    } else {
+      setPasswordError("");
     }
-    return newErrors;
+    setPassword(password);
+  };
+
+  const handleEmailChange = (e) => {
+    const email = e.target.value;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!email) {
+      setEmailError("Email is required.");
+    } else if (!emailPattern.test(email)) {
+      setEmailError("Invalid email format.");
+    } else {
+      setEmailError("");
+    }
+    setEmail(email);
+  };
+
+  const handleVerificationCodeChange = (e) => {
+    const verificationCode = e.target.value;
+    if (isCodeSent && !verificationCode) {
+      setVerificationCodeError("Verification code is required.");
+    } else {
+      setVerificationCodeError("");
+    }
+    setVerificationCode(verificationCode);
   };
 
   const handleSendCode = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrorMessage(validationErrors);
+    setLoading(true);
+
+    if (usernameError || passwordError || verificationCodeError) {
+      setLoading(false);
       return;
     }
-    
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
-        {
-          username,
-          email,
-          password,
-        }
+        { username, email, password }
       );
-
       if (response.status === 200) {
         setIsCodeSent(true);
         alert("Verification code sent to your email!");
       }
     } catch (error) {
-      console.error("Error sending verification code:", error);
-      alert("Failed to send verification code. Please try again.");
+      const errorMsg = error.response?.data?.message;
+      setErrorMessage(errorMsg);
+      setIsCodeSent(false); // Hide the Send Code button if sending fails
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    if (usernameError || passwordError || verificationCodeError) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/checkVerificationCode",
-        {
-          username,
-          password,
-          email,
-          verificationCode,
-        }
+        { username, email, password, verificationCode }
       );
-
-      if (response.status === 200) {
+      console.log(response);
+      if (response.data === "인증이 성공했습니다.") {
         setIsVerified(true);
-        alert("Email verified successfully!");
+        alert(response.data);
+      } else {
+        setIsVerified(false); // Verification fails
+        setErrorMessage("Invalid verification code. Please try again.");
       }
     } catch (error) {
-      console.error("Error verifying code:", error);
-      alert("Invalid verification code. Please try again.");
+      const errorMsg =
+        error.response?.data?.message ||
+        "Invalid verification code. Please try again.";
+      setErrorMessage(errorMsg);
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+      setVerificationCodeError("");
     }
   };
 
-  const handleSubmit = async (e) => {
+  const onRegisterButtonClickHandler = async (e) => {
     e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length === 0) {
-      // Submit form if no errors
+    setLoading(true);
 
-      const formData = {
-        username,
-        password,
-        email,
-        verificationCode,
-      };
+    if (usernameError || passwordError || verificationCodeError) {
+      setLoading(false);
+      return;
+    }
+    console.log("register", username, email, password);
 
-      if (!isVerified) {
-        alert("Please verify your email before submitting.");
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://localhost:8080/api/user/register",
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("Registration successful:", response.data);
-        window.location.href = "api/user/login";
+    const formData = { username, password, email, verificationCode };
 
-        if (response.status === 201) {
-          alert("Registration successful!");
-          // Optionally reset the form or redirect the user
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/user/register",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
         }
-      } catch (error) {
-        if (error.response && error.response.data) {
-          setErrorMessage(error.response.data);
-        } else {
-          setErrorMessage("등록 중 오류가 발생했습니다.");
-        }
-        console.error("Error during registration:", error);
-        alert("Registration failed. Please try again.");
+      );
+      if (response.status === 200) {
+        alert("Registration successful!");
+        navigate("/api/user/login");
       }
-      console.log("Form submitted:", { email, password });
-      setErrorMessage({});
-    } else {
-      setErrorMessage(validationErrors);
+    } catch (error) {
+      const errorMsg = error.response?.data?.message;
+      setErrorMessage(errorMsg);
+    } finally {
+      setLoading(false);
+      setUsername("");
+      setPassword("");
+      setEma
+      il("");//  setRememberMe(false);
+      navigate("/");
     }
   };
 
   return (
-    <form onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-
-      {isCodeSent && (
+    <div className="form">
+      <h2 className="form-title">회원가입</h2>
+      <form
+        id="userRegisterForm"
+        className="auth-form"
+        onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}
+      >
         <div>
-          <label htmlFor="verificationCode">Verification Code:</label>
           <input
+            ref={usernameRef}
             type="text"
-            id="verificationCode"
-            name="verificationCode"
-            value={verificationCode}
-            onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="Enter your username"
+            value={username}
+            onChange={handleUsernameChange}
             required
           />
+          <div className="error-text">
+            {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
+          </div>
         </div>
-      )}
 
-      <button type="submit">
-        {isCodeSent ? "Verify Code" : "Send Verification Code"}
-      </button>
+        <div>
+          <input
+            ref={passwordRef}
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={handlePasswordChange}
+            required
+          />
+          <div className="error-text">
+            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
+          </div>
+        </div>
 
-      {isVerified && (
-        <button onClick={handleSubmit} type="button">
-          Register
-        </button>
-      )}
-    </form>
+        <div className="verify-box">
+          <input
+            ref={emailRef}
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={handleEmailChange}
+            required
+          />
+          <button
+            className="send-code-button"
+            type="submit"
+            disabled={loading || isCodeSent}
+            style={{ marginLeft: "10px" }}
+          >
+            이메일 인증
+          </button>
+        </div>
+        <div className="error-text">
+          {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+        </div>
+
+        {/* Show verification code input and button only after code is sent */}
+        {isCodeSent && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              ref={verificationCodeRef}
+              type="text"
+              placeholder="Enter verification code"
+              value={verificationCode}
+              onChange={handleVerificationCodeChange}
+              required
+            />
+            <div className="error-text">
+              {verificationCodeError && (
+                <p style={{ color: "red" }}>{verificationCodeError}</p>
+              )}
+            </div>
+
+            <button
+              className="send-code-button"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Verify Code"}
+            </button>
+          </div>
+        )}
+        {isCodeSent && isVerified === true && (
+          <button
+            className="btn btn--form btn-login"
+            onClick={onRegisterButtonClickHandler}
+            type="button"
+          >
+            Register
+          </button>
+        )}
+        <div className="error-text">
+          {errorMessage && <p>{errorMessage}</p>}
+        </div>
+        <div>
+          <span>이미 계정이 있으신가요? </span>
+          <Link className="move-link" to="/api/user/login">
+            회원가입 하세요
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 };
 

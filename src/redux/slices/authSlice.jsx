@@ -1,50 +1,137 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
-
-
-
-const api = axios.create({
-  baseURL: "http://localhost:8080",
-});
-// initialize userToken from local storage
-const userToken = localStorage.getItem('userToken')
-  ? localStorage.getItem('userToken')
-  : null
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
-  loading: false,
-  userInfo: {}, // for user object
-  userToken: null, // for storing the JWT
-  error: null,
-  success: false,
+  username: null,
+  isLoading: false,
+  isError: false,
+  errorMessage: "",
+  isLoggedIn: false,
+  token: "",
 };
 
-
-export const register = createAsyncThunk(
+export const registerUser = createAsyncThunk(
   "auth/register",
-  async (userData, thunkAPI) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:8080/user/register", {
-        user: userData,
+      const response = await axios.post(
+        "http://localhost:8080/api/user/register",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log("Form Data:", formData);
+      console.log(response);
+      return response;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data); // API error response
+      }
+      return rejectWithValue(error.message); // General error
+    }
+  }
+);
+
+export const sendVerificationCode = createAsyncThunk(
+  "auth/sendVerificationCode",
+  async ({ username, email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/user/sendVerificationCode",
+        { username, email, password }
+      );
+      console.log(response);
+      return response.data; // Adjust this based on your API response structure
+    } catch (error) {
+      // Create a fallback message if the error response is not available
+      const errorMsg =
+        error.response?.data?.message ||
+        "An error occurred while sending the verification code.";
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const verifyCode = createAsyncThunk(
+  "auth/verifyCode",
+  async (
+    { username, email, password, verificationCode },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/user/checkVerificationCode",
+        { username, email, password, verificationCode }
+      );
+
+      // Return response data or a success message
+      return response.data; // Adjust based on your API response
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        "Invalid verification code. Please try again.";
+      return rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const checkUsername = createAsyncThunk(
+  "auth/checkUsername",
+  async (
+    { username, email, password, verificationCode },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post("/api/user/checkForDuplicateUsername", {
+        username,
+        email,
+        password,
+        verificationCode,
       });
-      return response.data.user;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.errors);
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      if (error.response) return error.response.data;
+      const errorMsg =
+        error.response?.data?.message ||
+        "An error occurred while sending the verification code.";
+      return rejectWithValue(errorMsg);
     }
   }
 );
 
 export const login = createAsyncThunk(
   "auth/login",
-  async (userData, thunkAPI) => {
+  // { username, password }
+
+  async (formData, thunkAPI) => {
     try {
-      const response = await axios.post("http://localhost:8080/user/login", {
-        user: userData,
-      });
-      return response.data.user;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.errors);
+      const response = await axios.post(
+        "http://localhost:8080/api/user/login",
+        formData
+      );
+
+      // Set Authorization header
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.access_token}`;
+
+      console.log("Login Response:", response.data);
+
+      localStorage.setItem("access_token", response.data.access_token);
+      localStorage.setItem("refresh_token", response.data.refresh_token);
+      localStorage.setItem("username", response.data.username);
+
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message ||
+        "Login failed. Please check your informations.";
+
+      return thunkAPI.rejectWithValue(errorMsg);
     }
   }
 );
@@ -53,71 +140,75 @@ export const getCurrentUser = createAsyncThunk(
   "auth/getCurrentUser",
   async (_, thunkAPI) => {
     try {
-      const token = localStorage.getItem("accessToken") ?? "";
-      const response = await axios.get("http://localhost:8080/mypage", {
+      const token = localStorage.getItem("access_token") ?? "";
+      const response = await axios.get("http://localhost:8080/api/mypage", {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${response.data.access_token}`,
         },
       });
-      return response.data.user;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.errors);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
-export const logout = createAsyncThunk("auth/logout", async () => {
-  localStorage.removeItem("accessToken");
-});
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.username = null;
+      state.token = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.errorMessage = "";
       })
-      .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-        state.currentUser = action.payload;
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.data;
       })
-      .addCase(register.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.errorMessage = action.payload || "Registration failed";
       })
       .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.isLoading = true;
+        state.isError = null;
+        state.isLoggedIn = false;
       })
-      .addCase(login.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        state.userInfo = payload;
-        state.userToken = payload.userToken;
+      .addCase(login.fulfilled, (state, action) => {
+        state.isLoading = false;
+
+        state.username = action.payload;
+        state.isLoggedIn = true;
+
+        state.token = action.payload;
       })
       .addCase(login.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
+        state.isLoading = false;
+        state.isError = payload;
+        state.isLoggedIn = false;
       })
       .addCase(getCurrentUser.pending, (state) => {
-        state.loading = true;
+        state.isLoading = true;
       })
       .addCase(getCurrentUser.fulfilled, (state, { payload }) => {
-        state.loading = false;
+        state.isLoading = false;
         state.currentUser = payload;
       })
       .addCase(getCurrentUser.rejected, (state) => {
-        state.loading = false;
-        state.currentUser = null;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.loading = false;
+        state.isLoading = false;
         state.currentUser = null;
       });
   },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
