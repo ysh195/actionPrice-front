@@ -104,25 +104,20 @@ export const dropMenu = [
   {
     title: "Login",
     path: "api/user/login",
-    subMenu: [
-      { title: "MyPage", path: "/mypage" },
-      { title: "Logout" },
-    ],
+    subMenu: [{ title: "MyPage", path: "/mypage" }, { title: "Logout" }],
   },
-
 ];
 export const mockCateg = [
   {
-    id:1,
+    id: 1,
     title: "Meat",
   },
-   {
-    id:2,
+  {
+    id: 2,
     title: "Veggie",
   },
-   {
-    id:3,
+  {
+    id: 3,
     title: "Fish",
-  }
-
+  },
 ];
