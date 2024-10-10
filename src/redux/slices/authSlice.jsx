@@ -77,6 +77,27 @@ export const verifyCode = createAsyncThunk(
   }
 );
 
+export const checkUsername = createAsyncThunk(
+  "auth/checkUsername",
+  async (username) => {
+    try {
+      const response = await axios.post("/api/user/checkForDuplicateUsername", {
+        username,
+      });
+      console.log(response);
+      return response.data;
+      
+    } catch (error) {
+      if (error.response)
+        return error.response.data;
+      //    const errorMsg =
+      //      error.response?.data?.message ||
+      //      "An error occurred while sending the verification code.";
+      // return rejectWithValue(errorMsg);
+    }
+  }
+);
+
 export const login = createAsyncThunk(
   "auth/login",
   // { username, password }
