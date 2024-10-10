@@ -31,20 +31,29 @@
 // export default Navbar;
 // src/Navbar.js
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css"; // Make sure to have your CSS styles here
+import { useDispatch, useSelector } from "react-redux";
+import { login, logout } from "../redux/slices/authSlice";
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const token = useSelector((state) => state.auth.token); // Assuming `user` is set upon successful login
 
   const handleLogin = () => {
-    // Simulate a login action
-    setIsLoggedIn(true);
+    dispatch(login(FormData));
   };
 
   const handleLogout = () => {
-    // Simulate a logout action
-    setIsLoggedIn(false);
+    dispatch(logout());
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("username")
+    navigate("/api/user/login"); // Redirect to logout endpoint
+   
   };
 
   return (
@@ -57,15 +66,18 @@ const Navbar = () => {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/about">About</Link>
+          <Link to="/api/categories">Category</Link>
+        </li>
+        <li>
+          <Link to="/api/contact-us">Contact Us</Link>
         </li>
       </ul>
       <div className="auth-buttons">
-        {isLoggedIn ? (
+        {token ? (
           <button onClick={handleLogout}>Logout</button>
         ) : (
-          <Link to="api/user/login">
-            <button onClick={handleLogin}>Login</button>
+          <Link to="/api/user/login">
+            <button>Login</button>
           </Link>
         )}
       </div>

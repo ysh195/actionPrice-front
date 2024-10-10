@@ -3,13 +3,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
-  user: null, // for user object
+  username: null, 
   isLoading: false,
   isError: false,
   errorMessage: "",
+  isLoggedIn: false,
+  token: "",
 };
-
-
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -24,8 +24,7 @@ export const registerUser = createAsyncThunk(
       );
       console.log("Form Data:", formData);
       console.log(response);
-      return response.data;
-    
+      return response;
     } catch (error) {
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data); // API error response
@@ -35,7 +34,6 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-
 export const sendVerificationCode = createAsyncThunk(
   "auth/sendVerificationCode",
   async ({ username, email, password }, { rejectWithValue }) => {
@@ -44,7 +42,7 @@ export const sendVerificationCode = createAsyncThunk(
         "http://localhost:8080/api/user/sendVerificationCode",
         { username, email, password }
       );
-      console.log(response)
+      console.log(response);
       return response.data; // Adjust this based on your API response structure
     } catch (error) {
       // Create a fallback message if the error response is not available
@@ -79,39 +77,34 @@ export const verifyCode = createAsyncThunk(
   }
 );
 
-
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ username, password }, thunkAPI) => {
+  // { username, password }
+
+  async (formData, thunkAPI) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/login",
-        { username, password }
+        formData
       );
 
       // Set Authorization header
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${response.data.access_token}`;
-  
+
+      console.log("Login Response:", response.data);
 
       localStorage.setItem("access_token", response.data.access_token);
       localStorage.setItem("refresh_token", response.data.refresh_token);
+      localStorage.setItem("username", response.data.username);
 
-      console.log(response);
       console.log(response.data);
-
-      //access /refresh token
-      console.log(response.config.data); //userdata
-
-      // return response.config.data;
       return response.data;
-      
-     
     } catch (error) {
-            const errorMsg =
-              error.response?.data?.message ||
-              "Login failed. Please check your credentials.";
+      const errorMsg =
+        error.response?.data?.message ||
+        "Login failed. Please check your informations.";
 
       return thunkAPI.rejectWithValue(errorMsg);
     }
@@ -128,21 +121,22 @@ export const getCurrentUser = createAsyncThunk(
           Authorization: `Bearer ${response.data.access_token}`,
         },
       });
-      return response.config.data;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
-export const logout = createAsyncThunk("api/user/logout", async () => {
-  localStorage.removeItem("access_token");
-});
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.username = null;
+      state.token=""
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -152,7 +146,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload;
+        state.user = action.payload.data;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -161,17 +155,21 @@ const authSlice = createSlice({
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
-        state.error = null;
+        state.isError = null;
+        state.isLoggedIn = false;
       })
-      .addCase(login.fulfilled, (state, { payload }) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.userInfo = payload;
-        state.userToken = payload.userToken;
-        console.log({ payload });
+
+        state.username = action.payload;
+        state.isLoggedIn = true;
+
+        state.token = action.payload;
       })
       .addCase(login.rejected, (state, { payload }) => {
         state.isLoading = false;
-        state.error = payload;
+        state.isError = payload;
+        state.isLoggedIn = false;
       })
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true;
@@ -183,12 +181,9 @@ const authSlice = createSlice({
       .addCase(getCurrentUser.rejected, (state) => {
         state.isLoading = false;
         state.currentUser = null;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.isLoading = false;
-        state.currentUser = null;
       });
   },
 });
 
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
