@@ -122,6 +122,7 @@ const RegTest = () => {
     if (Object.keys(errors).length > 0) return;
     try {
       const result = await dispatch(registerUser(formData)).unwrap();
+
       alert("Registered successfully!"); // Alert on successful registration
       // Reset form fields
       setFormData({
@@ -151,8 +152,6 @@ const RegTest = () => {
     const errors = validateForm();
     setEmailError(errors.email || "");
 
-    if (Object.keys(errors).length > 0) return;
-
     try {
       await dispatch(sendVerificationCode(formData)).unwrap();
       setIsCodeSent(true);
@@ -170,7 +169,7 @@ const RegTest = () => {
     const errors = validateForm();
     setVerificationCodeError(errors.verificationCode || "");
 
-    if (Object.keys(errors).length > 0) return;
+    // if (Object.keys(errors).length > 0) return;
 
     try {
       const response = await dispatch(verifyCode(formData)).unwrap(); // Unwrap to get the response directly

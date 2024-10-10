@@ -14,8 +14,11 @@ const initialState = {
 };
 
 export const registerUser = createAsyncThunk(
+  
   "auth/register",
+  
   async (formData, { rejectWithValue }) => {
+console.log("Form Data:", formData);
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/register",
@@ -24,10 +27,13 @@ export const registerUser = createAsyncThunk(
           headers: { "Content-Type": "application/json" },
         }
       );
+      console.log("Registration successful:", response.data);
       console.log("Form Data:", formData);
       console.log(response);
       return response;
     } catch (error) {
+      console.error("Registration error:", error);
+      // Handle API errors and return a meaningful message
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data); // API error response
       }
