@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
-  username: null, 
+  username: null,
   isLoading: false,
   isError: false,
   errorMessage: "",
@@ -79,21 +79,25 @@ export const verifyCode = createAsyncThunk(
 
 export const checkUsername = createAsyncThunk(
   "auth/checkUsername",
-  async (username) => {
+  async (
+    { username, email, password, verificationCode },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.post("/api/user/checkForDuplicateUsername", {
         username,
+        email,
+        password,
+        verificationCode,
       });
       console.log(response);
       return response.data;
-      
     } catch (error) {
-      if (error.response)
-        return error.response.data;
-      //    const errorMsg =
-      //      error.response?.data?.message ||
-      //      "An error occurred while sending the verification code.";
-      // return rejectWithValue(errorMsg);
+      if (error.response) return error.response.data;
+      const errorMsg =
+        error.response?.data?.message ||
+        "An error occurred while sending the verification code.";
+      return rejectWithValue(errorMsg);
     }
   }
 );
@@ -155,7 +159,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.username = null;
-      state.token=""
+      state.token = "";
     },
   },
   extraReducers: (builder) => {
