@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/slices/authSlice";
+import { login } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 
 const LogTest = () => {
   const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading, error } = useSelector((state) => state.login);
   const [rememberMe, setRememberMe] = useState(false);
 
   // Local state for managing form inputs (username and password)
@@ -28,10 +28,16 @@ const LogTest = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(login(formData));
+    // If Remember Me is checked, save username to local storage
+    if (rememberMe) {
+      localStorage.setItem("rememberMe", formData.username);
+    } else {
+      localStorage.removeItem("rememberMe");
+    }
     navigate("/");
   };
   const handleToggle = () => {
-    setRememberMe((prev) => !prev);
+    setRememberMe(!rememberMe);
   };
 
   return (
@@ -82,9 +88,14 @@ const LogTest = () => {
             )}
             <span className="slider"></span>
           </label>
-          <label htmlFor="remember-id" className="check-label">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={handleToggle}
+            className="check-label"
+          >
             아이디 저장
-          </label>
+          </input>
         </div>
         <button
           type="submit"
