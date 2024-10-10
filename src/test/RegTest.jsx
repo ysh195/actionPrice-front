@@ -6,7 +6,7 @@ import {
   registerUser,
   sendVerificationCode,
   verifyCode,
-} from "../redux/slices/authSlice"; // import the asyncThunk
+} from "../redux/slices/registerSlice"; // import the asyncThunk
 
 import { Link, useNavigate } from "react-router-dom";
 
@@ -26,7 +26,7 @@ const RegTest = () => {
   const [verificationCodeError, setVerificationCodeError] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
+  // const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,11 +35,13 @@ const RegTest = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const verificationCodeRef = useRef(null);
+
+  const { isUsernameAvailable } = useSelector((state) => state.register);
   const {
     isLoading,
     isError,
     errorMessage: reduxErrorMessage,
-  } = useSelector((state) => state.auth);
+  } = useSelector((state) => state.register);
 
   const validateForm = () => {
     let errors = {};
@@ -48,9 +50,8 @@ const RegTest = () => {
     if (!formData.username) {
       errors.username = "Username is required.";
     } else if (formData.username.length < 6) {
-      console.log(errors)
       errors.username = "Username must be at least 6 characters.";
-    } else if (!isUsernameAvailable) {
+    } else if (isUsernameAvailable) {
       errors.username = "Username is already taken.";
     }
 
@@ -92,21 +93,22 @@ const RegTest = () => {
       setVerificationCodeError(errors.verificationCode || "");
   };
 
+  //event handler: handleCheckUsername //
+
   const handleCheckUsername = async () => {
     try {
-      const response = await dispatch(
-        checkUsername(formData.username)
-      ).unwrap();
-      if (response.message === "Username is available.") {
+      const response = await dispatch(checkUsername(formData)).unwrap();
+
+      if (isUsernameAvailable) {
         setUsernameError(""); // Clear error if available
-        setIsUsernameAvailable(true); // Set username as available
       }
     } catch (error) {
+      console.log(error);
       setUsernameError(error); // Set error message if taken
-      setIsUsernameAvailable(false); // Set username as not available
     }
   };
 
+  //event handler: handleSubmit //
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,6 +122,7 @@ const RegTest = () => {
     if (Object.keys(errors).length > 0) return;
     try {
       const result = await dispatch(registerUser(formData)).unwrap();
+
       alert("Registered successfully!"); // Alert on successful registration
       // Reset form fields
       setFormData({
@@ -149,8 +152,6 @@ const RegTest = () => {
     const errors = validateForm();
     setEmailError(errors.email || "");
 
-    if (Object.keys(errors).length > 0) return;
-
     try {
       await dispatch(sendVerificationCode(formData)).unwrap();
       setIsCodeSent(true);
@@ -168,7 +169,7 @@ const RegTest = () => {
     const errors = validateForm();
     setVerificationCodeError(errors.verificationCode || "");
 
-    if (Object.keys(errors).length > 0) return;
+    // if (Object.keys(errors).length > 0) return;
 
     try {
       const response = await dispatch(verifyCode(formData)).unwrap(); // Unwrap to get the response directly
@@ -198,25 +199,26 @@ const RegTest = () => {
         id="userRegisterForm"
         className="auth-form"
         onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}
-      ><div className="verify-box">
-        <input
-          ref={usernameRef}
-          type="text"
-          name="username"
-          placeholder="Enter your username"
-          value={formData.username}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          // required
-        />
-        <button
-          className="send-code-button"
-          type="button"
-          onClick={handleCheckUsername}
-          style={{ marginLeft: "10px" }}
-        >
-          Check Availability
-        </button>
+      >
+        <div className="verify-box">
+          <input
+            ref={usernameRef}
+            type="text"
+            name="username"
+            placeholder="Enter your username"
+            value={formData.username}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            // required
+          />
+          <button
+            className="send-code-button"
+            type="button"
+            onClick={handleCheckUsername}
+            style={{ marginLeft: "10px" }}
+          >
+            Check Availability
+          </button>
         </div>
         <div className="error-text">
           {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
