@@ -1,67 +1,75 @@
-/* eslint-disable react/prop-types */
-import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "../css/Navbar.css";
-import Dropdown from "./Dropdown";
-import { icons } from "../assets/assest";
+// /* eslint-disable no-unused-vars */
+// /* eslint-disable react/prop-types */
+// import React from "react";
+// import "./Navbar.css";
+// import {icons} from "../assets/assest"
+
+// import { Link } from "react-router-dom";
+
+// const Navbar = ({ setShowLogin }) => {
+//   return (
+//     <div className="navbar">
+//       <Link to="/">
+//         <img className="logo" src={icons.logo} alt="" />
+//       </Link>
+//       <ul className="navbar-menu">
+//         <Link to="/">home</Link>
+//         <Link to="/api/categories">Category</Link>
+//         <Link to="/api/contact-us">ContactUs</Link>
+//       </ul>
+//       <div className="navbar-right">
+//         <Link to="/api/favs" className="navbar-fav-icon"></Link>
+
+//         <Link to="/api/user/login">
+//           <button>로그인 </button>{" "}
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Navbar;
+// src/Navbar.js
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css"; // Make sure to have your CSS styles here
 
 const Navbar = () => {
-  const [click, setClick] = useState(false);
-  const [dropdown, setDropdown] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleClick = () => setClick(!click);
-
-  const onMouseEnter = () => {
-    if (window.innerWidth < 960) {
-      setDropdown(false);
-    } else {
-      setDropdown(true);
-    }
+  const handleLogin = () => {
+    // Simulate a login action
+    setIsLoggedIn(true);
   };
 
-  const onMouseLeave = () => {
-    if (window.innerWidth < 960) {
-      setDropdown(false);
-    } else {
-      setDropdown(false);
-    }
+  const handleLogout = () => {
+    // Simulate a logout action
+    setIsLoggedIn(false);
   };
 
   return (
-    <div className="navbar">
-      <Link to="/">
-        <img className="nav-logo" src={icons.logo} alt="" />
-      </Link>
-      <div>
-        <ul className={click ? "nav-menu active" : "nav-menu"}>
-          <li className="nav-item">
-            <Link to="/" className="nav-links">
-              Home
-            </Link>
-          </li>
-          <li
-            className="nav-item"
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-          >
-            <Link to="/category" className="nav-links">
-              Category /카테고리 <i className="fas fa-caret-down" />
-            </Link>
-            {dropdown && <Dropdown />}
-          </li>
-          <li className="nav-item">
-            <Link to="/contact-us" className="nav-links">
-              Contact Us
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/authentication" className="nav-links">
-              로그인
-            </Link>
-          </li>
-        </ul>
+    <nav className="navbar">
+      <div className="logo">
+        <Link to="/">MyApp</Link>
       </div>
-    </div>
+      <ul className="nav-links">
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+      </ul>
+      <div className="auth-buttons">
+        {isLoggedIn ? (
+          <button onClick={handleLogout}>Logout</button>
+        ) : (
+          <Link to="api/user/login">
+            <button onClick={handleLogin}>Login</button>
+          </Link>
+        )}
+      </div>
+    </nav>
   );
 };
 

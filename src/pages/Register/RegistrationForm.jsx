@@ -116,7 +116,6 @@ const RegistrationForm = () => {
       );
       console.log(response);
       if (response.data === "인증이 성공했습니다.") {
-        // if (response.data.verified === true) {
         setIsVerified(true);
         alert(response.data);
       } else {
@@ -124,9 +123,11 @@ const RegistrationForm = () => {
         setErrorMessage("Invalid verification code. Please try again.");
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message;
-      ("Invalid verification code. Please try again.");
+      const errorMsg =
+        error.response?.data?.message ||
+        "Invalid verification code. Please try again.";
       setErrorMessage(errorMsg);
+      alert(errorMessage);
     } finally {
       setLoading(false);
       setVerificationCodeError("");
@@ -141,6 +142,7 @@ const RegistrationForm = () => {
       setLoading(false);
       return;
     }
+    console.log("register", username, email, password);
 
     const formData = { username, password, email, verificationCode };
 
@@ -161,6 +163,11 @@ const RegistrationForm = () => {
       setErrorMessage(errorMsg);
     } finally {
       setLoading(false);
+      setUsername("");
+      setPassword("");
+      setEma
+      il("");//  setRememberMe(false);
+      navigate("/");
     }
   };
 
