@@ -9,7 +9,7 @@ import {
 
 import { Link, useNavigate } from "react-router-dom";
 
-const Register = () => {
+const RegTest = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -119,227 +119,175 @@ const Register = () => {
     } finally {
       setLoading(false);
     }
-
-    //function:send Verification Code //
-
-    const handleSendCode = async (e) => {
-      e.preventDefault();
-
-      if (!validateForm()) {
-        return; // Prevent sending code if validation fails
-      }
-
-      // if (!formData.username || !formData.email || !formData.password) {
-      //   return; // Add validation as needed
-      // }
-
-      try {
-        await dispatch(sendVerificationCode(formData)).unwrap();
-        setIsCodeSent(true);
-        alert("Verification code sent to your email!");
-      } catch (error) {
-        console.error("Error sending verification code:", error);
-      }
-    };
-
-    //function:Verifying Code //
-    const handleVerifyCode = async (e) => {
-      e.preventDefault();
-      setLoading(true);
-
-      // Check for validation errors
-      if (!validateForm()) {
-        setLoading(false);
-        return; // Prevent verification if validation fails
-      }
-
-      // Check for validation errors
-      // if (usernameError || passwordError || verificationCodeError) {
-      //   setLoading(false);
-      //   return;
-      // }
-
-      try {
-        const response = await dispatch(verifyCode(formData)).unwrap(); // Unwrap to get the response directly
-        console.log(response);
-        if (response === "인증이 성공했습니다.") {
-          setIsVerified(true);
-          alert(response);
-        } else {
-          setIsVerified(false);
-          setErrorMessage("Invalid verification code. Please try again.");
-        }
-      } catch (error) {
-        setErrorMessage(error); // Set error message from thunk
-        alert(error);
-      } finally {
-        setLoading(false);
-        setVerificationCodeError("");
-      }
-    };
-
-    return (
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Username"
-        />
-        {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
-
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-        />
-        {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
-
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-        />
-        {emailError && <p style={{ color: "red" }}>{emailError}</p>}
-
-        <button type="button" onClick={handleSendCode} disabled={isLoading}>
-          Send Verification Code
-        </button>
-
-        <input
-          type="text"
-          name="verificationCode"
-          value={formData.verificationCode}
-          onChange={handleChange}
-          placeholder="Verification Code"
-        />
-        {verificationCodeError && (
-          <p style={{ color: "red" }}>{verificationCodeError}</p>
-        )}
-
-        <button type="button" onClick={handleVerifyCode} disabled={isLoading}>
-          Verify Code
-        </button>
-        <button type="submit" disabled={isLoading}>
-          Register
-        </button>
-        {isError && <p style={{ color: "red" }}>{reduxErrorMessage}</p>}
-      </form>
-
-      // <div className="form">
-      //   <h2 className="form-title">회원가입</h2>
-      //   <form
-      //     id="userRegisterForm"
-      //     className="auth-form"
-      //     onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}
-      //   >
-      //     <div>
-      //       <input
-      //         ref={usernameRef}
-      //         type="text"
-      //         name="username"
-      //         placeholder="Enter your username"
-      //         value={formData.username}
-      //         onChange={handleChange}
-      //         required
-      //       />
-      //       <div className="error-text">
-      //         {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
-      //       </div>
-      //     </div>
-
-      //     <div>
-      //       <input
-      //         ref={passwordRef}
-      //         type="password"
-      //         name="password"
-      //         placeholder="Enter your password"
-      //         value={formData.password}
-      //         onChange={handleChange}
-      //         required
-      //       />
-      //       <div className="error-text">
-      //         {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
-      //       </div>
-      //     </div>
-
-      //     <div className="verify-box">
-      //       <input
-      //         ref={emailRef}
-      //         type="email"
-      //         name="email"
-      //         placeholder="Enter your email"
-      //         value={formData.email}
-      //         onChange={handleChange}
-      //         required
-      //       />
-      //       <button
-      //         className="send-code-button"
-      //         type="submit"
-      //         disabled={loading || isCodeSent}
-      //         style={{ marginLeft: "10px" }}
-      //       >
-      //         이메일 인증
-      //       </button>
-      //     </div>
-      //     <div className="error-text">
-      //       {emailError && <p style={{ color: "red" }}>{emailError}</p>}
-      //     </div>
-
-      //     {/* Show verification code input and button only after code is sent */}
-      //     {isCodeSent && (
-      //       <div style={{ display: "flex", alignItems: "center" }}>
-      //         <input
-      //           ref={verificationCodeRef}
-      //           type="text"
-      //           name="verificationCode"
-      //           placeholder="Enter verification code"
-      //           value={formData.verificationCode}
-      //           onChange={handleChange}
-      //           required
-      //         />
-      //         <div className="error-text">
-      //           {verificationCodeError && (
-      //             <p style={{ color: "red" }}>{verificationCodeError}</p>
-      //           )}
-      //         </div>
-
-      //         <button
-      //           className="send-code-button"
-      //           type="submit"
-      //           disabled={loading}
-      //         >
-      //           {loading ? "Loading..." : "Verify Code"}
-      //         </button>
-      //       </div>
-      //     )}
-      //     {isCodeSent && isVerified === true && (
-      //       <button
-      //         className="btn btn--form btn-login"
-      //         onClick={handleSubmit}
-      //         type="button"
-      //       >
-      //         Register
-      //       </button>
-      //     )}
-      //     <div className="error-text">
-      //       {isError && <p style={{ color: "red" }}>{reduxErrorMessage}</p>}
-      //     </div>
-      //     <div>
-      //       <span>이미 계정이 있으신가요? </span>
-      //       <Link className="move-link" to="/api/user/login">
-      //         회원가입 하세요
-      //       </Link>
-      //     </div>
-      //   </form>
-      // </div>
-    );
   };
+
+  //function:send Verification Code //
+
+  const handleSendCode = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return; // Prevent sending code if validation fails
+    }
+
+    // if (!formData.username || !formData.email || !formData.password) {
+    //   return; // Add validation as needed
+    // }
+
+    try {
+      await dispatch(sendVerificationCode(formData)).unwrap();
+      setIsCodeSent(true);
+      alert("Verification code sent to your email!");
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+    }
+  };
+
+  //function:Verifying Code //
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Check for validation errors
+    if (!validateForm()) {
+      setLoading(false);
+      return; // Prevent verification if validation fails
+    }
+
+    // Check for validation errors
+    // if (usernameError || passwordError || verificationCodeError) {
+    //   setLoading(false);
+    //   return;
+    // }
+
+    try {
+      const response = await dispatch(verifyCode(formData)).unwrap(); // Unwrap to get the response directly
+      console.log(response);
+      if (response === "인증이 성공했습니다.") {
+        setIsVerified(true);
+        alert(response);
+      } else {
+        setIsVerified(false);
+        setErrorMessage("Invalid verification code. Please try again.");
+      }
+    } catch (error) {
+      setErrorMessage(error); // Set error message from thunk
+      alert(error);
+    } finally {
+      setLoading(false);
+      setVerificationCodeError("");
+    }
+  };
+
+  return (
+    <div className="form">
+      <h2 className="form-title">회원가입</h2>
+      <form
+        id="userRegisterForm"
+        className="auth-form"
+        onSubmit={isCodeSent ? handleVerifyCode : handleSendCode}
+      >
+        <div>
+          <input
+            ref={usernameRef}
+            type="text"
+            name="username"
+            placeholder="Enter your username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <div className="error-text">
+            {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
+          </div>
+        </div>
+
+        <div>
+          <input
+            ref={passwordRef}
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <div className="error-text">
+            {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
+          </div>
+        </div>
+
+        <div className="verify-box">
+          <input
+            ref={emailRef}
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <button
+            className="send-code-button"
+            type="submit"
+            disabled={loading || isCodeSent}
+            style={{ marginLeft: "10px" }}
+          >
+            이메일 인증
+          </button>
+        </div>
+        <div className="error-text">
+          {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+        </div>
+
+        {/* Show verification code input and button only after code is sent */}
+        {isCodeSent && (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <input
+              ref={verificationCodeRef}
+              type="text"
+              name="verificationCode"
+              placeholder="Enter verification code"
+              value={formData.verificationCode}
+              onChange={handleChange}
+              required
+            />
+            <div className="error-text">
+              {verificationCodeError && (
+                <p style={{ color: "red" }}>{verificationCodeError}</p>
+              )}
+            </div>
+
+            <button
+              className="send-code-button"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Verify Code"}
+            </button>
+          </div>
+        )}
+        {isCodeSent && isVerified === true && (
+          <button
+            className="btn btn--form btn-login"
+            onClick={handleSubmit}
+            type="button"
+          >
+            Register
+          </button>
+        )}
+        <div className="error-text">
+          {isError && <p style={{ color: "red" }}>{reduxErrorMessage}</p>}
+        </div>
+        <div>
+          <span>이미 계정이 있으신가요? </span>
+          <Link className="move-link" to="/api/user/login">
+            로그인 하세요
+          </Link>
+        </div>
+      </form>
+    </div>
+  );
 };
 
-export default Register;
+export default RegTest;
