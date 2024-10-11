@@ -21,12 +21,10 @@ export const registerUser = createAsyncThunk(
     { username, password, email, verificationCode },
     { rejectWithValue }
   ) => {
-    // console.log("Form Data:", formData);
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/register",
-        //
-        JSON.stringify(username, password, email, verificationCode),
+        { username, password, email, verificationCode },
         {
           headers: { "Content-Type": "application/json" },
         }
