@@ -7,7 +7,6 @@ import Category from "./components/Category";
 import "./App.css";
 
 import DynamicDropdown from "./components/CategoryDetails/DynamicDropdown";
-import Login from "./pages/Login/Login";
 
 import MyPage from "./pages/MyPage/MyPage";
 
@@ -15,14 +14,8 @@ import Header from "./layouts/Header/Header";
 
 import Register from "./pages/Register/Register";
 
-import RegTest from "./test/RegTest.jsx";
-
-
-
-import RegistrationForm from "./pages/Register/RegistrationForm";
 import Navbar from "./components/Navbar";
-import LogTest from "./test/logTest";
-
+import Login from "./pages/Login/Login";
 
 function App() {
   const { pathname } = useLocation();
@@ -35,14 +28,9 @@ function App() {
       <Routes>
         <Route path="/" exact element={<Home />} />
 
-        {/* <Route path="api/user/login" exact element={<Login />} /> */}
+        <Route path="api/user/login" exact element={<Login />} />
 
-        {/* <Route path="api/user/register" exact element={<Register />} /> */}
-
-        {/* <Route path="api/user/register" exact element={<RegistrationForm />} /> */}
-
-        <Route path="api/user/register" exact element={<RegTest />} />
-        <Route path="api/user/login" exact element={<LogTest />} />
+        <Route path="api/user/register" exact element={<Register />} />
 
         <Route path="api/mypage" exact element={<MyPage />} />
 

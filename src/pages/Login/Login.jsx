@@ -1,65 +1,58 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
-import "./form.css";
-
-export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+const Login = () => {
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((state) => state.login);
   const [rememberMe, setRememberMe] = useState(false);
 
- const navigate = useNavigate(); 
+  // Local state for managing form inputs (username and password)
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
 
-  const onLoginButtonClick = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+  // Update form input values
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    const formData = {
-      username,
-      password,
-    };
+  const navigate = useNavigate();
 
-    try {
-      // Send login request
-      const response = await axios.post(
-        "http://localhost:8080/api/user/login",
-        formData
-      );
-      // Set Authorization header
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${response.data.access_token}`;
-
-      console.log(response);
-      console.log(response.data); //access /refresh token
-      console.log(response.config.data); //userdata
-
-      localStorage.setItem("access_token", response.data.access_token);
-      localStorage.setItem("refresh_token", response.data.refresh_token);
-
-      navigate("/");
-    } catch (error) {
-      console.error("Login error:", error);
-      // Optionally handle the error, e.g., show a notification or set an error state
-      alert("Login failed. Please check your login information.");
+  // Handle login action (when the user submits the form)
+  const handleLogin = (e) => {
+    e.preventDefault();
+    dispatch(login(formData));
+    // If Remember Me is checked, save username to local storage
+    if (rememberMe) {
+      localStorage.setItem("rememberMe", formData.username);
+    } else {
+      localStorage.removeItem("rememberMe");
     }
+    navigate("/");
   };
   const handleToggle = () => {
-    setRememberMe((prev) => !prev);
+    setRememberMe(!rememberMe);
   };
 
   return (
     <div className="form">
       <h2 className="form-title">Login</h2>
 
-      <form id="userLoginForm" className="auth-form">
+      <form onSubmit={handleLogin} id="userLoginForm" className="auth-form">
         <div>
           <input
             type="text"
             id="username"
             name="username"
             placeholder="username"
-            onChange={(e) => setUsername(e.target.value)}
+            value={formData.username}
+            onChange={handleInputChange}
             autoComplete="username"
             required
           />
@@ -70,9 +63,9 @@ export default function Login() {
             id="password"
             name="password"
             placeholder="password"
-            autoComplete="current-password"
+            value={formData.password}
+            onChange={handleInputChange}
             required
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         <div className="form-check">
@@ -95,18 +88,22 @@ export default function Login() {
             )}
             <span className="slider"></span>
           </label>
-          <label htmlFor="remember-id" className="check-label">
-            아이디 저장
-          </label>
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={handleToggle}
+            className="check-label"
+          />
+          아이디 저장
         </div>
-
         <button
-          className="btn btn--form btn-login"
           type="submit"
-          onClick={onLoginButtonClick}
+          disabled={isLoading}
+          className="btn btn--form btn-login"
         >
-          로그인
+          {isLoading ? "Logging in..." : "Login"}
         </button>
+        {error && <p style={{ color: "red" }}>{error}</p>}{" "}
         <p className="have-account">
           계정이 없으신가요?
           <Link className="move-link" to="/api/user/register">
@@ -116,4 +113,6 @@ export default function Login() {
       </form>
     </div>
   );
-}
+};
+
+export default Login;

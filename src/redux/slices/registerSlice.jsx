@@ -7,30 +7,33 @@ const initialState = {
   isLoading: false,
   isError: false,
   errorMessage: "",
-  isLoggedIn: false,
+  successMessage: "",
+
   token: "",
-  isUsernameAvailable: false,
-  usernameCheckResult: null,
+  isUsernameAvailable: true,
 };
 
+//function:  user register  //
 export const registerUser = createAsyncThunk(
-  
   "auth/register",
-  
-  async (formData, { rejectWithValue }) => {
-console.log("Form Data:", formData);
+
+  async (
+    { username, password, email, verificationCode },
+    { rejectWithValue }
+  ) => {
+    // console.log("Form Data:", formData);
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/register",
-        formData,
+        //
+        JSON.stringify(username, password, email, verificationCode),
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       console.log("Registration successful:", response.data);
-      console.log("Form Data:", formData);
       console.log(response);
-      return response;
+      return response.data;
     } catch (error) {
       console.error("Registration error:", error);
       // Handle API errors and return a meaningful message
@@ -41,90 +44,14 @@ console.log("Form Data:", formData);
     }
   }
 );
-//function: send Verification Code  //
-export const sendVerificationCode = createAsyncThunk(
-  "auth/sendVerificationCode",
-  async ({ username, email, password }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/user/sendVerificationCode",
-        { username, email, password }
-      );
-      console.log(response);
-      return response.data; // Adjust this based on your API response structure
-    } catch (error) {
-      // Create a fallback message if the error response is not available
-      const errorMsg =
-        error.response?.data?.message ||
-        "An error occurred while sending the verification code.";
-      return rejectWithValue(errorMsg);
-    }
-  }
-);
-//function: verify code //
-export const verifyCode = createAsyncThunk(
-  "auth/verifyCode",
-  async (
-    { username, email, password, verificationCode },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/user/checkVerificationCode",
-        { username, email, password, verificationCode }
-      );
-
-      // Return response data or a success message
-      return response.data; // Adjust based on your API response
-    } catch (error) {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Invalid verification code. Please try again.";
-      return rejectWithValue(errorMsg);
-    }
-  }
-);
-//function: check Username  //
-export const checkUsername = createAsyncThunk(
-  "auth/checkUsername",
-  async (
-    { username, email, password, verificationCode },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await axios.post("/api/user/checkForDuplicateUsername", {
-        username,
-        email,
-        password,
-        verificationCode,
-      });
-
-      const result= response.data; // Successful response
-      alert(result)
-      return result;
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status === 409) {
-          return rejectWithValue(
-            "Username already exists. Please choose another one."
-          );
-        }
-        console.log(error.response.data);
-        // Check if there's a response from the server
-        return rejectWithValue(error.response.data || "An error occurred.");
-      }
-      return rejectWithValue("Network error.");
-    }
-  }
-);
 
 const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
-    logout: (state) => {
-      state.username = null;
-      state.token = "";
+    clearMessages(state) {
+      state.errorMessage = null;
+      state.successMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -142,23 +69,9 @@ const registerSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload || "Registration failed";
-      })
-      .addCase(checkUsername.pending, (state) => {
-        state.isLoading = true;
-        state.isError = null; // Reset error on new request
-      })
-      .addCase(checkUsername.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isUsernameAvailable = true; // Store the result
-        state.usernameCheckResult = action.payload; // Handle success
-      })
-      .addCase(checkUsername.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isUsernameAvailable = false;
-        state.isError = action.payload; // Store the error
       });
   },
 });
 
-export const {} = registerSlice.actions;
+export const { clearMessages } = registerSlice.actions;
 export default registerSlice.reducer;

@@ -165,7 +165,7 @@ const RegistrationForm = () => {
       setLoading(false);
       setUsername("");
       setPassword("");
-      setEmail("");//  setRememberMe(false);
+      setEmail(""); //  setRememberMe(false);
       navigate("/");
     }
   };

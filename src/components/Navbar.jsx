@@ -34,7 +34,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css"; // Make sure to have your CSS styles here
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout } from "../redux/slices/authSlice";
+import { login, logout } from "../redux/slices/loginSlice";
 
 const Navbar = () => {
 
@@ -42,7 +42,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const token = useSelector((state) => state.auth.token); // Assuming `user` is set upon successful login
+  const token = useSelector((state) => state.login.token); // Assuming `user` is set upon successful login
 
   const handleLogin = () => {
     dispatch(login(FormData));

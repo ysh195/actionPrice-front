@@ -8,7 +8,6 @@ const initialState = {
   isError: false,
   errorMessage: "",
   isLoggedIn: false,
-  // token: "",
   access_token: null,
   refresh_token: null,
 };
@@ -16,7 +15,7 @@ const initialState = {
 
 export const login = createAsyncThunk(
   "auth/login",
-  // { username, password }
+
 
   async (formData, thunkAPI) => {
     try {
@@ -30,13 +29,13 @@ export const login = createAsyncThunk(
         "Authorization"
       ] = `Bearer ${response.data.access_token}`;
 
-      console.log("Login Response:", response.data);
+      console.log("Login Response:", response);
 
       localStorage.setItem("access_token", response.data.access_token);
       localStorage.setItem("refresh_token", response.data.refresh_token);
       localStorage.setItem("username", response.data.username);
 
-      console.log(response.data);
+      console.log(response);
       return response.data;
     } catch (error) {
       const errorMsg =
@@ -84,24 +83,21 @@ const loginSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-
         state.username = action.payload;
         state.isLoggedIn = true;
-        console.log(action.payload)
         state.access_token = action.payload;
-        // state.access_token=response.data.access_token;
       })
-      .addCase(login.rejected, (state, { payload }) => {
+      .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = payload;
+        state.isError = action.payload;
         state.isLoggedIn = false;
       })
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getCurrentUser.fulfilled, (state, { payload }) => {
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentUser = payload;
+        state.currentUser = action.payload;
       })
       .addCase(getCurrentUser.rejected, (state) => {
         state.isLoading = false;
