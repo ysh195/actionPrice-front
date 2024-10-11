@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 const initialState = {
   username: null,
   isLoading: false,
@@ -12,16 +11,14 @@ const initialState = {
   refresh_token: null,
 };
 
-
 export const login = createAsyncThunk(
   "auth/login",
 
-
-  async (formData, thunkAPI) => {
+  async ({ username, password, email, verificationCode }, thunkAPI) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/login",
-        formData
+        { username, password, email, verificationCode }
       );
 
       // Set Authorization header
