@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -34,10 +36,25 @@ const Login = () => {
     try {
       const result = await dispatch(login(formData)).unwrap();
       console.log("Login result:", result);
+      // alert("success")
+      Swal.fire({
+        title: "Signed in successfully!",
+        // text: "You clicked the button!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+        // timerProgressBar: true,
+      });
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
-      setError(error.message || "로그인에 실패했습니다.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "로그인에 실패했습니다! 정보를 확인하세요",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     }
   };
 
@@ -85,7 +102,6 @@ const Login = () => {
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>
-        {isError && <p style={{ color: "red" }}>{errorMessage}</p>}
         <p className="have-account">
           계정이 없으신가요?
           <Link className="move-link" to="/api/user/register">
