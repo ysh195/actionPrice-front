@@ -5,39 +5,40 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { isLoading, error } = useSelector((state) => state.login);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // Local state for managing form inputs (username and password)
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-
-  // Update form input values
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
+  const [error, setError] = useState(null);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Handle login action (when the user submits the form)
-  const handleLogin = (e) => {
-    e.preventDefault();
-    dispatch(login(formData));
-    // If Remember Me is checked, save username to local storage
-    if (rememberMe) {
-      localStorage.setItem("rememberMe", formData.username);
-    } else {
-      localStorage.removeItem("rememberMe");
+  const { isLoading, isError, errorMessage, isLoggedIn, refresh_token } =
+    useSelector((state) => state.login);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "username") {
+      setUsername(value); // Update username
+    } else if (name === "password") {
+      setPassword(value); // Update password
     }
-    navigate("/");
   };
+
   const handleToggle = () => {
     setRememberMe(!rememberMe);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const formData = { username, password };
+
+    try {
+      const result = await dispatch(login(formData)).unwrap();
+      console.log("Login result:", result);
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      setError(error.message || "로그인에 실패했습니다.");
+    }
   };
 
   return (
@@ -51,7 +52,7 @@ const Login = () => {
             id="username"
             name="username"
             placeholder="username"
-            value={formData.username}
+            value={username}
             onChange={handleInputChange}
             autoComplete="username"
             required
@@ -63,31 +64,12 @@ const Login = () => {
             id="password"
             name="password"
             placeholder="password"
-            value={formData.password}
+            value={password}
             onChange={handleInputChange}
             required
           />
         </div>
         <div className="form-check">
-          <label className="toggle-btn">
-            {!rememberMe ? (
-              <input
-                type="checkbox"
-                id="remember-id"
-                name="rememberId"
-                value="0"
-              />
-            ) : (
-              <input
-                type="checkbox"
-                id="remember-id"
-                name="rememberId"
-                value="0"
-                defaultChecked
-              />
-            )}
-            <span className="slider"></span>
-          </label>
           <input
             type="checkbox"
             checked={rememberMe}
@@ -103,7 +85,7 @@ const Login = () => {
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+        {isError && <p style={{ color: "red" }}>{errorMessage}</p>}
         <p className="have-account">
           계정이 없으신가요?
           <Link className="move-link" to="/api/user/register">

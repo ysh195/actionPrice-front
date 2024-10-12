@@ -1,24 +1,28 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import Footer from "./layouts/Footer/Footer";
 import Home from "./pages/Home/Home";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Category from "./components/Category";
-
-import "./App.css";
-
 import DynamicDropdown from "./components/CategoryDetails/DynamicDropdown";
-
 import MyPage from "./pages/MyPage/MyPage";
-
 import Header from "./layouts/Header/Header";
-
 import Register from "./pages/Register/Register";
-
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login/Login";
+import "./App.css";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { checkAuth } from "./redux/slices/authSlice";
+import { login } from "./redux/slices/loginSlice";
 
 function App() {
-  const { pathname } = useLocation();
+  const dispatch = useDispatch();
 
   return (
     <div className="app">
