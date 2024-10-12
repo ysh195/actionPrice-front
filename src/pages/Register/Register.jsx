@@ -127,10 +127,7 @@ const RegTest = () => {
     e.preventDefault();
 
     //todo: need to check validation before sending code to email
-    // if (usernameError || emailError || passwordError) {
-    //   alert("Please fix the errors before sending the verification code.");
-    //   return;
-    // }
+
     try {
       const sendCodeResult = await dispatch(
         sendVerificationCode(formData)

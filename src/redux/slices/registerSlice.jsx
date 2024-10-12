@@ -8,7 +8,6 @@ const initialState = {
   isError: false,
   errorMessage: "",
   successMessage: "",
-
   token: "",
   isUsernameAvailable: true,
 };
@@ -18,13 +17,14 @@ export const registerUser = createAsyncThunk(
   "auth/register",
 
   async (
-    { username, password, email, verificationCode },
+    formData,
     { rejectWithValue }
   ) => {
     try {
+      console.log(formData)
       const response = await axios.post(
         "http://localhost:8080/api/user/register",
-        { username, password, email, verificationCode },
+        formData,
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -61,6 +61,7 @@ const registerSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
+        console.log(action.payload.data);
         state.user = action.payload.data;
       })
       .addCase(registerUser.rejected, (state, action) => {

@@ -66,14 +66,23 @@ export const sendVerificationCode = createAsyncThunk(
         "http://localhost:8080/api/user/sendVerificationCode",
         { username, email, password }
       );
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.log("send Verification error:", error);
-      return rejectWithValue(
-        error.response?.data?.message ||
-          "An error occurred while sending the verification code."
-      );
+      const errorCode = error.response?.status; // Get the error status code
+      let errorMessage;
+      if (errorCode === 409) {
+        errorMessage = "The email is already in use.";
+      } else if (errorCode === 400) {
+        errorMessage = "The email does not exist.";
+      } else {
+        errorMessage =
+          error.response?.data ||
+          "An error occurred while sending the verification code.";
+      }
+
+      return rejectWithValue(errorMessage);
     }
   }
 );
