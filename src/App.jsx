@@ -11,24 +11,17 @@ import ContactUs from "./pages/ContactUs/ContactUs";
 import Category from "./components/Category";
 import DynamicDropdown from "./components/CategoryDetails/DynamicDropdown";
 import MyPage from "./pages/MyPage/MyPage";
-import Header from "./layouts/Header/Header";
+
 import Register from "./pages/Register/Register";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login/Login";
 import "./App.css";
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { checkAuth } from "./redux/slices/authSlice";
-import { login } from "./redux/slices/loginSlice";
 
 function App() {
-  const dispatch = useDispatch();
-
   return (
     <div className="app">
       <Navbar />
-      {/* <Header /> */}
-
       <Routes>
         <Route path="/" exact element={<Home />} />
 
