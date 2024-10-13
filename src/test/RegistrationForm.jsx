@@ -154,6 +154,7 @@ const RegistrationForm = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+      console.log(response);
       if (response.status === 200) {
         alert("Registration successful!");
         navigate("/api/user/login");

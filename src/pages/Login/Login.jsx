@@ -1,49 +1,104 @@
-import React, { useState } from "react";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import MuiCard from "@mui/material/Card";
+import { styled } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
 import { login } from "../../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import InputAdornment from "@mui/material/InputAdornment";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
+const Card = styled(MuiCard)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: "center",
+  width: "100%",
+  padding: theme.spacing(4),
+  gap: theme.spacing(2),
+  margin: "auto",
+  [theme.breakpoints.up("sm")]: {
+    maxWidth: "450px",
+  },
+  boxShadow:
+    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+}));
 
-const Login = () => {
+const SignInContainer = styled(Stack)(({ theme }) => ({
+  minHeight: "100%",
+  padding: theme.spacing(),
+}));
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "lightGray",
+      borderRadius: "15px",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "tomato",
+    },
+  },
+}));
+
+export default function Login() {
+  const [usernameError, setUsernameError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+
   const dispatch = useDispatch();
-  const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const { isLoading, isError, errorMessage, isLoggedIn, refresh_token } =
-    useSelector((state) => state.login);
+  const { isLoading } = useSelector((state) => state.login);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "username") {
-      setUsername(value); // Update username
-    } else if (name === "password") {
-      setPassword(value); // Update password
-    }
+    if (name === "username") setUsername(value);
+    else if (name === "password") setPassword(value);
   };
 
-  const handleToggle = () => {
-    setRememberMe(!rememberMe);
+  const validateInputs = () => {
+    let isValid = true;
+    setUsernameError("");
+    setPasswordError("");
+
+    if (!username) {
+      setUsernameError("Username is required");
+      isValid = false;
+    }
+    if (!password) {
+      setPasswordError("Password is required.");
+      isValid = false;
+    }
+    return isValid;
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!validateInputs()) return;
+
     const formData = { username, password };
 
     try {
-      const result = await dispatch(login(formData)).unwrap();
-      console.log("Login result:", result);
-      // alert("success")
+      await dispatch(login(formData)).unwrap();
       Swal.fire({
         title: "Signed in successfully!",
-        // text: "You clicked the button!",
         icon: "success",
         showConfirmButton: false,
         timer: 1500,
-        // timerProgressBar: true,
       });
       navigate("/");
     } catch (error) {
@@ -51,7 +106,7 @@ const Login = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "로그인에 실패했습니다! 정보를 확인하세요",
+        text: error.message || "로그인에 실패했습니다! 정보를 확인하세요.",
         showConfirmButton: false,
         timer: 2000,
       });
@@ -59,58 +114,115 @@ const Login = () => {
   };
 
   return (
-    <div className="form">
-      <h2 className="form-title">Login</h2>
-
-      <form onSubmit={handleLogin} id="userLoginForm" className="auth-form">
-        <div>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="username"
-            value={username}
-            onChange={handleInputChange}
-            autoComplete="username"
-            required
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="password"
-            value={password}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-check">
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={handleToggle}
-            className="check-label"
-          />
-          아이디 저장
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="btn btn--form btn-login"
+    <SignInContainer direction="column" justifyContent="space-between">
+      <Card variant="outlined">
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{
+            width: "100%",
+            fontSize: "clamp(2rem, 10vw, 2.15rem)",
+            color: "#49557e",
+            textAlign: "center",
+            marginBottom: "15px",
+          }}
         >
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
-        <p className="have-account">
-          계정이 없으신가요?
-          <Link className="move-link" to="/api/user/register">
-            회원가입 하세요
+          Login
+        </Typography>
+        <Box
+          component="form"
+          onSubmit={handleLogin}
+          noValidate
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            gap: 4,
+          }}
+        >
+          <FormControl>
+            <CustomTextField
+              error={Boolean(usernameError)}
+              helperText={usernameError}
+              id="username"
+              type="text"
+              name="username"
+              placeholder="유저네임 입력하세요"
+              autoFocus
+              required
+              fullWidth
+              variant="outlined"
+              onChange={handleInputChange}
+              color={usernameError ? "error" : "primary"}
+            />
+          </FormControl>
+          <FormControl>
+            <CustomTextField
+              error={Boolean(passwordError)}
+              helperText={passwordError}
+              name="password"
+              placeholder="페스워드를 입력하세요"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              required
+              fullWidth
+              variant="outlined"
+              onChange={handleInputChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      onClick={() => setShowPassword(!showPassword)}
+                      sx={{ marginRight: 1 }}
+                    >
+                      {showPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={isLoading}
+            sx={{
+              backgroundColor: "tomato",
+              color: "white",
+              borderRadius: "15px",
+              height: "50px",
+              "&:hover": { backgroundColor: "tomato" },
+            }}
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </Button>
+        </Box>
+        <Typography sx={{ textAlign: "center" }}>
+          계장이 없으신가요?
+          <Link
+            to="/api/user/register"
+            variant="body2"
+            sx={{
+              alignSelf: "center",
+              textDecoration: "none",
+              color: "inherit",
+            }}
+          >
+            해원가입 하세요
           </Link>
-        </p>
-      </form>
-    </div>
-  );
-};
+        </Typography>
 
-export default Login;
+        <Divider>or</Divider>
+      </Card>
+    </SignInContainer>
+  );
+}

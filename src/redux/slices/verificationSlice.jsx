@@ -3,14 +3,15 @@ import axios from "axios";
 
 const initialState = {
   isLoading: false,
-  usernameErrorMessage: "",
+  isUsernameAvailable:true,
+  usernameFailMessage: "",
   usernameSuccessMessage: "",
   sendCode: "",
   verifySuccess: "",
   verifyCode: "",
   isError: false,
   emailSuccessMessage: null,
-  emailErrorMessage: null,
+  emailFailMessage: null,
 };
 
 //function: check Username duplicate //
@@ -21,9 +22,10 @@ export const checkUsername = createAsyncThunk(
       const response = await axios.post("/api/user/checkForDuplicateUsername", {
         username,
       });
-
+      console.log(response);
       return response.data; //"Username is available";
     } catch (error) {
+      console.log("error.response:", error.response);
       if (error.response) {
         if (error.response.status === 409) {
           return rejectWithValue(
@@ -113,10 +115,10 @@ const verificationSlice = createSlice({
   initialState,
   reducers: {
     clearMessages(state) {
-      state.usernameErrorMessage = null;
+      state.usernameFailMessage = null;
       state.usernameSuccessMessage = null;
       state.emailSuccessMessage = null;
-      state.emailErrorMessage = null;
+      state.emailFailMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -133,17 +135,17 @@ const verificationSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isUsernameAvailable = false;
-        state.usernameErrorMessage = action.payload; // Store the error
+        state.usernameFailMessage = action.payload;
       })
       //desc:---------------------------------------------
       //desc: ------------check Email Dup---------------
 
       .addCase(checkEmailDup.fulfilled, (state, action) => {
         state.emailSuccessMessage = action.payload; // Success message
-        state.emailErrorMessage = null; // Clear error message
+        state.emailFailMessage = null; // Clear error message
       })
       .addCase(checkEmailDup.rejected, (state, action) => {
-        state.emailErrorMessage = action.payload; // Error message
+        state.emailFailMessage = action.payload; // Error message
         state.emailSuccessMessage = null; // Clear success message
       })
       //desc:---------------------------------------------
