@@ -28,6 +28,8 @@ export const login = createAsyncThunk(
         "Authorization"
       ] = `Bearer ${response.data.access_token}`;
 
+      console.log("response:",response)
+
       if (!response.data.access_token) {
         return thunkAPI.rejectWithValue(
           "로그인에 실패했습니다. 정보를 확인하세요."
