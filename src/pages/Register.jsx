@@ -50,7 +50,7 @@ const SignUpContainer = ({ children }) => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#f5f5f5", // Optional: set a background color
+        // backgroundColor: "#f5f5f5", 
       }}
     >
       {children}
