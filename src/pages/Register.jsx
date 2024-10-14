@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -22,8 +23,8 @@ import {
   checkUsername,
   sendVerificationCode,
   verifyCode,
-} from "../../redux/slices/verificationSlice";
-import { clearMessages, registerUser } from "../../redux/slices/registerSlice";
+} from "../redux/slices/verificationSlice";
+import { clearMessages, registerUser } from "../redux/slices/registerSlice";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -36,14 +37,26 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {
     maxWidth: "450px",
   },
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+
+  borderRadius: "20px",
 }));
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(),
-}));
+const SignUpContainer = ({ children }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5", // Optional: set a background color
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -222,6 +235,13 @@ export default function Register() {
       !isCodeVerified
     )
       return;
+
+    const formData = {
+      username,
+      email,
+      password,
+      verificationCode,
+    };
 
     console.log("Form Data being sent:", formData); // Log formData
 

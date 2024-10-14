@@ -1,3 +1,79 @@
+
+// import React from "react";
+// import { useParams } from "react-router-dom";
+// import {
+//   Container,
+//   Button,
+//   FormControl,
+//   InputLabel,
+//   Select,
+//   MenuItem,
+//   Box,
+//   Typography,
+//   Card,
+//   CardMedia,
+//   CardContent,
+// } from "@mui/material";
+
+// const categoryData = {
+//   Meat: {
+//     title: "Meat",
+//     description: "Find the best prices for various types of meat.",
+//     image: "path_to_meat_image.jpg", // Replace with actual image path
+//   },
+//   Veggie: {
+//     title: "Veggie",
+//     description: "Fresh and healthy vegetables at competitive prices.",
+//     image: "path_to_veggies_image.jpg", // Replace with actual image path
+//   },
+//   Fish: {
+//     title: "Fish",
+//     description: "The freshest seafood available in your area.",
+//     image: "path_to_seafood_image.jpg", // Replace with actual image path
+//   },
+//   Dairy: {
+//     title: "Dairy",
+//     description: "The freshest seafood available in your area.",
+//     image: "path_to_seafood_image.jpg", // Replace with actual image path
+//   },
+// };
+
+// const CategoryDetails = () => {
+//   const { categoryTitle } = useParams();
+//   const category = categoryData[categoryTitle]; // Fetch category data based on URL
+
+//   if (!category) {
+//     return <Typography variant="h6">Category not found.</Typography>; // Handle invalid category
+//   }
+
+//   return (
+//     <Container sx={{ padding: 4 }}>
+//       <Typography variant="h4" gutterBottom>
+//         {category.title}
+//       </Typography>
+//       <Card>
+//         <CardMedia
+//           component="img"
+//           alt={category.title}
+//           height="300"
+//           image={category.image}
+//         />
+//         <CardContent>
+//           <Typography variant="body1">{category.description}</Typography>
+//         </CardContent>
+//       </Card>
+//       {/* You can add more details or sections below */}
+//       <Box sx={{ marginTop: 4 }}>
+//         <Typography variant="h5">Price Comparisons:</Typography>
+//         {/* Render price comparisons or other relevant data here */}
+//       </Box>
+//     </Container>
+
+    
+//   );
+// };
+
+// export default CategoryDetails;
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -13,7 +14,7 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import { login } from "../../redux/slices/loginSlice";
+import { login } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -30,14 +31,26 @@ const Card = styled(MuiCard)(({ theme }) => ({
   [theme.breakpoints.up("sm")]: {
     maxWidth: "450px",
   },
-  boxShadow:
-    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+
+  borderRadius: "20px",
 }));
 
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  minHeight: "100%",
-  padding: theme.spacing(),
-}));
+const SignInContainer = ({ children }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f5f5f5", // Optional: set a background color
+      }}
+    >
+      {children}
+    </Box>
+  );
+};
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -116,6 +129,7 @@ export default function Login() {
   return (
     <SignInContainer direction="column" justifyContent="space-between">
       <Card variant="outlined">
+        {/* login title */}
         <Typography
           component="h1"
           variant="h4"
@@ -129,6 +143,7 @@ export default function Login() {
         >
           Login
         </Typography>
+        {/* login input box */}
         <Box
           component="form"
           onSubmit={handleLogin}
@@ -176,9 +191,9 @@ export default function Login() {
                       sx={{ marginRight: 1 }}
                     >
                       {showPassword ? (
-                        <VisibilityIcon />
+                        <VisibilityIcon sx={{ color: "#8e8d8a" }} />
                       ) : (
-                        <VisibilityOffIcon />
+                        <VisibilityOffIcon sx={{ color: "#8e8d8a" }} />
                       )}
                     </Button>
                   </InputAdornment>
@@ -196,11 +211,11 @@ export default function Login() {
             variant="contained"
             disabled={isLoading}
             sx={{
-              backgroundColor: "tomato",
+              backgroundColor: "#E85A4F",
               color: "white",
               borderRadius: "15px",
               height: "50px",
-              "&:hover": { backgroundColor: "tomato" },
+              "&:hover": { backgroundColor: "#0D7C66" },
             }}
           >
             {isLoading ? "Logging in..." : "Login"}

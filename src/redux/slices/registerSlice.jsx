@@ -17,6 +17,7 @@ export const registerUser = createAsyncThunk(
   "auth/register",
 
   async (formData, { rejectWithValue }) => {
+    console.log("Slice formData:", formData);
     try {
       // console.log("Payload sent to API:", {formData});
 
@@ -28,12 +29,12 @@ export const registerUser = createAsyncThunk(
         }
       );
       console.log("Registration successful:", response.data);
-      console.log(response);
       return response.data;
     } catch (error) {
       console.error("Registration error:", error);
       // Handle API errors and return a meaningful message
       if (error.response && error.response.data) {
+        console.error("Response data:", error.response.data); // Log the response data for debugging
         return rejectWithValue(error.response.data); // API error response
       }
       return rejectWithValue(error.message); // General error
