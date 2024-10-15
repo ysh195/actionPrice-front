@@ -7,17 +7,12 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.withCredentials = true;
 
 createRoot(document.getElementById("root")).render(
-
   <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
   </Provider>
-
-
 );
-

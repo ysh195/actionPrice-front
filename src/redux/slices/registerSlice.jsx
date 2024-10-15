@@ -12,6 +12,8 @@ const initialState = {
   isUsernameAvailable: true,
 };
 
+const BASE_URL = "http://localhost:8080/api";
+
 //function:  user register  //
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -22,7 +24,12 @@ export const registerUser = createAsyncThunk(
       // console.log("Payload sent to API:", {formData});
 
       const response = await axios.post(
-        "http://localhost:8080/api/user/register",
+        // "http://localhost:8080/api/user/register",
+        // formData,
+        // {
+        //   headers: { "Content-Type": "application/json" },
+        // }
+        `${BASE_URL}/user/register`,
         formData,
         {
           headers: { "Content-Type": "application/json" },
@@ -32,12 +39,9 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error("Registration error:", error);
-      // Handle API errors and return a meaningful message
-      if (error.response && error.response.data) {
-        console.error("Response data:", error.response.data); // Log the response data for debugging
-        return rejectWithValue(error.response.data); // API error response
-      }
-      return rejectWithValue(error.message); // General error
+      return rejectWithValue(
+        error.response?.data || error.message || "An error occurred"
+      );
     }
   }
 );
@@ -60,7 +64,6 @@ const registerSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log(action.payload.data);
         state.user = action.payload.data;
       })
       .addCase(registerUser.rejected, (state, action) => {

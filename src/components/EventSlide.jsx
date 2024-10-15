@@ -129,6 +129,52 @@ const EventSlide = () => {
     ],
   };
 
+  function Next(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{
+          ...style,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "lightgray",
+          borderRadius: "50%",
+          padding: "15px",
+          cursor: "pointer",
+          position: "absolute",
+          right: "-40px",
+          zIndex: 1,
+        }}
+        onClick={onClick}
+      ></div>
+    );
+  }
+
+  function Prev(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{
+          ...style,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "lightgray",
+          borderRadius: "50%",
+          padding: "15px",
+          cursor: "pointer",
+          position: "absolute",
+          left: "-40px",
+          zIndex: 1,
+        }}
+        onClick={onClick}
+      ></div>
+    );
+  }
+
   return (
     <div
       className="slider-container"
@@ -157,50 +203,6 @@ const EventSlide = () => {
   );
 };
 
-function Next(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "lightgray",
-        borderRadius: "50%",
-        padding: "15px",
-        cursor: "pointer",
-        position: "absolute",
-        right: "-40px",
-        zIndex: 1,
-      }}
-      onClick={onClick}
-    ></div>
-  );
-}
 
-function Prev(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "lightgray",
-        borderRadius: "50%",
-        padding: "15px",
-        cursor: "pointer",
-        position: "absolute",
-        left: "-40px",
-        zIndex: 1,
-      }}
-      onClick={onClick}
-    ></div>
-  );
-}
 
 export default EventSlide;

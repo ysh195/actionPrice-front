@@ -10,6 +10,7 @@ import Footer from "./layouts/Footer";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import Register from "./pages/Register";
+
 import Login from "./pages/Login";
 import CategoryDetails from "./components/CategoryDetails";
 import Navbar from "./layouts/Navbar";
@@ -41,7 +42,9 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="api/user/login" exact element={<Login />} />
+
           <Route path="api/user/register" exact element={<Register />} />
+
           <Route
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}
