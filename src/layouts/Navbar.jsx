@@ -163,9 +163,9 @@ function Navbar() {
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            onClick={() => navigate("/")}
             sx={{
+              cursor:"pointer",
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,

@@ -15,8 +15,15 @@ import Login from "./pages/Login";
 import CategoryDetails from "./components/CategoryDetails";
 import Navbar from "./layouts/Navbar";
 import "./App.css";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { autoLogin } from "./redux/slices/loginSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(autoLogin());
+  }, [dispatch]);
   return (
     <Box
       sx={{
