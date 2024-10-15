@@ -73,4 +73,3 @@ export const category_list = [
     image: veggie2,
   },
 ];
-
