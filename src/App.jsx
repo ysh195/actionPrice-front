@@ -1,61 +1,57 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-import Footer from "./layouts/Footer/Footer";
-import Home from "./pages/Home/Home";
-import ContactUs from "./pages/ContactUs/ContactUs";
-import Category from "./components/Category";
-
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { Box, CssBaseline, GlobalStyles } from "@mui/material";
+import Footer from "./layouts/Footer";
+import Home from "./pages/Home";
+import ContactUs from "./pages/ContactUs";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import CategoryDetails from "./components/CategoryDetails";
+import Navbar from "./layouts/Navbar";
 import "./App.css";
 
-import DynamicDropdown from "./components/CategoryDetails/DynamicDropdown";
-import Login from "./pages/Login/Login";
-
-import MyPage from "./pages/MyPage/MyPage";
-
-import Header from "./layouts/Header/Header";
-
-import Register from "./pages/Register/Register";
-
-import RegTest from "./test/RegTest.jsx";
-
-
-
-import RegistrationForm from "./pages/Register/RegistrationForm";
-import Navbar from "./components/Navbar";
-import LogTest from "./test/logTest";
-
-
 function App() {
-  const { pathname } = useLocation();
-
   return (
-    <div className="app">
-      <Navbar />
-      {/* <Header /> */}
-
-      <Routes>
-        <Route path="/" exact element={<Home />} />
-
-        {/* <Route path="api/user/login" exact element={<Login />} /> */}
-
-        {/* <Route path="api/user/register" exact element={<Register />} /> */}
-
-        {/* <Route path="api/user/register" exact element={<RegistrationForm />} /> */}
-
-        <Route path="api/user/register" exact element={<RegTest />} />
-        <Route path="api/user/login" exact element={<LogTest />} />
-
-        <Route path="api/mypage" exact element={<MyPage />} />
-
-        <Route path="api/categories" element={<Category />} />
-
-        <Route path="api/category-details" element={<DynamicDropdown />} />
-
-        <Route path="api/contact-us" element={<ContactUs />} />
-
-        <Route path="*" element={<h1> 404 Not Found </h1>} />
-      </Routes>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        pt: 8,
+        margin: "0 auto",
+      }}
+    >
+      <CssBaseline />
+      <GlobalStyles
+        styles={{
+          "*": { boxSizing: "border-box" },
+          body: {
+            fontFamily: "'Outfit', sans-serif",
+            scrollBehavior: "smooth",
+          },
+        }}
+      />
+      <Box sx={{ maxWidth: "80%", margin: "0 auto" }}>
+        <Navbar />
+        <Routes>
+          <Route path="/" exact element={<Home />} />
+          <Route path="api/user/login" exact element={<Login />} />
+          <Route path="api/user/register" exact element={<Register />} />
+          <Route
+            path="/category-details/:categoryTitle"
+            element={<CategoryDetails />}
+          />
+          <Route path="api/contact-us" element={<ContactUs />} />
+          <Route path="*" element={<h1> 404 Not Found </h1>} />
+        </Routes>
+      </Box>
       <Footer />
-    </div>
+    </Box>
   );
 }
 

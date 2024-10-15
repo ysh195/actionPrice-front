@@ -154,6 +154,7 @@ const RegistrationForm = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+      console.log(response);
       if (response.status === 200) {
         alert("Registration successful!");
         navigate("/api/user/login");
@@ -165,8 +166,7 @@ const RegistrationForm = () => {
       setLoading(false);
       setUsername("");
       setPassword("");
-      setEma
-      il("");//  setRememberMe(false);
+      setEmail(""); //  setRememberMe(false);
       navigate("/");
     }
   };
