@@ -1,94 +1,6 @@
-
-// import React from "react";
-// import { useParams } from "react-router-dom";
-// import {
-//   Container,
-//   Button,
-//   FormControl,
-//   InputLabel,
-//   Select,
-//   MenuItem,
-//   Box,
-//   Typography,
-//   Card,
-//   CardMedia,
-//   CardContent,
-// } from "@mui/material";
-
-// const categoryData = {
-//   Meat: {
-//     title: "Meat",
-//     description: "Find the best prices for various types of meat.",
-//     image: "path_to_meat_image.jpg", // Replace with actual image path
-//   },
-//   Veggie: {
-//     title: "Veggie",
-//     description: "Fresh and healthy vegetables at competitive prices.",
-//     image: "path_to_veggies_image.jpg", // Replace with actual image path
-//   },
-//   Fish: {
-//     title: "Fish",
-//     description: "The freshest seafood available in your area.",
-//     image: "path_to_seafood_image.jpg", // Replace with actual image path
-//   },
-//   Dairy: {
-//     title: "Dairy",
-//     description: "The freshest seafood available in your area.",
-//     image: "path_to_seafood_image.jpg", // Replace with actual image path
-//   },
-// };
-
-// const CategoryDetails = () => {
-//   const { categoryTitle } = useParams();
-//   const category = categoryData[categoryTitle]; // Fetch category data based on URL
-
-//   if (!category) {
-//     return <Typography variant="h6">Category not found.</Typography>; // Handle invalid category
-//   }
-
-//   return (
-//     <Container sx={{ padding: 4 }}>
-//       <Typography variant="h4" gutterBottom>
-//         {category.title}
-//       </Typography>
-//       <Card>
-//         <CardMedia
-//           component="img"
-//           alt={category.title}
-//           height="300"
-//           image={category.image}
-//         />
-//         <CardContent>
-//           <Typography variant="body1">{category.description}</Typography>
-//         </CardContent>
-//       </Card>
-//       {/* You can add more details or sections below */}
-//       <Box sx={{ marginTop: 4 }}>
-//         <Typography variant="h5">Price Comparisons:</Typography>
-//         {/* Render price comparisons or other relevant data here */}
-//       </Box>
-//     </Container>
-
-    
-//   );
-// };
-
-// export default CategoryDetails;
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  Card,
-  CardMedia,
-  CardContent,
-  Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-} from "@mui/material";
+import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
 
 const bigCategory = [
   { id: "1", name: "Meat" },
@@ -140,13 +52,14 @@ const categoryData = {
 
 const CategoryDetails = () => {
   const { categoryTitle } = useParams();
-  const category = categoryData[categoryTitle]; // Fetch category data based on URL
+  const category = categoryData[categoryTitle];
 
   const [category1, setCategory1] = useState([]);
   const [category2, setCategory2] = useState([]);
   const [category3, setCategory3] = useState([]);
   const [selectedCategory1, setSelectedCategory1] = useState("");
   const [selectedCategory2, setSelectedCategory2] = useState("");
+  const [selectedCategory3, setSelectedCategory3] = useState(""); // New state for Category 3
 
   useEffect(() => {
     setCategory1(bigCategory);
@@ -158,95 +71,93 @@ const CategoryDetails = () => {
     setCategory2(data);
     setSelectedCategory2(""); // Reset Category 2 and 3
     setCategory3([]);
+    setSelectedCategory3(""); // Reset Category 3
   };
 
   const handleCategory2Change = (id) => {
     setSelectedCategory2(id);
     const data = smallCategory.filter((small) => small.smallCategoryId === id);
     setCategory3(data);
+    setSelectedCategory3(""); // Reset Category 3
+  };
+
+  const handleCategory3Change = (id) => {
+    setSelectedCategory3(id); // Update selected value for Category 3
   };
 
   if (!category) {
-    return <Typography variant="h6">Category not found.</Typography>; // Handle invalid category
+    return <h6>Category not found.</h6>;
   }
 
   return (
-    <Container sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        {category.title}
-      </Typography>
+    <Container className="py-4">
+      <h4>{category.title}</h4>
       <Card>
-        <CardMedia
-          component="img"
+        <Image
+          src={category.image}
           alt={category.title}
-          height="300"
-          image={category.image}
+          fluid
+          style={{ height: "300px", objectFit: "cover" }}
         />
-        <CardContent>
-          <Typography variant="body1">{category.description}</Typography>
-        </CardContent>
+        <Card.Body>
+          <Card.Text>{category.description}</Card.Text>
+        </Card.Body>
       </Card>
 
-      {/* Category Selector */}
-      <Box sx={{ marginTop: 4 }}>
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel id="bigCategory-label">Select Category 1</InputLabel>
-          <Select
-            labelId="bigCategory-label"
-            value={selectedCategory1}
-            onChange={(e) => handleCategory1Change(e.target.value)}
-            label="Select Category 1"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {category1.map((big) => (
-              <MenuItem key={big.id} value={big.id}>
-                {big.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Row className="mt-4">
+        <Col md={4}>
+          <Form.Group controlId="bigCategory">
+            <Form.Label>Select Category 1</Form.Label>
+            <Form.Select
+              value={selectedCategory1}
+              onChange={(e) => handleCategory1Change(e.target.value)}
+            >
+              <option value="">None</option>
+              {category1.map((big) => (
+                <option key={big.id} value={big.id}>
+                  {big.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
 
-        <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
-          <InputLabel id="middleCategory-label">Select Category 2</InputLabel>
-          <Select
-            labelId="middleCategory-label"
-            value={selectedCategory2}
-            onChange={(e) => handleCategory2Change(e.target.value)}
-            label="Select Category 2"
-            disabled={!selectedCategory1} // Disable if no Category 1 is selected
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {category2.map((middle) => (
-              <MenuItem key={middle.id} value={middle.id}>
-                {middle.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Col md={4}>
+          <Form.Group controlId="middleCategory">
+            <Form.Label>Select Category 2</Form.Label>
+            <Form.Select
+              value={selectedCategory2}
+              onChange={(e) => handleCategory2Change(e.target.value)}
+              disabled={!selectedCategory1}
+            >
+              <option value="">None</option>
+              {category2.map((middle) => (
+                <option key={middle.id} value={middle.id}>
+                  {middle.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
 
-        <FormControl fullWidth variant="outlined">
-          <InputLabel id="smallCategory-label">Select Category 3</InputLabel>
-          <Select
-            labelId="smallCategory-label"
-            value=""
-            label="Select Category 3"
-            disabled={!selectedCategory2} // Disable if no Category 2 is selected
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {category3.map((small) => (
-              <MenuItem key={small.id} value={small.id}>
-                {small.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
+        <Col md={4}>
+          <Form.Group controlId="smallCategory">
+            <Form.Label>Select Category 3</Form.Label>
+            <Form.Select
+              value={selectedCategory3} // Set the value to the selected state
+              onChange={(e) => handleCategory3Change(e.target.value)} // Update the state on change
+              disabled={!selectedCategory2}
+            >
+              <option value="">None</option>
+              {category3.map((small) => (
+                <option key={small.id} value={small.id}>
+                  {small.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
     </Container>
   );
 };
