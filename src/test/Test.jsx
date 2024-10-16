@@ -19,8 +19,6 @@ import { login } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import Cookies from "js-cookie";
-
 
 const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
@@ -65,8 +63,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ username: "", password: "" });
-  const [rememberMe, setRememberMe] = React.useState(false);
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -83,20 +79,9 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateInputs()) return;
-     const formData = { username, password };
 
     try {
-      
-        const result = await dispatch(login(formData)).unwrap();
-        console.log("login result:", result)
-
-          if (rememberMe) {
-            // Set cookies if Remember Me is checked
-            Cookies.set("REMEMBERME", true, { expires: 30 }); // Set a cookie for 30 days
-            Cookies.set("access_token", result.access_token, { expires: 30 });
-            Cookies.set("refresh_token", result.refresh_token, { expires: 30 });
-            Cookies.set("username", result.username, { expires: 30 });
-          }
+      await dispatch(login({ username, password })).unwrap();
       Swal.fire({
         title: "Signed in successfully!",
         icon: "success",
@@ -109,7 +94,7 @@ export default function Login() {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "로그인에 실패했습니다! 정보를 확인하세요.",
+        text: error.message || "로그인에 실패했습니다! 정보를 확인하세요.",
         showConfirmButton: true,
       });
     }
@@ -178,13 +163,7 @@ export default function Login() {
             />
           </FormControl>
           <FormControlLabel
-            control={
-              <Checkbox
-                checked={rememberMe}
-                color="primary"
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-            }
+            control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
           <Button

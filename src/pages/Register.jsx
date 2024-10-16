@@ -1,32 +1,30 @@
+
 /* eslint-disable react/prop-types */
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import FormControl from "@mui/material/FormControl";
-import { Link, useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import MuiCard from "@mui/material/Card";
+import {
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  TextField,
+  Typography,
+  CircularProgress,
+  Card
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
-
-import CheckIcon from "@mui/icons-material/Check";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-
 import {
   checkUsername,
+  checkEmailDup,
   sendVerificationCode,
   verifyCode,
 } from "../redux/slices/verificationSlice";
 import { clearMessages, registerUser } from "../redux/slices/registerSlice";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
-const Card = styled(MuiCard)(({ theme }) => ({
+const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignSelf: "center",
@@ -34,29 +32,23 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
-  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-
+  maxWidth: "450px",
   borderRadius: "20px",
+  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
 }));
 
-const SignUpContainer = ({ children }) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        // backgroundColor: "#f5f5f5", 
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
+const SignUpContainer = ({ children }) => (
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+    }}
+  >
+    {children}
+  </Box>
+);
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -65,221 +57,172 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       borderRadius: "15px",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "tomato",
+      borderColor: "#CB6040",
     },
   },
 }));
 
 export default function Register() {
-  const [usernameError, setUsernameError] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState("");
-  const [emailError, setEmailError] = React.useState("");
-  const [verificationCodeError, setVerificationCodeError] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [verificationCode, setVerificationCode] = React.useState("");
+  const [formData, setFormData] = React.useState({
+    username: "",
+    password: "",
+    email: "",
+    verificationCode: "",
+  });
+  const [errors, setErrors] = React.useState({});
   const [isCodeSent, setIsCodeSent] = React.useState(false);
   const [isCodeVerified, setIsCodeVerified] = React.useState(false);
-  const [isCheckingUsername, setIsCheckingUsername] = React.useState(false);
   const [isUsernameAvailable, setIsUsernameAvailable] = React.useState(false);
-
-  const [touched, setTouched] = React.useState({
-    username: false,
-    password: false,
-    email: false,
-    verificationCode: false,
-  });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isLoading } = useSelector((state) => state.verification);
 
-  const { isLoading, emailSuccessMessage, emailFailMessage } = useSelector(
-    (state) => state.verification
-  );
-
-  const formData = { username, password, email, verificationCode };
+  //prevent users to type blank space
   const handleKeyDown = (e) => {
     if (e.key === " ") {
       e.preventDefault(); // Prevent space from being entered
     }
   };
-  // Update handleInputChange to mark field as touched
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
+
+  const validateInput = (name, value) => {
+    let error = "";
     switch (name) {
       case "username":
-        setUsername(value);
-        setUsernameError("");
+        error =
+          value.length < 6
+            ? "Username must be at least 6 characters long."
+            : "";
         break;
-
       case "password":
-        setPassword(value);
-        setPasswordError(
-          value.length < 8 ? "Password must be at least 8 characters long." : ""
-        );
-
+        error =
+          value.length < 8
+            ? "Password must be at least 8 characters long."
+            : "";
         break;
       case "email":
-        setEmail(value);
-        setEmailError(
-          !/\S+@\S+\.\S+/.test(value)
-            ? "Please enter a valid email address."
-            : ""
-        );
+        error = !/\S+@\S+\.\S+/.test(value)
+          ? "Please enter a valid email address."
+          : "";
         break;
       case "verificationCode":
-        setVerificationCode(value);
-        setVerificationCodeError(
-          isCodeSent && !value ? "Verification Code is required." : ""
-        );
+        error = isCodeSent && !value ? "Verification Code is required." : "";
         break;
       default:
         break;
     }
+    setErrors((prev) => ({ ...prev, [name]: error }));
+    return error;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateInput(name, value);
     dispatch(clearMessages());
   };
 
-  const handleCheckUsername = async (e) => {
-    if (e.relatedTarget && e.relatedTarget.closest("a")) return;
+  //function:      handleCheckUsername       //
+  const handleCheckUsername = async () => {
+    const { username } = formData;
+    if (validateInput("username", username)) return;
 
-    setIsCheckingUsername(true); // Start checking
-    if (username.length < 6) {
-      setUsernameError("Username must be at least 6 characters long.");
-      setIsCheckingUsername(false); // Stop checking
-      return;
-    }
     try {
-      const response = await dispatch(checkUsername({ username })).unwrap();
-      console.log("response:", response);
-      if (response === "Username is available") {
-        setIsUsernameAvailable(true); // Set username as available
-        setUsernameError(""); // Clear error if valid
-      } else {
-        setUsernameError(response);
-        setIsUsernameAvailable(false); // Set username as not available
-      }
+      await dispatch(checkUsername({ username })).unwrap();
+      setIsUsernameAvailable(true);
     } catch (error) {
-      console.error("Error checking username:", error);
-      setUsernameError("Username already exists. Please choose another one.");
-      setIsUsernameAvailable(false); // Set username as not available
-    } finally {
-      setIsCheckingUsername(false); // Stop checking
+      setErrors((prev) => ({
+        ...prev,
+        username: "Username already exists. Please choose another one.",
+      }));
     }
   };
 
+  //function:      handleCheckEmail       //
+  const handleCheckEmail = async () => {
+    const { email } = formData;
+    if (validateInput("email", email)) return;
+
+    try {
+      await dispatch(checkEmailDup({ email })).unwrap();
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        email: "This email is in use. Please choose another one.",
+      }));
+    }
+  };
   const handleSendCode = async (e) => {
     e.preventDefault();
-    if (usernameError || emailError || passwordError) return;
+    if (Object.values(errors).some((error) => error)) return;
 
     try {
       const sendCodeResult = await dispatch(
         sendVerificationCode(formData)
       ).unwrap();
       setIsCodeSent(true);
-      console.log("handleSendCode", sendCodeResult);
-
-      Swal.fire({
-        title: sendCodeResult,
-        icon: "success",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      Swal.fire({ text: sendCodeResult, icon: "success", timer: 2000 });
     } catch (error) {
-      console.error("Error sending verification code:", error);
       Swal.fire({
         icon: "error",
-        title: "Oops...",
         text: error || "Failed to send verification code.",
         showConfirmButton: true,
-        // timer: 2000,
       });
     }
   };
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
-    if (!verificationCode) {
-      setVerificationCodeError("Verification Code is required.");
+    if (!formData.verificationCode) {
+      setErrors((prev) => ({
+        ...prev,
+        verificationCode: "Verification Code is required.",
+      }));
       return;
     }
 
     try {
       const verifyCodeResult = await dispatch(verifyCode(formData)).unwrap();
-      if (verifyCodeResult === "인증이 성공했습니다.") {
-        setIsCodeVerified(true);
-        Swal.fire(verifyCodeResult);
-      } else {
-        setIsCodeVerified(false);
-        Swal.fire(verifyCodeResult);
-        console.log("verifyCodeResult:", verifyCodeResult);
-        // ("Invalid verification code. Please try again.");
-      }
+      setIsCodeVerified(verifyCodeResult === "인증이 성공했습니다.");
+      Swal.fire(verifyCodeResult);
     } catch (error) {
-      console.error("Verification code error:", error);
       setIsCodeVerified(false);
-      Swal.fire(error || "Invalid verification code. Please try again.");
-    } finally {
-      setVerificationCodeError("");
+      Swal.fire({
+        icon: "error",
+        text: "Invalid verification code. Please try again.",
+      });
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if (
-      usernameError ||
-      emailError ||
-      passwordError ||
-      verificationCodeError ||
-      !isCodeVerified
-    )
-      return;
-
-    const formData = {
-      username,
-      email,
-      password,
-      verificationCode,
-    };
-
-    console.log("Form Data being sent:", formData); // Log formData
+    if (Object.values(errors).some((error) => error)) return;
 
     try {
-      const result = await dispatch(registerUser(formData)).unwrap();
-      console.log("Registration result:", result); // Log the result
+      await dispatch(registerUser(formData)).unwrap();
       Swal.fire({
-        position: "top-end",
         icon: "success",
-        title: "Registered successfully!",
-        showConfirmButton: false,
-        timer: 1500,
+        text: "Registered successfully!",
+        timer: 2000,
       });
       navigate("/api/user/login");
     } catch (error) {
-      console.error("Registration failed:", error);
-      Swal.fire(
-        "Error",
-        error.message || "Registration failed. Please try again.",
-        "error"
-      );
+      Swal.fire({
+        icon: "error",
+        text: "Registration failed. Please try again.",
+      });
     }
   };
 
   return (
-    <SignUpContainer
-      sx={{ flexDirection: "column", justifyContent: "space-between" }}
-    >
-      <Card variant="outlined">
+    <SignUpContainer>
+      <StyledCard>
         <Typography
-          component="h1"
           variant="h4"
           sx={{
-            width: "100%",
-            fontSize: "clamp(2rem, 10vw, 2.15rem)",
-            color: "#49557e",
             textAlign: "center",
-            marginBottom: "15px",
+            color: "#49557e",
+            mb: 2,
           }}
         >
           Register
@@ -287,177 +230,143 @@ export default function Register() {
         <Box
           component="form"
           onSubmit={handleRegister}
-          noValidate
           sx={{
             display: "flex",
             flexDirection: "column",
+            gap: 2,
             width: "100%",
-            gap: 4,
           }}
         >
           {/* Username Input */}
           <FormControl>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <CustomTextField
-                id="username"
                 name="username"
                 placeholder="유저네임 입력하세요"
-                value={username}
-                autoFocus
-                required
+                value={formData.username}
+                onBlur={handleCheckUsername}
+                onChange={handleInputChange}
                 fullWidth
                 onKeyDown={handleKeyDown}
                 variant="outlined"
-                onBlur={handleCheckUsername}
-                onChange={handleInputChange}
-                color={usernameError ? "error" : "primary"}
+                autoFocus
               />
-              <HowToRegIcon
-                onClick={handleCheckUsername}
-                sx={{ cursor: "pointer", marginLeft: 1 }}
-              />
+              {isUsernameAvailable ? (
+                <DoneAllIcon sx={{ marginLeft: 1, color: "green" }} />
+              ) : (
+                ""
+              )}
             </Box>
-
-            {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
-            {!usernameError && isUsernameAvailable && (
-              <p style={{ color: "green" }}>Username is available!</p>
+            {errors.username && (
+              <span style={{ color: "red" }}>{errors.username}</span>
             )}
           </FormControl>
           {/* Password Input */}
           <FormControl>
-            <CustomTextField
-              // helperText={passwordError}
-              name="password"
-              placeholder="페스워드를 입력하세요"
-              type="password"
-              id="password"
-              required
-              fullWidth
-              onKeyDown={handleKeyDown}
-              value={password}
-              variant="outlined"
-              onChange={handleInputChange}
-              color={passwordError ? "error" : "primary"}
-            />
-
-            {touched.password && passwordError && (
-              <p style={{ color: "red" }}>{passwordError}</p>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <CustomTextField
+                name="password"
+                placeholder="페스워드를 입력하세요"
+                type="password"
+                value={formData.password}
+                onBlur={() => validateInput("password", formData.password)}
+                onChange={handleInputChange}
+                fullWidth
+                variant="outlined"
+              />
+              {!errors.password && formData.password && (
+                <DoneAllIcon style={{ color: "green", marginLeft: 10 }} />
+              )}
+            </Box>
+            {errors.password && (
+              <span style={{ color: "red" }}>{errors.password}</span>
             )}
           </FormControl>
           {/* Email Input with Verification Button */}
-          <FormControl
-            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-          >
-            <CustomTextField
-              // helperText={emailError}
-              name="email"
-              placeholder="이메일을 입력하세요"
-              type="email"
-              id="email"
-              required
-              fullWidth
-              value={email}
-              variant="outlined"
-              onChange={handleInputChange}
-              color={emailError ? "error" : "primary"}
-            />
+          <FormControl>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <CustomTextField
+                name="email"
+                placeholder="이메일을 입력하세요"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                fullWidth
+                variant="outlined"
+              />
+              <Button
+                type="button"
+                onClick={handleSendCode}
+                variant="contained"
+                disabled={isLoading || isCodeSent}
+                sx={{
+                  marginLeft: 1,
+                  backgroundColor: isCodeSent ? "#d3d3d3" : "#C5705D",
+                  cursor: isCodeSent ? "not-allowed" : "pointer",
+                  color: isCodeSent ? "#666" : "#fff",
+                  borderRadius: "15px",
+                  height: "56px",
 
-            <Button
-              type="button"
-              onClick={handleSendCode}
-              variant="contained"
-              disabled={isLoading || isCodeSent}
-              sx={{
-                marginLeft: 1,
-                backgroundColor: isCodeSent ? "#d3d3d3" : "tomato",
-                cursor: isCodeSent ? "not-allowed" : "pointer",
-                color: isCodeSent ? "#666" : "#fff",
-                borderRadius: "15px",
-                height: "56px", // Match the height of the text field
-                "&:hover": { backgroundColor: "tomato" },
-              }}
-            >
-              인증코드 보내기
-            </Button>
+                  "&:hover": { backgroundColor: "#CB6040" },
+                }}
+              >
+                코드발성
+              </Button>
+            </Box>
+            {errors.email && (
+              <span style={{ color: "red" }}>{errors.email}</span>
+            )}
           </FormControl>
-          {/* error message */}
-          {touched.email && emailError && (
-            <p style={{ color: "red" }}>{emailError}</p>
-          )}
-          {emailSuccessMessage && (
-            <p style={{ color: "green" }}>{emailSuccessMessage}</p>
-          )}
-
-          {emailFailMessage && (
-            <p style={{ color: "red" }}>{emailFailMessage}</p>
-          )}
-
-          {/* Loading icon */}
-
           {isLoading && (
-            <Box
+            <CircularProgress
               sx={{
                 display: "flex",
                 justifyContent: "center",
               }}
-            >
-              <CircularProgress size={26} />
-            </Box>
+            />
           )}
-
           {isCodeSent && (
-            <FormControl
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <CustomTextField
-                helperText={verificationCodeError}
-                name="verificationCode"
-                placeholder="인증 코드를 입력하세요"
-                type="text"
-                id="verificationCode"
-                required
-                fullWidth
-                variant="outlined"
-                value={verificationCode}
-                onChange={handleInputChange}
-                color={verificationCodeError ? "error" : "primary"}
-              />
-              <Button
-                type="button"
-                onClick={handleVerifyCode}
-                variant="contained"
-                disabled={isLoading || isCodeVerified}
-                sx={{
-                  marginLeft: 1,
-                  backgroundColor: isCodeVerified ? "#d3d3d3" : "tomato",
-                  cursor: isCodeVerified ? "not-allowed" : "pointer",
-                  color: isCodeVerified ? "#666" : "#fff",
-                  borderRadius: "15px",
-                  height: "56px",
-                  "&:hover": { backgroundColor: "tomato" },
-                }}
-              >
-                {isLoading ? "Loading..." : "Verify Code"}
-              </Button>
+            <FormControl>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <CustomTextField
+                  name="verificationCode"
+                  placeholder="인증 코드를 입력하세요"
+                  value={formData.verificationCode}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  fullWidth
+                  variant="outlined"
+                />
+                <Button
+                  type="button"
+                  onClick={handleVerifyCode}
+                  variant="contained"
+                  disabled={isLoading || isCodeVerified}
+                  sx={{
+                    marginLeft: 1,
+                    backgroundColor: "#C5705D",
+                    borderRadius: "15px",
+                    height: "56px",
+                    "&:hover": { backgroundColor: "#CB6040" },
+                  }}
+                >
+                  {isLoading ? "Loading..." : "코드 인증"}
+                </Button>
+              </Box>
             </FormControl>
           )}
-          {isCodeSent && isCodeVerified === true && (
+          {isCodeVerified && (
             <Button
               type="submit"
-              onClick={handleRegister}
-              fullWidth
               variant="contained"
               disabled={isLoading}
               sx={{
-                backgroundColor: "tomato",
+                backgroundColor: "#C5705D",
                 color: "white",
                 borderRadius: "15px",
                 height: "50px",
-                "&:hover": { backgroundColor: "tomato" },
+                "&:hover": { backgroundColor: "#CB6040" },
               }}
             >
               {isLoading ? "Registering..." : "Register"}
@@ -467,20 +376,14 @@ export default function Register() {
         <Typography sx={{ textAlign: "center" }}>
           계장이 있으신가요?
           <Link
-            to="/api/user/login" // Ensure this path matches your route
-            variant="body2"
-            sx={{
-              alignSelf: "center",
-              textDecoration: "none",
-              color: "inherit",
-            }}
+            to="/api/user/login"
+            sx={{ textDecoration: "none", color: "#CB6040" }}
           >
             로그인 하세요
           </Link>
         </Typography>
-
-        <Divider>or</Divider>
-      </Card>
+        <Divider />
+      </StyledCard>
     </SignUpContainer>
   );
 }

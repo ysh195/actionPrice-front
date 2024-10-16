@@ -10,12 +10,20 @@ import Footer from "./layouts/Footer";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import Register from "./pages/Register";
+
 import Login from "./pages/Login";
 import CategoryDetails from "./components/CategoryDetails";
 import Navbar from "./layouts/Navbar";
 import "./App.css";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { autoLogin } from "./redux/slices/loginSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(autoLogin());
+  }, [dispatch]);
   return (
     <Box
       sx={{
@@ -41,7 +49,9 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="api/user/login" exact element={<Login />} />
+
           <Route path="api/user/register" exact element={<Register />} />
+
           <Route
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}

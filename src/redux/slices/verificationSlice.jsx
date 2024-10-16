@@ -6,7 +6,8 @@ const initialState = {
   isUsernameAvailable:true,
   usernameFailMessage: "",
   usernameSuccessMessage: "",
-  sendCode: "",
+  codeSendSuccessMessage: "",
+  codeSendFailMessage:"",
   verifySuccess: "",
   verifyCode: "",
   isError: false,
@@ -14,28 +15,21 @@ const initialState = {
   emailFailMessage: null,
 };
 
+
+const BASE_URL = "http://localhost:8080/api";
+
 //function: check Username duplicate //
 export const checkUsername = createAsyncThunk(
   "auth/checkUsername",
   async ({ username }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/user/checkForDuplicateUsername", {
-        username,
-      });
-      console.log(response);
+      const response = await axios.post(`${BASE_URL}/user/checkForDuplicateUsername`, {
+        username});
+      console.log("Slice check Username:",response.data);
       return response.data; //"Username is available";
     } catch (error) {
-      console.log("error.response:", error.response);
-      if (error.response) {
-        if (error.response.status === 409) {
-          return rejectWithValue(
-            "Username already exists. Please choose another one."
-          );
-        }
-        // Check if there's a response from the server
-        return rejectWithValue(error.response.data || "An error occurred.");
-      }
-      return rejectWithValue("Network error.");
+      console.error("Slice Error response:", error.response);
+      return rejectWithValue(error.response?.data || "An error occurred.");
     }
   }
 );
@@ -43,13 +37,15 @@ export const checkUsername = createAsyncThunk(
 //function: check email duplicate //
 export const checkEmailDup = createAsyncThunk(
   "auth/checkEmail",
-  async ({ email }, { rejectWithValue }) => {
+  async ({email}, { rejectWithValue }) => {
+   
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/user/checkForDuplicateEmail",
-        { email }
+        `${BASE_URL}/user/checkForDuplicateEmail`,
+        {email}
       );
-      return response.data.message; // Assuming the API returns a message
+      console.log("email response:", response)
+      return response.data; // Assuming the API returns a message
     } catch (error) {
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data.message);
@@ -62,13 +58,13 @@ export const checkEmailDup = createAsyncThunk(
 //function: send Verification Code  //
 export const sendVerificationCode = createAsyncThunk(
   "auth/sendVerificationCode",
-  async ({ username, email, password }, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/api/user/sendVerificationCode",
-        { username, email, password }
+        formData
       );
-      console.log(response.data);
+      console.log("sendVerificationCode:", response.data);
       return response.data;
     } catch (error) {
       console.log("send Verification error:", error);
@@ -158,11 +154,14 @@ const verificationSlice = createSlice({
       .addCase(sendVerificationCode.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isError = false;
-        state.sendCode = action.payload;
+        console.log(action.payload);
+        state.codeSendSuccessMessage = action.payload;
       })
       .addCase(sendVerificationCode.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.codeSendFailMessage = action.payload;
+
       })
       //desc:--------------------------------------------------------
       //desc: ------------verify Code---------------

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const initialState = {
   username: null,
@@ -11,24 +12,22 @@ const initialState = {
   refresh_token: null,
 };
 
+const BASE_URL = "http://localhost:8080/api";
+
 export const login = createAsyncThunk(
   "auth/login",
 
   async (formData, thunkAPI) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/user/login",
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/user/login`, formData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${response.data.access_token}`;
 
-      console.log("response:",response)
+      console.log("response:", response);
 
       if (!response.data.access_token) {
         return thunkAPI.rejectWithValue(
@@ -57,14 +56,35 @@ const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
+    autoLogin: (state) => {
+      const accessToken = Cookies.get("access_token");
+      const refreshToken = Cookies.get("refresh_token");
+      const username = Cookies.get("username");
+
+      console.log("Auto Login Check:", {
+        accessToken,
+        refreshToken,
+        username,
+      });
+
+      if (accessToken && refreshToken && username) {
+        state.isLoggedIn = true;
+        state.access_token = accessToken;
+        state.refresh_token = refreshToken;
+        state.username = username;
+      }
+    },
     logout: (state) => {
       state.username = null;
       state.isLoggedIn = false;
-      state.isError = false; // Reset error state
-      state.errorMessage = ""; // Clear error message
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("username");
+      state.isError = false;
+      state.errorMessage = "";
+
+      // Clear cookies on logout
+      Cookies.remove("REMEMBERME");
+      Cookies.remove("access_token");
+      Cookies.remove("refresh_token");
+      Cookies.remove("username");
     },
   },
   extraReducers: (builder) => {
@@ -76,8 +96,8 @@ const loginSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.username = action.payload.username;
         state.isLoggedIn = true;
+        state.username = action.payload.username;
         state.access_token = action.payload.access_token;
         state.refresh_token = action.payload.refresh_token;
       })
@@ -90,5 +110,5 @@ const loginSlice = createSlice({
   },
 });
 
-export const { logout } = loginSlice.actions;
+export const { logout, autoLogin } = loginSlice.actions;
 export default loginSlice.reducer;
