@@ -46,7 +46,7 @@ const Login = () => {
 
       if (rememberMe) {
         // Set cookies if Remember Me is checked
-        Cookies.set("REMEMBERME", true, { expires: 30 });
+        // Cookies.set("REMEMBERME", true, { expires: 30 });
         Cookies.set("access_token", result.access_token, { expires: 30 });
         Cookies.set("refresh_token", result.refresh_token, { expires: 30 });
         Cookies.set("username", result.username, { expires: 30 });
