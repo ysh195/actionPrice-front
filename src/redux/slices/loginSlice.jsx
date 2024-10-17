@@ -18,6 +18,7 @@ export const login = createAsyncThunk(
   "auth/login",
 
   async (formData, thunkAPI) => {
+    console.log("formData;", formData);
     try {
       const response = await axios.post(`${BASE_URL}/user/login`, formData, {
         headers: { "Content-Type": "application/json" },
@@ -35,10 +36,6 @@ export const login = createAsyncThunk(
         );
       }
       console.log("Login Response:", response);
-
-      localStorage.setItem("access_token", response.data.access_token);
-      localStorage.setItem("refresh_token", response.data.refresh_token);
-      localStorage.setItem("username", response.data.username);
 
       console.log("login:", response.data);
       return response.data;
@@ -58,12 +55,15 @@ export const logoutUser = createAsyncThunk(
     try {
       // Send a POST request to the logout endpoint
       const response = await axios.post(`${BASE_URL}/user/logout`);
+      console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {
-
         console.log("Logout successful");
-        localStorage.removeItem("username"); 
-        return response.data; 
+        Cookies.remove("REMEMBERME");
+        localStorage.removeItem("username");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        return response.data;
       } else {
         // Handle unexpected status
         return rejectWithValue("Logout failed. Please try again.");
@@ -81,17 +81,17 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      const accessToken = Cookies.get("access_token");
-      const refreshToken = Cookies.get("refresh_token");
-      const username = Cookies.get("username");
+      const accessToken = localStorage.getItem("access_token");
+      const refreshToken = localStorage.getItem("refresh_token");
+      const username = localStorage.getItem("username");
+      const rememberMe = Cookies.get("REMEMBERME");
 
       console.log("Auto Login Check:", {
+        rememberMe,
         accessToken,
-        refreshToken,
-        username,
       });
 
-      if (accessToken && refreshToken && username) {
+      if (rememberMe && accessToken) {
         state.isLoggedIn = true;
         state.access_token = accessToken;
         state.refresh_token = refreshToken;
@@ -129,5 +129,5 @@ const loginSlice = createSlice({
   },
 });
 
-export const { logout, autoLogin } = loginSlice.actions;
+export const { autoLogin } = loginSlice.actions;
 export default loginSlice.reducer;
