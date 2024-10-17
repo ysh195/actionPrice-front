@@ -15,7 +15,6 @@ import {
 } from "react-bootstrap";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
-
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -39,17 +38,19 @@ const Login = () => {
     e.preventDefault();
     if (!validateInputs()) return;
 
-    const formData = { username, password };
+    const formData = { username, password, rememberMe };
+    console.log(formData);
 
     try {
       const result = await dispatch(login(formData)).unwrap();
 
+      // Set tokens in local storage if login is successful
+      localStorage.setItem("access_token", result.access_token);
+      localStorage.setItem("refresh_token", result.refresh_token);
+      localStorage.setItem("username", result.username);
+
       if (rememberMe) {
-        // Set cookies if Remember Me is checked
-        // Cookies.set("REMEMBERME", true, { expires: 30 });
-        Cookies.set("access_token", result.access_token, { expires: 30 });
-        Cookies.set("refresh_token", result.refresh_token, { expires: 30 });
-        Cookies.set("username", result.username, { expires: 30 });
+        Cookies.set("REMEMBERME", true, { expires: 30 }); // Set remember me cookie
       }
 
       Swal.fire({
@@ -118,11 +119,7 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 style={{ cursor: "pointer", borderRadius: "0 5px 5px 0" }}
               >
-                {showPassword ? (
-                  <IoEyeOutline />
-                ) : (
-                  <IoEyeOffOutline />
-                )}
+                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
               </InputGroup.Text>
               <Form.Control.Feedback type="invalid">
                 {errors.password}
