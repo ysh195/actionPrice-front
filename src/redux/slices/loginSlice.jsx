@@ -52,6 +52,30 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      // Send a POST request to the logout endpoint
+      const response = await axios.post(`${BASE_URL}/user/logout`);
+
+      if (response.status === 200) {
+
+        console.log("Logout successful");
+        localStorage.removeItem("username"); 
+        return response.data; 
+      } else {
+        // Handle unexpected status
+        return rejectWithValue("Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Handle logout error
+      return rejectWithValue(error.response?.data || "Logout failed.");
+    }
+  }
+);
+
 const loginSlice = createSlice({
   name: "login",
   initialState,
@@ -74,18 +98,6 @@ const loginSlice = createSlice({
         state.username = username;
       }
     },
-    logout: (state) => {
-      state.username = null;
-      state.isLoggedIn = false;
-      state.isError = false;
-      state.errorMessage = "";
-
-      // Clear cookies on logout
-      Cookies.remove("REMEMBERME");
-      Cookies.remove("access_token");
-      Cookies.remove("refresh_token");
-      Cookies.remove("username");
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -106,6 +118,13 @@ const loginSlice = createSlice({
         state.isError = true;
         state.errorMessage = action.payload;
         state.isLoggedIn = false;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoggedIn = false; // Update login status
+        state.isError = null; // Clear any errors
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.errorMessage = action.payload; // Set the error message
       });
   },
 });

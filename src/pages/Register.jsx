@@ -45,8 +45,6 @@ const Register = () => {
       setErrors((prev) => ({ ...prev, [name]: error })); // Set error state
     } else {
       setErrors((prev) => ({ ...prev, [name]: "" })); // Clear the error
-      //  }
-      // validateInput(name, value);
       dispatch(clearMessages());
     }
   };
@@ -55,12 +53,15 @@ const Register = () => {
     let error = "";
     switch (name) {
       case "username":
+        //todo: will user be able to use korean alphabet, or only number?
         error =
           value.length < 6
             ? "Username must be at least 6 characters long."
             : "";
         break;
       case "password":
+        //todo: will user be able to use only number?
+
         error =
           value.length < 8
             ? "Password must be at least 8 characters long."

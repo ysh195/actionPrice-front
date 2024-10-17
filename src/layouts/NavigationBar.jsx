@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../redux/slices/loginSlice";
+import { logoutUser } from "../redux/slices/loginSlice";
 import { FaHeart, FaBell, FaUserCircle } from "react-icons/fa";
 import { GrLogout } from "react-icons/gr";
 import { MdOutlineFavorite } from "react-icons/md";
@@ -21,7 +21,7 @@ function NavigationBar() {
     setExpanded(false); // Close the navbar on link click
   };
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
     navigate("/api/user/login");
   };
 

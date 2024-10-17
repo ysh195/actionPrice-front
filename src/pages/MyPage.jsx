@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { logout } from "../redux/slices/loginSlice";
+import {logoutUser } from "../redux/slices/loginSlice";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
@@ -14,7 +14,7 @@ const UserProfile = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logoutUser());
     navigate("/api/user/login");
   };
 
