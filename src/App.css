@@ -12,6 +12,17 @@
   max-height: 400px;
   object-fit: cover; 
   border-radius: 15px; 
+  background-color: #f8f9fa;
+
+}
+
+.carousel-item {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-item img {
+  display: block;
+  margin: 0 auto;
 }
 
 

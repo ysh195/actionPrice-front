@@ -1,22 +1,36 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Nav, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/slices/loginSlice";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("personalInfo");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/api/user/login");
+  };
+
+    const withdrawMembership = () => {
+      dispatch(withdrawMembership());
+      navigate("/api/user/withdraw");
+    };
 
   const renderContent = () => {
     switch (activeTab) {
       case "personalInfo":
         return (
           <div>
-            <h4>Personal Information</h4>
-            <p>Name: John Doe</p>
-            <p>Email: john.doe@example.com</p>
-            <p>Phone: +1234567890</p>
+            <h4>개인 정보</h4>
+            <p>성명: John Doe</p>
+            <p>이메일: john.doe@example.com</p>
           </div>
         );
       case "wishlist":
@@ -35,8 +49,19 @@ const UserProfile = () => {
           <div>
             <h4>Logout</h4>
             <p>Are you sure you want to log out?</p>
-            <Button variant="danger" onClick={() => alert("Logged out!")}>
-              Confirm Logout
+            <Button variant="danger" onClick={handleLogout}>
+              로그아웃 확인
+            </Button>
+          </div>
+        );
+
+      case "deleteUser":
+        return (
+          <div>
+            <h4>회원탈퇴</h4>
+            <p>Are you sure you want to delete you profile?</p>
+            <Button variant="danger" onClick={withdrawMembership}>
+              회원탈퇴 확인
             </Button>
           </div>
         );
@@ -51,25 +76,32 @@ const UserProfile = () => {
         <Col md={3}>
           <Nav className="flex-column">
             <Button
-              variant="outline-primary"
+              variant="outline-secondary"
               onClick={() => handleTabClick("personalInfo")}
               className="mb-2"
             >
-              Personal Information
+              개인 정보
             </Button>
             <Button
-              variant="outline-primary"
+              variant="outline-secondary"
               onClick={() => handleTabClick("wishlist")}
               className="mb-2"
             >
               Wishlist
             </Button>
             <Button
-              variant="outline-danger"
+              variant="outline-info"
               onClick={() => handleTabClick("logout")}
               className="mb-2"
             >
-              Logout
+              로그아웃
+            </Button>
+            <Button
+              variant="outline-danger"
+              onClick={() => handleTabClick("deleteUser")}
+              className="mb-2"
+            >
+              회원탈퇴
             </Button>
           </Nav>
         </Col>

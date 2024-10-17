@@ -3,6 +3,7 @@ import categoryReducer from "./slices/categorySlice";
 import loginReducer from "./slices/loginSlice";
 import registerReducer from "./slices/registerSlice";
 import verificationReducer from "./slices/verificationSlice";
+import userReducer from "./slices/userSlice";
 
 
 export const store = configureStore({
@@ -11,5 +12,6 @@ export const store = configureStore({
     login: loginReducer,
     register: registerReducer,
     verification: verificationReducer,
+    user: userReducer,
   },
 });
