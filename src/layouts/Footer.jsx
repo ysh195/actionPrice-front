@@ -1,54 +1,55 @@
-import * as React from "react";
-import { Box, Container, Typography, Link } from "@mui/material";
-import { icons } from "../assets/assest";
+import React from "react";
+import { Container, Row, Col, Nav } from "react-bootstrap";
 
 const Footer = () => {
   return (
-    <Box
-      sx={{
-        backgroundColor: "#C5705D ",
+    <footer
+      style={{
+        backgroundColor: "#C5705D",
         color: "white",
-        py: 4,
-        position: "relative",
-        bottom: 0,
+        padding: "2rem 0",
       }}
     >
-      <Container maxWidth="lg">
+      <Container>
         {/* Logo Image */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "left",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          <img
-            src={""}
-            alt="Company Logo"
-            style={{ width: "150px", height: "auto", marginRight: "16px" }}
-          />
-        </Box>
+        <Row className="mb-3">
+          <Col className="text-center">
+            <img
+              src={""} // Replace with your logo source
+              alt="Company Logo"
+              style={{ width: "150px", height: "auto" }}
+            />
+          </Col>
+        </Row>
 
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <Link href="#" color="inherit" sx={{ mx: 2 }}>
-            Home
-          </Link>
-          <Link href="#about" color="inherit" sx={{ mx: 2 }}>
-            About Us
-          </Link>
-          <Link href="#services" color="inherit" sx={{ mx: 2 }}>
-            Services
-          </Link>
-          <Link href="#contact" color="inherit" sx={{ mx: 2 }}>
-            Contact
-          </Link>
-        </Box>
-        <Typography variant="body2" align="center">
-          © {new Date().getFullYear()} AuctionPrice. All rights reserved.
-        </Typography>
+        {/* Navigation Links */}
+        <Row className="mb-3 justify-content-center">
+          <Nav>
+            <Nav.Link href="#" className="text-white mx-3">
+              Home
+            </Nav.Link>
+            <Nav.Link href="#about" className="text-white mx-3">
+              About Us
+            </Nav.Link>
+            <Nav.Link href="#services" className="text-white mx-3">
+              Services
+            </Nav.Link>
+            <Nav.Link href="#contact" className="text-white mx-3">
+              Contact
+            </Nav.Link>
+          </Nav>
+        </Row>
+
+        {/* Copyright Text */}
+        <Row>
+          <Col>
+            <p className="text-center" style={{ margin: 0 }}>
+              © {new Date().getFullYear()} AuctionPrice. All rights reserved.
+            </p>
+          </Col>
+        </Row>
       </Container>
-    </Box>
+    </footer>
   );
 };
 
