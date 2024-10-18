@@ -39,18 +39,16 @@ const Login = () => {
     if (!validateInputs()) return;
 
     const formData = { username, password, rememberMe };
-    console.log(formData);
-
     try {
       const result = await dispatch(login(formData)).unwrap();
 
-      // Set tokens in local storage if login is successful
-      localStorage.setItem("access_token", result.access_token);
-      localStorage.setItem("refresh_token", result.refresh_token);
-      localStorage.setItem("username", result.username);
-
+      // Set a cookie for "Remember Me"
       if (rememberMe) {
-        Cookies.set("REMEMBERME", true, { expires: 30 }); // Set remember me cookie
+        console.log("Setting access token in local storage");
+        localStorage.setItem("access_token", result.access_token);
+      } else {
+        console.log("Setting access token in session storage");
+        sessionStorage.setItem("access_token", result.access_token);
       }
 
       Swal.fire({
