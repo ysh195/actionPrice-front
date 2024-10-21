@@ -1,42 +1,42 @@
-/* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  loading: false,
-  users:[],
-  error:''
-
+  isLoading: false,
+  isError: false,
 };
 
-export const fetchUsers = createAsyncThunk("user/fectUsers", async() =>{
-  return await axios
-  .get("https://jsonplaceholder.typicode.com/users")
- .then((response) => response.data)
-});
+const BASE_URL = "http://localhost:8080/api";
 
-export const userSlice = createSlice({
+export const withdrawMembership = createAsyncThunk(
+  "user/withdrawMembership",
+  async ({ password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${BASE_URL}/user/withdraw`, {
+        password,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-
-  },
-  extraReducers:(builder) =>{
+  reducers: {},
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchUsers.pending, (state) => {
-        state.loading = true;
+      .addCase(withdrawMembership.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
       })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.loading = false;
-        state.users = action.payload;
-      })
-      .addCase(fetchUsers.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
+      .addCase(withdrawMembership.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
       });
-  }
+  },
 });
-
-export const {} = userSlice.actions;
 
 export default userSlice.reducer;

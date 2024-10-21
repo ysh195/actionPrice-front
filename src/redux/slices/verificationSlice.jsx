@@ -3,18 +3,17 @@ import axios from "axios";
 
 const initialState = {
   isLoading: false,
-  isUsernameAvailable:true,
+  isUsernameAvailable: true,
   usernameFailMessage: "",
   usernameSuccessMessage: "",
   codeSendSuccessMessage: "",
-  codeSendFailMessage:"",
+  codeSendFailMessage: "",
   verifySuccess: "",
   verifyCode: "",
   isError: false,
   emailSuccessMessage: null,
   emailFailMessage: null,
 };
-
 
 const BASE_URL = "http://localhost:8080/api";
 
@@ -23,9 +22,13 @@ export const checkUsername = createAsyncThunk(
   "auth/checkUsername",
   async ({ username }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/user/checkForDuplicateUsername`, {
-        username});
-      console.log("Slice check Username:",response.data);
+      const response = await axios.post(
+        `${BASE_URL}/user/checkForDuplicateUsername`,
+        {
+          username,
+        }
+      );
+      console.log("Slice check Username:", response.data);
       return response.data; //"Username is available";
     } catch (error) {
       console.error("Slice Error response:", error.response);
@@ -37,14 +40,13 @@ export const checkUsername = createAsyncThunk(
 //function: check email duplicate //
 export const checkEmailDup = createAsyncThunk(
   "auth/checkEmail",
-  async ({email}, { rejectWithValue }) => {
-   
+  async ({ email }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/user/checkForDuplicateEmail`,
-        {email}
+        { email }
       );
-      console.log("email response:", response)
+      console.log("email response:", response);
       return response.data; // Assuming the API returns a message
     } catch (error) {
       if (error.response && error.response.data) {
@@ -61,7 +63,7 @@ export const sendVerificationCode = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/user/sendVerificationCode",
+        `${BASE_URL}/user/sendVerificationCode`,
         formData
       );
       console.log("sendVerificationCode:", response.data);
@@ -93,7 +95,7 @@ export const verifyCode = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/user/checkVerificationCode",
+        `${BASE_URL}/user/checkVerificationCode`,
         { username, email, password, verificationCode }
       );
       return response.data;
@@ -161,7 +163,6 @@ const verificationSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.codeSendFailMessage = action.payload;
-
       })
       //desc:--------------------------------------------------------
       //desc: ------------verify Code---------------

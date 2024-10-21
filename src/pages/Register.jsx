@@ -1,78 +1,30 @@
-
 /* eslint-disable react/prop-types */
-import * as React from "react";
-import {
-  Box,
-  Button,
-  Divider,
-  FormControl,
-  TextField,
-  Typography,
-  CircularProgress,
-  Card
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { Link, useNavigate } from "react-router-dom";
+
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Swal from "sweetalert2";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser, clearMessages } from "../redux/slices/registerSlice";
 import {
   checkUsername,
-  checkEmailDup,
   sendVerificationCode,
   verifyCode,
 } from "../redux/slices/verificationSlice";
-import { clearMessages, registerUser } from "../redux/slices/registerSlice";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
+import Swal from "sweetalert2";
+import { Container, Card, Form, Button, Spinner } from "react-bootstrap";
+import { BsCheck2All } from "react-icons/bs";
 
-const StyledCard = styled(Card)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  maxWidth: "450px",
-  borderRadius: "20px",
-  boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-}));
 
-const SignUpContainer = ({ children }) => (
-  <Box
-    sx={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
-    }}
-  >
-    {children}
-  </Box>
-);
-
-const CustomTextField = styled(TextField)(({ theme }) => ({
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "lightGray",
-      borderRadius: "15px",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#CB6040",
-    },
-  },
-}));
-
-export default function Register() {
-  const [formData, setFormData] = React.useState({
+const Register = () => {
+  const [formData, setFormData] = useState({
     username: "",
     password: "",
     email: "",
     verificationCode: "",
   });
-  const [errors, setErrors] = React.useState({});
-  const [isCodeSent, setIsCodeSent] = React.useState(false);
-  const [isCodeVerified, setIsCodeVerified] = React.useState(false);
-  const [isUsernameAvailable, setIsUsernameAvailable] = React.useState(false);
+  const [errors, setErrors] = useState({});
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,16 +37,31 @@ export default function Register() {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    const error = validateInput(name, value); // Capture the error
+    if (error) {
+      setErrors((prev) => ({ ...prev, [name]: error })); // Set error state
+    } else {
+      setErrors((prev) => ({ ...prev, [name]: "" })); // Clear the error
+      dispatch(clearMessages());
+    }
+  };
+
   const validateInput = (name, value) => {
     let error = "";
     switch (name) {
       case "username":
+        //todo: will user be able to use korean alphabet, or only number?
         error =
           value.length < 6
             ? "Username must be at least 6 characters long."
             : "";
         break;
       case "password":
+        //todo: will user be able to use only number?
+
         error =
           value.length < 8
             ? "Password must be at least 8 characters long."
@@ -115,13 +82,6 @@ export default function Register() {
     return error;
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    validateInput(name, value);
-    dispatch(clearMessages());
-  };
-
   //function:      handleCheckUsername       //
   const handleCheckUsername = async () => {
     const { username } = formData;
@@ -137,24 +97,18 @@ export default function Register() {
       }));
     }
   };
-
-  //function:      handleCheckEmail       //
-  const handleCheckEmail = async () => {
-    const { email } = formData;
-    if (validateInput("email", email)) return;
-
-    try {
-      await dispatch(checkEmailDup({ email })).unwrap();
-    } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        email: "This email is in use. Please choose another one.",
-      }));
-    }
-  };
+  //function:      handleSendCode       //
   const handleSendCode = async (e) => {
     e.preventDefault();
-    if (Object.values(errors).some((error) => error)) return;
+    if (Object.values(errors).some((error) => error)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Input",
+        text: "Please fix the errors in the form before sending the verification code.",
+        showConfirmButton: true,
+      });
+    // Stop execution if there are errors
+    }
 
     try {
       const sendCodeResult = await dispatch(
@@ -163,6 +117,8 @@ export default function Register() {
       setIsCodeSent(true);
       Swal.fire({ text: sendCodeResult, icon: "success", timer: 2000 });
     } catch (error) {
+      console.log(error);
+
       Swal.fire({
         icon: "error",
         text: error || "Failed to send verification code.",
@@ -170,7 +126,7 @@ export default function Register() {
       });
     }
   };
-
+  //function:      handleVerifyCode       //
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     if (!formData.verificationCode) {
@@ -180,7 +136,6 @@ export default function Register() {
       }));
       return;
     }
-
     try {
       const verifyCodeResult = await dispatch(verifyCode(formData)).unwrap();
       setIsCodeVerified(verifyCodeResult === "인증이 성공했습니다.");
@@ -190,10 +145,11 @@ export default function Register() {
       Swal.fire({
         icon: "error",
         text: "Invalid verification code. Please try again.",
+        showConfirmButton: true,
       });
     }
   };
-
+  //function:      handleRegister       //
   const handleRegister = async (e) => {
     e.preventDefault();
     if (Object.values(errors).some((error) => error)) return;
@@ -210,180 +166,204 @@ export default function Register() {
       Swal.fire({
         icon: "error",
         text: "Registration failed. Please try again.",
+        showConfirmButton: true,
       });
     }
   };
 
   return (
-    <SignUpContainer>
-      <StyledCard>
-        <Typography
-          variant="h4"
-          sx={{
-            textAlign: "center",
-            color: "#49557e",
-            mb: 2,
-          }}
+    <Container className="d-flex align-items-center justify-content-center min-vh-100">
+      <Card
+        className="p-5"
+        style={{
+          maxWidth: "450px",
+          width: "100%",
+          borderRadius: "20px",
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Card.Title
+          className="text-center"
+          style={{ fontSize: "2rem", color: "#49557e" }}
         >
           Register
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={handleRegister}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            width: "100%",
-          }}
-        >
+        </Card.Title>
+        <Form onSubmit={handleRegister}>
           {/* Username Input */}
-          <FormControl>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <CustomTextField
-                name="username"
-                placeholder="유저네임 입력하세요"
-                value={formData.username}
-                onBlur={handleCheckUsername}
-                onChange={handleInputChange}
-                fullWidth
-                onKeyDown={handleKeyDown}
-                variant="outlined"
-                autoFocus
+          <Form.Group className="mb-3 mt-3 position-relative">
+            <Form.Control
+              type="text"
+              placeholder="유저네임 입력하세요"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+              onBlur={handleCheckUsername}
+              isInvalid={!!errors.username}
+              onKeyDown={handleKeyDown}
+              style={{ height: "3rem" }}
+            />
+            {isUsernameAvailable && !errors.username ? (
+              <BsCheck2All
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "green",
+                }}
               />
-              {isUsernameAvailable ? (
-                <DoneAllIcon sx={{ marginLeft: 1, color: "green" }} />
-              ) : (
-                ""
-              )}
-            </Box>
-            {errors.username && (
-              <span style={{ color: "red" }}>{errors.username}</span>
+            ) : (
+              ""
             )}
-          </FormControl>
+            <Form.Control.Feedback type="invalid">
+              {errors.username}
+            </Form.Control.Feedback>
+          </Form.Group>
+
           {/* Password Input */}
-          <FormControl>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <CustomTextField
-                name="password"
-                placeholder="페스워드를 입력하세요"
-                type="password"
-                value={formData.password}
-                onBlur={() => validateInput("password", formData.password)}
-                onChange={handleInputChange}
-                fullWidth
-                variant="outlined"
+          <Form.Group className="mb-3 position-relative">
+            <Form.Control
+              type="password"
+              placeholder="페스워드를 입력하세요"
+              name="password"
+              onKeyDown={handleKeyDown}
+              value={formData.password}
+              onChange={handleInputChange}
+              onBlur={() => validateInput("password", formData.password)}
+              isInvalid={!!errors.password}
+              style={{ height: "3rem" }}
+            />
+            {!errors.password && formData.password && (
+              <BsCheck2All
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "green",
+                }}
               />
-              {!errors.password && formData.password && (
-                <DoneAllIcon style={{ color: "green", marginLeft: 10 }} />
-              )}
-            </Box>
-            {errors.password && (
-              <span style={{ color: "red" }}>{errors.password}</span>
             )}
-          </FormControl>
+            <Form.Control.Feedback type="invalid">
+              {errors.password}
+            </Form.Control.Feedback>
+          </Form.Group>
+
           {/* Email Input with Verification Button */}
-          <FormControl>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <CustomTextField
-                name="email"
-                placeholder="이메일을 입력하세요"
+          <Form.Group className="mb-3">
+            <div className="d-flex align-items-center">
+              <Form.Control
                 type="email"
+                placeholder="이메일을 입력하세요"
+                name="email"
+                onKeyDown={handleKeyDown}
                 value={formData.email}
                 onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                fullWidth
-                variant="outlined"
+                isInvalid={!!errors.email}
+                style={{ height: "3rem" }}
               />
               <Button
                 type="button"
                 onClick={handleSendCode}
-                variant="contained"
-                disabled={isLoading || isCodeSent}
-                sx={{
-                  marginLeft: 1,
+                disabled={
+                  isLoading ||
+                  isCodeSent ||
+                  !formData.email ||
+                  !formData.username
+                }
+                className="ms-2"
+                variant="primary"
+                style={{
                   backgroundColor: isCodeSent ? "#d3d3d3" : "#C5705D",
                   cursor: isCodeSent ? "not-allowed" : "pointer",
                   color: isCodeSent ? "#666" : "#fff",
-                  borderRadius: "15px",
-                  height: "56px",
-
+                  borderRadius: "5px",
+                  height: "3rem",
+                  fontSize: "0.875rem",
+                  fontWeight: "bold",
+                  lineHeight: "1.25",
+                  border: "none",
                   "&:hover": { backgroundColor: "#CB6040" },
                 }}
               >
                 코드발성
               </Button>
-            </Box>
-            {errors.email && (
-              <span style={{ color: "red" }}>{errors.email}</span>
-            )}
-          </FormControl>
-          {isLoading && (
-            <CircularProgress
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            />
-          )}
+            </div>
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          {/* Verification Code Input */}
           {isCodeSent && (
-            <FormControl>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <CustomTextField
-                  name="verificationCode"
+            <Form.Group className="mb-3">
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  type="text"
                   placeholder="인증 코드를 입력하세요"
+                  name="verificationCode"
                   value={formData.verificationCode}
                   onChange={handleInputChange}
+                  isInvalid={!!errors.verificationCode}
                   onKeyDown={handleKeyDown}
-                  fullWidth
-                  variant="outlined"
+                  style={{ height: "3rem" }}
                 />
                 <Button
                   type="button"
                   onClick={handleVerifyCode}
-                  variant="contained"
                   disabled={isLoading || isCodeVerified}
-                  sx={{
-                    marginLeft: 1,
+                  className="ms-2"
+                  variant="success"
+                  style={{
                     backgroundColor: "#C5705D",
-                    borderRadius: "15px",
-                    height: "56px",
+                    cursor: "pointer",
+                    borderRadius: "5px",
+                    height: "3rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "bold",
+                    lineHeight: "1.25",
+                    border: "none",
                     "&:hover": { backgroundColor: "#CB6040" },
                   }}
                 >
                   {isLoading ? "Loading..." : "코드 인증"}
                 </Button>
-              </Box>
-            </FormControl>
+              </div>
+              <Form.Control.Feedback type="invalid">
+                {errors.verificationCode}
+              </Form.Control.Feedback>
+            </Form.Group>
           )}
+
+          {/* Register Button */}
           {isCodeVerified && (
             <Button
               type="submit"
-              variant="contained"
+              variant="success"
               disabled={isLoading}
-              sx={{
+              className="w-100 mb-3"
+              style={{
                 backgroundColor: "#C5705D",
                 color: "white",
-                borderRadius: "15px",
-                height: "50px",
+                border: "none",
+                borderRadius: "10px",
+                height: "3rem",
                 "&:hover": { backgroundColor: "#CB6040" },
               }}
             >
               {isLoading ? "Registering..." : "Register"}
             </Button>
           )}
-        </Box>
-        <Typography sx={{ textAlign: "center" }}>
-          계장이 있으신가요?
-          <Link
-            to="/api/user/login"
-            sx={{ textDecoration: "none", color: "#CB6040" }}
-          >
+        </Form>
+        <div className="text-center mt-3">
+          계장이 있으신가요?{" "}
+          <Link to="/api/user/login" style={{ color: "#CB6040" }}>
             로그인 하세요
           </Link>
-        </Typography>
-        <Divider />
-      </StyledCard>
-    </SignUpContainer>
+        </div>
+      </Card>
+    </Container>
   );
-}
+};
+
+export default Register;
