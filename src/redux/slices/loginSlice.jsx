@@ -9,7 +9,6 @@ const initialState = {
   errorMessage: "",
   isLoggedIn: false,
   access_token: null,
-  refresh_token: null,
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -18,26 +17,35 @@ export const login = createAsyncThunk(
   "auth/login",
 
   async (formData, thunkAPI) => {
-    console.log("formData;", formData);
     try {
-      const response = await axios.post(`${BASE_URL}/user/login`, formData, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/user/login`,
+        {
+          username: formData.username,
+          password: formData.password,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      // Setting Authorization header globally
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${response.data.access_token}`;
-
-      console.log("response:", response);
 
       if (!response.data.access_token) {
         return thunkAPI.rejectWithValue(
           "로그인에 실패했습니다. 정보를 확인하세요."
         );
       }
+      // Check rememberMe to set tokens
+      if (formData.rememberMe) {
+        localStorage.setItem("access_token", response.data.access_token);
+      } else {
+        sessionStorage.setItem("access_token", response.data.access_token);
+      }
       console.log("Login Response:", response);
-
-      console.log("login:", response.data);
       return response.data;
     } catch (error) {
       console.error("Login Error:", error);
@@ -53,16 +61,16 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      // Send a POST request to the logout endpoint
+
       const response = await axios.post(`${BASE_URL}/user/logout`);
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {
         console.log("Logout successful");
+
         Cookies.remove("REMEMBERME");
-        localStorage.removeItem("username");
         localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        sessionStorage.removeItem("access_token");
         return response.data;
       } else {
         // Handle unexpected status
@@ -81,20 +89,15 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      const accessToken = localStorage.getItem("access_token");
-      const refreshToken = localStorage.getItem("refresh_token");
-      const username = localStorage.getItem("username");
-      const rememberMe = Cookies.get("REMEMBERME");
+      const accessToken =
+        localStorage.getItem("access_token") ||
+        sessionStorage.getItem("access_token");
+      const username =
+        localStorage.getItem("username") || sessionStorage.getItem("username");
 
-      console.log("Auto Login Check:", {
-        rememberMe,
-        accessToken,
-      });
-
-      if (rememberMe && accessToken) {
+      if (accessToken || username) {
         state.isLoggedIn = true;
         state.access_token = accessToken;
-        state.refresh_token = refreshToken;
         state.username = username;
       }
     },
@@ -111,7 +114,6 @@ const loginSlice = createSlice({
         state.isLoggedIn = true;
         state.username = action.payload.username;
         state.access_token = action.payload.access_token;
-        state.refresh_token = action.payload.refresh_token;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
