@@ -1,18 +1,33 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+} from "@mui/material";
+
 const bigCategory = [
   { id: "1", name: "Meat" },
   { id: "2", name: "Veggie" },
   { id: "3", name: "Fish" },
   { id: "4", name: "Dairy" },
 ];
+
 const midlleCategory = [
   { id: "1", categoryId: "1", name: "Haryana" },
   { id: "2", categoryId: "1", name: "Delhi" },
   { id: "3", categoryId: "2", name: "Texas" },
   { id: "4", categoryId: "2", name: "California" },
 ];
+
 const smallCategory = [
   { id: "1", smallCategoryId: "1", name: "Faridabad" },
   { id: "2", smallCategoryId: "1", name: "Palwal" },
@@ -23,6 +38,7 @@ const smallCategory = [
   { id: "7", smallCategoryId: "4", name: "Los Angeles" },
   { id: "8", smallCategoryId: "4", name: "San Diego" },
 ];
+
 const categoryData = {
   Meat: {
     title: "Meat",
@@ -45,6 +61,7 @@ const categoryData = {
     image: "path_to_dairy_image.jpg", // Replace with actual image path
   },
 };
+
 const CategoryDetails = () => {
   const { categoryTitle } = useParams();
   const category = categoryData[categoryTitle];
@@ -53,98 +70,108 @@ const CategoryDetails = () => {
   const [category3, setCategory3] = useState([]);
   const [selectedCategory1, setSelectedCategory1] = useState("");
   const [selectedCategory2, setSelectedCategory2] = useState("");
-  const [selectedCategory3, setSelectedCategory3] = useState(""); // New state for Category 3
+  const [selectedCategory3, setSelectedCategory3] = useState("");
 
   useEffect(() => {
     setCategory1(bigCategory);
   }, []);
+
   const handleCategory1Change = (id) => {
     setSelectedCategory1(id);
     const data = midlleCategory.filter((middle) => middle.categoryId === id);
     setCategory2(data);
-    setSelectedCategory2(""); // Reset Category 2 and 3
+    setSelectedCategory2("");
     setCategory3([]);
-    setSelectedCategory3(""); // Reset Category 3
+    setSelectedCategory3("");
   };
+
   const handleCategory2Change = (id) => {
     setSelectedCategory2(id);
     const data = smallCategory.filter((small) => small.smallCategoryId === id);
     setCategory3(data);
-    setSelectedCategory3(""); // Reset Category 3
+    setSelectedCategory3("");
   };
+
   const handleCategory3Change = (id) => {
-    setSelectedCategory3(id); // Update selected value for Category 3
+    setSelectedCategory3(id);
   };
+
   if (!category) {
     return <h6>Category not found.</h6>;
   }
+
   return (
     <Container className="py-4">
-      <h4>{category.title}</h4>
+      <Typography variant="h4">{category.title}</Typography>
       <Card>
-        <Image
-          src={category.image}
+        <CardMedia
+          component="img"
+          height="300"
+          image={category.image}
           alt={category.title}
-          fluid
-          style={{ height: "300px", objectFit: "cover" }}
+          sx={{ objectFit: "cover" }}
         />
-        <Card.Body>
-          <Card.Text>{category.description}</Card.Text>
-        </Card.Body>
+        <CardContent>
+          <Typography variant="body1">{category.description}</Typography>
+        </CardContent>
       </Card>
 
-      <Row className="mt-4">
-        <Col md={4}>
-          <Form.Group controlId="bigCategory">
-            <Form.Label>Select Category 1</Form.Label>
-            <Form.Select
+      <Grid container spacing={4} className="mt-4">
+        <Grid item md={4}>
+          <FormControl fullWidth>
+            <InputLabel>Select Category 1</InputLabel>
+            <Select
               value={selectedCategory1}
               onChange={(e) => handleCategory1Change(e.target.value)}
             >
-              <option value="">None</option>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               {category1.map((big) => (
-                <option key={big.id} value={big.id}>
+                <MenuItem key={big.id} value={big.id}>
                   {big.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="middleCategory">
-            <Form.Label>Select Category 2</Form.Label>
-            <Form.Select
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item md={4}>
+          <FormControl fullWidth disabled={!selectedCategory1}>
+            <InputLabel>Select Category 2</InputLabel>
+            <Select
               value={selectedCategory2}
               onChange={(e) => handleCategory2Change(e.target.value)}
-              disabled={!selectedCategory1}
             >
-              <option value="">None</option>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               {category2.map((middle) => (
-                <option key={middle.id} value={middle.id}>
+                <MenuItem key={middle.id} value={middle.id}>
                   {middle.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form.Group controlId="smallCategory">
-            <Form.Label>Select Category 3</Form.Label>
-            <Form.Select
-              value={selectedCategory3} // Set the value to the selected state
-              onChange={(e) => handleCategory3Change(e.target.value)} // Update the state on change
-              disabled={!selectedCategory2}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item md={4}>
+          <FormControl fullWidth disabled={!selectedCategory2}>
+            <InputLabel>Select Category 3</InputLabel>
+            <Select
+              value={selectedCategory3}
+              onChange={(e) => handleCategory3Change(e.target.value)}
             >
-              <option value="">None</option>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               {category3.map((small) => (
-                <option key={small.id} value={small.id}>
+                <MenuItem key={small.id} value={small.id}>
                   {small.name}
-                </option>
+                </MenuItem>
               ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-      </Row>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
     </Container>
   );
 };

@@ -7,7 +7,6 @@ const initialState = {
   post: {},
   loading: false,
   error: null,
-  updateUrl: null,
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -44,7 +43,8 @@ export const fetchPostById = createAsyncThunk(
   async (postId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/${postId}/detail`);
-      return response.data; // Adjust based on the API response structure
+
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -65,17 +65,18 @@ export const deletePost = createAsyncThunk(
 
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
-  async (postId) => {
-    const response = await axios.put(`${API_URL}/${postId}/update`, postId);
-    return response.data;
-  }
-);
-
-export const UpdatePostUrl = createAsyncThunk(
-  "posts/fetchUpdatePostUrl",
-  async (postId) => {
-    const response = await axios.get(`${API_URL}/${postId}/update`);
-    return response.data; // Adjust based on your API response structure
+  async ({ postId, postData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${API_URL}/${postId}/update`, postData);
+      console.log("updatePost response:", response);
+      return response.data;
+    } catch (error) {
+      console.log("updatePost error:", error)
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred.");
+    }
   }
 );
 
@@ -111,19 +112,18 @@ const postSlice = createSlice({
       })
       // Create post
       .addCase(createPost.fulfilled, (state, action) => {
-         state.loading = false;
-        // state.postList.push(action.payload); 
-          const postsToAdd = Array.isArray(action.payload)
-            ? action.payload
-            : [action.payload];
-          state.postList.push(...postsToAdd);
-          console.log(postsToAdd);
+        state.loading = false;
+        // state.postList.push(action.payload);
+        const postsToAdd = Array.isArray(action.payload)
+          ? action.payload
+          : [action.payload];
+        state.postList.push(...postsToAdd);
       })
       // Edit post
       .addCase(updatePost.fulfilled, (state, action) => {
         const updatedPost = action.payload;
         const index = state.postList.findIndex(
-          (post) => post.id === updatedPost.id
+          (post) => post.postId === updatedPost.postId
         );
         if (index >= 0) {
           state.postList[index] = updatedPost;
@@ -146,17 +146,6 @@ const postSlice = createSlice({
       .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message; // Set error message
-      })
-      .addCase(UpdatePostUrl.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(UpdatePostUrl.fulfilled, (state, action) => {
-        state.loading = false;
-        state.updateUrl = action.payload.data.url; // Adjust based on your response structure
-      })
-      .addCase(UpdatePostUrl.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
       });
   },
 });

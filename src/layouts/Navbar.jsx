@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,7 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
+
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { login, logoutUser } from "../redux/slices/loginSlice";
@@ -19,7 +19,7 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-   const username = useSelector((state) => state.login.username);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,16 +45,12 @@ function Navbar() {
   };
 
   const handleLogin = () => {
-
-    dispatch(login(FormData));
+    dispatch(login());
     navigate("/");
   };
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{ backgroundColor: "#C5705D", color: "beige", height: "5rem" }}
-    >
+    <AppBar position="sticky" sx={{ backgroundColor: "#2C3E50" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Menu Button for mobile */}
@@ -82,11 +78,7 @@ function Navbar() {
                 <Typography
                   component={Link}
                   to="/"
-                  sx={{
-                    textAlign: "center",
-                    color: "inherit",
-                    textDecoration: "none",
-                  }}
+                  sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Home
                 </Typography>
@@ -95,11 +87,7 @@ function Navbar() {
                 <Typography
                   component={Link}
                   to="/category"
-                  sx={{
-                    textAlign: "center",
-                    color: "inherit",
-                    textDecoration: "none",
-                  }}
+                  sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Category
                 </Typography>
@@ -107,12 +95,8 @@ function Navbar() {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="/api/user/contact-us"
-                  sx={{
-                    textAlign: "center",
-                    color: "inherit",
-                    textDecoration: "none",
-                  }}
+                  to="/api/contact-us"
+                  sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Contact Us
                 </Typography>
@@ -120,7 +104,7 @@ function Navbar() {
             </Menu>
           </Box>
 
-          {/* Logo Positioned on the Right for Desktop */}
+          {/* Logo Positioned on the Left for Desktop */}
           <Box
             sx={{
               flexGrow: 1,
@@ -132,37 +116,12 @@ function Navbar() {
               variant="h6"
               noWrap
               component={Link}
-              to="/" // Home path
+              to="/"
               sx={{
                 fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".1rem",
-                color: "beige",
-                textDecoration: "none",
-              }}
-            >
-              AuctionPrice
-            </Typography>
-          </Box>
-
-          {/* Mobile Logo Centered */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
-              noWrap
-              component={Link}
-              to="/" // Home path
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".1rem",
-                color: "beige",
+                color: "white",
                 textDecoration: "none",
               }}
             >
@@ -176,7 +135,7 @@ function Navbar() {
               component={Link}
               to="/"
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "inherit", display: "block" }}
+              sx={{ my: 2, color: "white", display: "block" }}
             >
               Home
             </Button>
@@ -184,15 +143,15 @@ function Navbar() {
               component={Link}
               to="/category"
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "inherit", display: "block" }}
+              sx={{ my: 2, color: "white", display: "block" }}
             >
               Category
             </Button>
             <Button
               component={Link}
-              to="/api/user/contact-us"
+              to="/api/contact-us"
               onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "inherit", display: "block" }}
+              sx={{ my: 2, color: "white", display: "block" }}
             >
               Contact Us
             </Button>
@@ -201,15 +160,12 @@ function Navbar() {
           {/* User Menu */}
           {isLoggedIn ? (
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Profile">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <AccountCircle sx={{ color: "beige" }} />
-                </IconButton>
-              </Tooltip>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <AccountCircle sx={{ color: "white" }} />
+              </IconButton>
+
               <Menu
-                sx={{
-                  mt: "25px",
-                }}
+                sx={{ mt: "45px" }}
                 id="menu-appbar"
                 anchorEl={anchorElUser}
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
@@ -222,11 +178,7 @@ function Navbar() {
                   <Typography
                     component={Link}
                     to="/api/user/mypage"
-                    sx={{
-                      textAlign: "center",
-                      color: "inherit",
-                      textDecoration: "none",
-                    }}
+                    sx={{ textDecoration: "none", color: "inherit" }}
                   >
                     My Page
                   </Typography>
@@ -235,19 +187,13 @@ function Navbar() {
                   <Typography
                     component={Link}
                     to="/api/user/wishlist"
-                    sx={{
-                      textAlign: "center",
-                      color: "#2b2a28",
-                      textDecoration: "none",
-                    }}
+                    sx={{ textDecoration: "none", color: "inherit" }}
                   >
                     WishList
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
-                  <Typography sx={{ textAlign: "center", color: "#2b2a28" }}>
-                    Logout
-                  </Typography>
+                  <Typography sx={{ color: "#d32f2f" }}>Logout</Typography>
                 </MenuItem>
               </Menu>
             </Box>
@@ -256,7 +202,7 @@ function Navbar() {
               component={Link}
               to="/api/user/login"
               onClick={handleLogin}
-              sx={{ my: 2, color: "inherit", display: "block" }}
+              sx={{ my: 2, color: "white", display: "block" }}
             >
               Login
             </Button>

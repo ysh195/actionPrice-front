@@ -1,25 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 
-import Footer from "./layouts/Footer";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import MyPage from "./pages/MyPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-
-
-import CategoryDetails from "./components/CategoryDetails";
-
-
+import CategoryDetails from "./components/Category/CategoryDetails";
 import "./App.css";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { autoLogin } from "./redux/slices/loginSlice";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 import AppLayout from "./layouts/AppLayout";
-import CreatePost from "./components/CreatePost";
-import PostDetail from "./components/PostDetail";
-import EditPost from "./components/EditPost";
+import CreatePost from "./components/Post/CreatePost";
+import PostDetailPage from "./components/Post/PostDetailPage";
+import UpdatePost from "./components/Post/UpdatePost";
+import PostList from "./components/Post/PostList";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,16 +30,29 @@ function App() {
           <Route path="/" exact element={<Home />} />
           <Route path="api/user/login" exact element={<Login />} />
           <Route path="api/user/register" exact element={<Register />} />
-          <Route path="api/user/mypage" exact element={<MyPage />} />
           <Route
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}
           />
-          <Route path="api/user/contact-us" element={<ContactUs />} />
-          <Route path="api/post/create" exact element={<CreatePost />} />
-          <Route path="api/post/:postId/detail" element={<PostDetail />} />
-          <Route path="/post/:postId/update" element={<EditPost />} />
+          <Route path="api/contact-us" element={<ContactUs />} />
 
+
+          <Route
+            path="api/user/mypage"
+            element={<ProtectedRoute element={<MyPage />} />}
+          />
+          <Route
+            path="api/post/create"
+            element={<ProtectedRoute element={<CreatePost />} />}
+          />
+          <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
+
+          <Route
+            path="api/post/:postId/update"
+            element={<ProtectedRoute element={<UpdatePost />} />}
+          />
+          <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
+          <Route path="api/post/list" element={<PostList />} />
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>
