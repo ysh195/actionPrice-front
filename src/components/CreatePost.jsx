@@ -19,6 +19,7 @@ const CreatePost = ({ onPostCreated }) => {
   const dispatch = useDispatch();
 
   const username = useSelector((state) => state.login.username);
+     console.log(username);
 
 
   const handleCreatePost = async () => {
@@ -29,7 +30,7 @@ const CreatePost = ({ onPostCreated }) => {
         username
       };
       await dispatch(createPost(postData)).unwrap();
-      console.log(postData)
+      console.log("postData:", postData);
       setNewPost("");
       setTitle("");
       setOpenSnackbar(true);
@@ -53,6 +54,7 @@ const CreatePost = ({ onPostCreated }) => {
       </Typography>
       <TextField
       value={username}></TextField>
+   
       <TextField
         label="제목"
         value={title}

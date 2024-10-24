@@ -7,6 +7,7 @@ const initialState = {
   postDetail: null,
   loading: false,
   error: null,
+  updateUrl: null,
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -15,7 +16,7 @@ export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData) => {
     console.log(postData);
-    const response = await axios.post(`${API_URL}/createPost`, postData);
+    const response = await axios.post(`${API_URL}/create`, postData);
     console.log(response);
     return response.data; // Assuming the response contains the created post
     // return response.data.data.message;
@@ -24,28 +25,34 @@ export const createPost = createAsyncThunk(
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const response = await axios.get(`${API_URL}/list`);
-  return response.data; // Assuming your API returns an object with a "content" property
+  return response.data;
 });
 
 export const onePostDetails = createAsyncThunk(
   "posts/fetchPostDetails",
-  async ({ id }) => {
+  async (id) => {
     const response = await axios.get(`${API_URL}/${id}`);
     return response.data; // Adjust based on the API response structure
   }
 );
 
-export const updatePost = createAsyncThunk(
-  "posts/updatePost",
-  async ({ id, postData }) => {
-    const response = await axios.put(`${API_URL}/${id}/update`, postData);
-    return response.data; // Assuming the response contains the updated post
-    // return response.data.data.message;
+export const updatePost = createAsyncThunk("posts/updatePost", async (id) => {
+  const response = await axios.put(`${API_URL}/${id}/update`, id);
+  return response.data; 
+});
+
+export const UpdatePostUrl = createAsyncThunk(
+  "posts/fetchUpdatePostUrl",
+  async (postId) => {
+    const response = await axios.get(`${API_URL}/${postId}/update`);
+    return response.data; // Adjust based on your API response structure
   }
 );
 
+
+
 export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
-  await axios.delete(`${API_URL}/${id}/deletePost`);
+  await axios.delete(`${API_URL}/${id}/delete`);
   return id; // Return the deleted post's id
   //  return response.data.data.message;
 });
@@ -93,9 +100,7 @@ const postSlice = createSlice({
       // Delete post
       .addCase(deletePost.fulfilled, (state, action) => {
         const id = action.payload;
-        state.postList = state.postList.filter(
-          (post) => post.id !== id
-        );
+        state.postList = state.postList.filter((post) => post.id !== id);
       })
       .addCase(onePostDetails.pending, (state) => {
         state.loading = true;
@@ -107,7 +112,18 @@ const postSlice = createSlice({
       })
       .addCase(onePostDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message; ; // Set error message
+        state.error = action.error.message; // Set error message
+      })
+      .addCase(UpdatePostUrl.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(UpdatePostUrl.fulfilled, (state, action) => {
+        state.loading = false;
+        state.updateUrl = action.payload.data.url; // Adjust based on your response structure
+      })
+      .addCase(UpdatePostUrl.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

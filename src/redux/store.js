@@ -6,7 +6,6 @@ import verificationReducer from "./slices/verificationSlice";
 import userReducer from "./slices/userSlice";
 import postReducer from "./slices/postSlice";
 
-
 export const store = configureStore({
   reducer: {
     category: categoryReducer,

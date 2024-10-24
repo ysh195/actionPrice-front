@@ -85,13 +85,16 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      const access_token =
-        localStorage.getItem("access_token");
+      const access_token = localStorage.getItem("access_token");
+
+      const username = localStorage.getItem("username");
 
       console.log("checking if there's token:", access_token);
       if (access_token) {
         state.isLoggedIn = true;
         state.access_token = access_token;
+
+        state.username = username;
       }
     },
   },
@@ -105,9 +108,11 @@ const loginSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
- 
+
         state.username = action.payload.username;
         state.access_token = action.payload.access_token;
+        localStorage.setItem("username", action.payload.username);
+        localStorage.setItem("access_token", action.payload.access_token);
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
