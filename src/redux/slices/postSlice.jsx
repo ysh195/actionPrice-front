@@ -4,7 +4,7 @@ import axios from "axios";
 
 const initialState = {
   postList: [],
-  postDetail: null,
+  post: {},
   loading: false,
   error: null,
   updateUrl: null,
@@ -39,11 +39,11 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-export const onePostDetails = createAsyncThunk(
+export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async (id, { rejectWithValue }) => {
+  async (postId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${id}`);
+      const response = await axios.get(`${API_URL}/${postId}/detail`);
       return response.data; // Adjust based on the API response structure
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -51,10 +51,25 @@ export const onePostDetails = createAsyncThunk(
   }
 );
 
-export const updatePost = createAsyncThunk("posts/updatePost", async (id) => {
-  const response = await axios.put(`${API_URL}/${id}/update`, id);
-  return response.data;
-});
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (postId, { rejectWithValue }) => {
+    try {
+      await axios.delete(`${API_URL}/${postId}/delete`);
+      return postId; // Return the deleted post's id
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (postId) => {
+    const response = await axios.put(`${API_URL}/${postId}/update`, postId);
+    return response.data;
+  }
+);
 
 export const UpdatePostUrl = createAsyncThunk(
   "posts/fetchUpdatePostUrl",
@@ -64,12 +79,6 @@ export const UpdatePostUrl = createAsyncThunk(
   }
 );
 
-export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
-  await axios.delete(`${API_URL}/${id}/delete`);
-  return id; // Return the deleted post's id
-  //  return response.data.data.message;
-});
-
 const postSlice = createSlice({
   name: "post",
   initialState,
@@ -78,7 +87,7 @@ const postSlice = createSlice({
       state.error = null;
     },
     clearPostDetail: (state) => {
-      state.postDetail = null; // Action to clear post detail
+      state.post = null; // Action to clear post detail
     },
   },
   extraReducers: (builder) => {
@@ -92,10 +101,9 @@ const postSlice = createSlice({
         state.loading = false;
         console.log("postList", action.payload);
         // state.postList = action.payload;
-            state.postList = Array.isArray(action.payload)
-              ? action.payload
-              : [action.payload];
-
+        state.postList = Array.isArray(action.payload)
+          ? action.payload
+          : [action.payload];
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.loading = false;
@@ -103,7 +111,13 @@ const postSlice = createSlice({
       })
       // Create post
       .addCase(createPost.fulfilled, (state, action) => {
-        state.postList.push(action.payload); // Add the new post to the postList
+         state.loading = false;
+        // state.postList.push(action.payload); 
+          const postsToAdd = Array.isArray(action.payload)
+            ? action.payload
+            : [action.payload];
+          state.postList.push(...postsToAdd);
+          console.log(postsToAdd);
       })
       // Edit post
       .addCase(updatePost.fulfilled, (state, action) => {
@@ -120,15 +134,16 @@ const postSlice = createSlice({
         const id = action.payload;
         state.postList = state.postList.filter((post) => post.id !== id);
       })
-      .addCase(onePostDetails.pending, (state) => {
+      //fetchPostById
+      .addCase(fetchPostById.pending, (state) => {
         state.loading = true;
         state.error = null; // Reset error on new request
       })
-      .addCase(onePostDetails.fulfilled, (state, action) => {
+      .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
-        state.postDetail = action.payload; // Set post data
+        state.post = action.payload; // Set post data
       })
-      .addCase(onePostDetails.rejected, (state, action) => {
+      .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message; // Set error message
       })
