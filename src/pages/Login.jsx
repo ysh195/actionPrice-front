@@ -43,7 +43,9 @@ const Login = () => {
     const formData = { username, password };
     try {
       const result = await dispatch(login(formData)).unwrap();
+      console.log(result);
       localStorage.setItem("access_token", result.access_token);
+       localStorage.setItem("username", result.username);
 
       Swal.fire({
         text: "성공적으로 로그인되었습니다!",
@@ -122,7 +124,7 @@ const Login = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, backgroundColor: "#C5705D", height:"3rem"}}
+            sx={{ mt: 2, backgroundColor: "#C5705D", height: "3rem" }}
             disabled={isLoading}
           >
             {isLoading ? <CircularProgress size={24} /> : "Login"}

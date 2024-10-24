@@ -56,7 +56,6 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-
       const response = await axios.post(`${BASE_URL}/user/logout`);
       console.log("logoutUser response status:", response.status);
 
@@ -65,7 +64,7 @@ export const logoutUser = createAsyncThunk(
 
         Cookies.remove("REMEMBERME");
         localStorage.removeItem("access_token");
-        sessionStorage.removeItem("access_token");
+
         return response.data;
       } else {
         // Handle unexpected status
@@ -86,12 +85,10 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      
       const access_token =
-        localStorage.getItem("access_token") ||
-        sessionStorage.getItem("access_token");
+        localStorage.getItem("access_token");
 
-        console.log("checking if there's token:", access_token);
+      console.log("checking if there's token:", access_token);
       if (access_token) {
         state.isLoggedIn = true;
         state.access_token = access_token;
@@ -108,7 +105,7 @@ const loginSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
-        console.log(action.payload);
+ 
         state.username = action.payload.username;
         state.access_token = action.payload.access_token;
       })

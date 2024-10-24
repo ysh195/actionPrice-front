@@ -18,16 +18,18 @@ const CreatePost = ({ onPostCreated }) => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
-  const username = useSelector((state) => state.login.username); // Assuming you have a user slice
+  const username = useSelector((state) => state.login.username);
+
 
   const handleCreatePost = async () => {
     try {
       const postData = {
         title,
         content: newPost,
-        username,
+        username
       };
       await dispatch(createPost(postData)).unwrap();
+      console.log(postData)
       setNewPost("");
       setTitle("");
       setOpenSnackbar(true);
@@ -50,6 +52,8 @@ const CreatePost = ({ onPostCreated }) => {
         문의 내용을 작성해주세요
       </Typography>
       <TextField
+      value={username}></TextField>
+      <TextField
         label="제목"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -67,7 +71,7 @@ const CreatePost = ({ onPostCreated }) => {
         fullWidth
         sx={{ marginTop: 2, marginBottom: 2 }}
       />
-      <Button variant="contained" color="primary" onClick={handleCreatePost}>
+      <Button variant="contained" onClick={handleCreatePost}>
         등록
       </Button>
 
