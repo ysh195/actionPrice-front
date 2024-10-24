@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice"; 
 import { useNavigate } from "react-router-dom";
 import "../css/MyPage.css";
@@ -8,6 +8,10 @@ const MyPage = () => {
   const [activeTab, setActiveTab] = useState("personalInfo");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+    const username = useSelector((state) => state.login.username);
+        const access_token = useSelector((state) => state.login.access_token);
+    console.log(username)
+
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -29,7 +33,8 @@ const MyPage = () => {
         return (
           <div>
             <h4>Personal Information</h4>
-            <p>Name: John Doe</p>
+            <p>Name: {username || "Not provided"}</p>
+            <p>Name: {access_token || "Not provided"}</p>
             <p>Email: john.doe@example.com</p>
           </div>
         );

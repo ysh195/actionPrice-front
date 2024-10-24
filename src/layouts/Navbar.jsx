@@ -19,6 +19,7 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+   const username = useSelector((state) => state.login.username);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,7 +45,8 @@ function Navbar() {
   };
 
   const handleLogin = () => {
-    dispatch(login());
+
+    dispatch(login(FormData));
     navigate("/");
   };
 
