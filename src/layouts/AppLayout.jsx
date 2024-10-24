@@ -2,17 +2,21 @@
 
 import React from "react";
 import { Container } from "react-bootstrap";
-import Footer from "./Footer"; 
-import NavigationBar from "./NavigationBar";
+import Footer from "./Footer";
+import Navbar from "./NavBar";
 
 const AppLayout = ({ children }) => {
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", minHeight: "100vh", marginTop: '100px'}}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
     >
-      <NavigationBar />
-      <Container className="flex-fill" style={{ flex: "1"}}>
-        {children} 
+      <Navbar />
+      <Container className="flex-fill" style={{ flex: "1" }}>
+        {children}
       </Container>
       <Footer />
     </div>

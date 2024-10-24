@@ -6,8 +6,10 @@ import ContactUs from "./pages/ContactUs";
 import MyPage from "./pages/MyPage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+
+
 import CategoryDetails from "./components/CategoryDetails";
-import NavigationBar from "./layouts/NavigationBar";
+
 
 import "./App.css";
 import { useDispatch } from "react-redux";
@@ -15,6 +17,9 @@ import { useEffect } from "react";
 import { autoLogin } from "./redux/slices/loginSlice";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppLayout from "./layouts/AppLayout";
+import CreatePost from "./components/CreatePost";
+import PostDetail from "./components/PostDetail";
+import EditPost from "./components/EditPost";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,7 +38,11 @@ function App() {
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}
           />
-          <Route path="api/contact-us" element={<ContactUs />} />
+          <Route path="api/user/contact-us" element={<ContactUs />} />
+          <Route path="api/post/create" exact element={<CreatePost />} />
+          <Route path="api/post/:postId/detail" element={<PostDetail />} />
+          <Route path="/post/:postId/update" element={<EditPost />} />
+
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>

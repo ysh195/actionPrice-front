@@ -1,35 +1,4 @@
-.alert-title {
-  font-size: 14px; /* Adjust the font size as needed */
-}
-
-.alert-body {
-  font-size: 12px; /* Adjust the font size as needed */
-}
-
-.event-img {
-  width: 100%;
-  height: auto; 
-  max-height: 400px;
-  object-fit: cover; 
-  border-radius: 15px; 
-  background-color: #f8f9fa;
-
-}
-
-.carousel-item {
-  transition: opacity 0.5s ease-in-out;
-}
-
-.carousel-item img {
-  display: block;
-  margin: 0 auto;
-}
 
 
-/* CategorySection.css */
-.card-custom:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
+
+

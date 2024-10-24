@@ -1,8 +1,9 @@
+/* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  username: null,
+  user: null,
   isLoading: false,
   isError: false,
   errorMessage: "",
@@ -30,11 +31,15 @@ export const registerUser = createAsyncThunk(
         }
       );
       console.log("Registration successful:", response.data);
+      console.log(response);
       return response.data;
+      
     } catch (error) {
       console.error("Registration error:", error);
       return rejectWithValue(
-        error.response?.data || error.message || "An error occurred"
+        error.response?.data ||
+          error.message ||
+          "오류가 발생했습니다. 다시 시도해 주세요."
       );
     }
   }
@@ -44,10 +49,7 @@ const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
-    clearMessages(state) {
-      state.errorMessage = null;
-      state.successMessage = null;
-    },
+  
   },
   extraReducers: (builder) => {
     builder
@@ -58,7 +60,8 @@ const registerSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.data;
+        console.log(action.payload)
+        state.user = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -68,5 +71,5 @@ const registerSlice = createSlice({
   },
 });
 
-export const { clearMessages } = registerSlice.actions;
+export const { } = registerSlice.actions;
 export default registerSlice.reducer;

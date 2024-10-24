@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Nav, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import {logoutUser } from "../redux/slices/loginSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../redux/slices/loginSlice"; 
 import { useNavigate } from "react-router-dom";
+import "../css/MyPage.css";
 
-const UserProfile = () => {
+const MyPage = () => {
   const [activeTab, setActiveTab] = useState("personalInfo");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+    const username = useSelector((state) => state.login.username);
+        const access_token = useSelector((state) => state.login.access_token);
+    console.log(username)
+
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -18,19 +22,19 @@ const UserProfile = () => {
     navigate("/api/user/login");
   };
 
-    const withdrawMembership = () => {
-      dispatch(withdrawMembership());
-      navigate("/api/user/withdraw");
-    };
+  const withdrawMembership = () => {
+    dispatch(withdrawMembership());
+    navigate("/api/user/withdraw");
+  };
 
   const renderContent = () => {
     switch (activeTab) {
       case "personalInfo":
         return (
           <div>
-            <h4>개인 정보</h4>
-            <p>성명: John Doe</p>
-            <p>이메일: john.doe@example.com</p>
+            <h4>Personal Information</h4>
+            <p>Name: {username || "Not provided"}</p>
+            <p>Email: john.doe@example.com</p>
           </div>
         );
       case "wishlist":
@@ -44,25 +48,37 @@ const UserProfile = () => {
             </ul>
           </div>
         );
+
+      case "myPosts":
+        return (
+          <div>
+            <h4>Your Posts</h4>
+            <ul>
+              <li>Item 1</li>
+              <li>Item 2</li>
+              <li>Item 3</li>
+            </ul>
+          </div>
+        );
       case "logout":
         return (
           <div>
             <h4>Logout</h4>
             <p>Are you sure you want to log out?</p>
-            <Button variant="danger" onClick={handleLogout}>
-              로그아웃 확인
-            </Button>
+            <button onClick={handleLogout} className="danger-button">
+              Confirm Logout
+            </button>
           </div>
         );
 
       case "deleteUser":
         return (
           <div>
-            <h4>회원탈퇴</h4>
-            <p>Are you sure you want to delete you profile?</p>
-            <Button variant="danger" onClick={withdrawMembership}>
-              회원탈퇴 확인
-            </Button>
+            <h4>Delete Account</h4>
+            <p>Are you sure you want to delete your profile?</p>
+            <button onClick={withdrawMembership} className="danger-button">
+              Confirm Withdrawal
+            </button>
           </div>
         );
       default:
@@ -71,46 +87,36 @@ const UserProfile = () => {
   };
 
   return (
-    <Container className="py-5 mt-5">
-      <Row>
-        <Col md={3}>
-          <Nav className="flex-column">
-            <Button
-              variant="outline-secondary"
-              onClick={() => handleTabClick("personalInfo")}
-              className="mb-2"
-            >
-              개인 정보
-            </Button>
-            <Button
-              variant="outline-secondary"
-              onClick={() => handleTabClick("wishlist")}
-              className="mb-2"
-            >
-              Wishlist
-            </Button>
-            <Button
-              variant="outline-info"
-              onClick={() => handleTabClick("logout")}
-              className="mb-2"
-            >
-              로그아웃
-            </Button>
-            <Button
-              variant="outline-danger"
-              onClick={() => handleTabClick("deleteUser")}
-              className="mb-2"
-            >
-              회원탈퇴
-            </Button>
-          </Nav>
-        </Col>
-        <Col md={9}>
-          <div className="border p-3">{renderContent()}</div>
-        </Col>
-      </Row>
-    </Container>
+    <div className="user-profile-container">
+      <div className="sidebar">
+        <button
+          onClick={() => handleTabClick("personalInfo")}
+          className="tab-button"
+        >
+          Personal Info
+        </button>
+        <button
+          onClick={() => handleTabClick("wishlist")}
+          className="tab-button"
+        >
+          Wishlist
+        </button>
+        <button onClick={() => handleTabClick("myPosts")} className="tab-button">
+          My Posts
+        </button>
+        <button onClick={() => handleTabClick("logout")} className="tab-button">
+          Logout
+        </button>
+        <button
+          onClick={() => handleTabClick("deleteUser")}
+          className="tab-button"
+        >
+          Delete Account
+        </button>
+      </div>
+      <div className="content">{renderContent()}</div>
+    </div>
   );
 };
 
-export default UserProfile;
+export default MyPage;

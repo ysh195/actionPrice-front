@@ -11,6 +11,10 @@
     "serve": "vite --port 8000"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/material": "^6.1.5",
     "@reduxjs/toolkit": "^2.2.7",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
@@ -24,6 +28,7 @@
     "react-router-dom": "^6.26.2",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
+    "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.14.2",
     "sweetalert2-react-content": "^5.0.7"
@@ -40,6 +45,7 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
+    "sass-embedded": "^1.80.2",
     "vite": "^5.4.1"
   }
 }

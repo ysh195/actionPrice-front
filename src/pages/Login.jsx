@@ -4,15 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Cookies from "js-cookie";
 import {
   Container,
   Card,
-  Form,
+  TextField,
   Button,
-  InputGroup,
-  Spinner,
-} from "react-bootstrap";
+  Checkbox,
+  FormControlLabel,
+  CircularProgress,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
@@ -28,8 +30,8 @@ const Login = () => {
 
   const validateInputs = () => {
     const newErrors = { username: "", password: "" };
-    if (!username) newErrors.username = "Username is required";
-    if (!password) newErrors.password = "Password is required";
+    if (!username) newErrors.username = "시용자 이름은 필수입니다.";
+    if (!password) newErrors.password = "비밀번호는 필수입니다";
     setErrors(newErrors);
     return !newErrors.username && !newErrors.password;
   };
@@ -38,21 +40,15 @@ const Login = () => {
     e.preventDefault();
     if (!validateInputs()) return;
 
-    const formData = { username, password, rememberMe };
+    const formData = { username, password };
     try {
       const result = await dispatch(login(formData)).unwrap();
-
-      // Set a cookie for "Remember Me"
-      if (rememberMe) {
-        console.log("Setting access token in local storage");
-        localStorage.setItem("access_token", result.access_token);
-      } else {
-        console.log("Setting access token in session storage");
-        sessionStorage.setItem("access_token", result.access_token);
-      }
+      console.log(result);
+      localStorage.setItem("access_token", result.access_token);
+       localStorage.setItem("username", result.username);
 
       Swal.fire({
-        title: "Signed in successfully!",
+        text: "성공적으로 로그인되었습니다!",
         icon: "success",
         showConfirmButton: false,
         timer: 2000,
@@ -63,94 +59,78 @@ const Login = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "입력한 정보가 올바르지 않습니다. 다시 시도해 주세요.",
+        text: "입력된 정보가 올바르지 않습니다. 다시 시도해 주세요.",
         showConfirmButton: true,
       });
     }
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center min-vh-100">
-      <Card
-        className="p-5"
-        style={{
-          maxWidth: "450px",
-          width: "100%",
-          borderRadius: "20px",
-          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Card.Title
-          className="text-center"
-          style={{ fontSize: "2rem", color: "#49557e" }}
-        >
+    <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
+      <Card sx={{ p: 3, borderRadius: "16px", boxShadow: 3 }}>
+        <Typography variant="h5" align="center" color="#49557e">
           Login
-        </Card.Title>
-        <Form onSubmit={handleLogin}>
+        </Typography>
+        <form onSubmit={handleLogin}>
           {/* Username Input */}
-          <Form.Group className="mb-3 mt-3">
-            <Form.Control
-              type="text"
-              placeholder="유저네임 입력하세요"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              isInvalid={!!errors.username}
-              style={{ height: "3rem" }}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="사용자 이름"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            error={!!errors.username}
+            helperText={errors.username}
+          />
 
           {/* Password Input */}
-          <Form.Group className="mb-3">
-            <InputGroup>
-              <Form.Control
-                type={showPassword ? "text" : "password"}
-                placeholder="페스워드를 입력하세요"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                isInvalid={!!errors.password}
-                style={{ height: "3rem" }}
-              />
-              <InputGroup.Text
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ cursor: "pointer", borderRadius: "0 5px 5px 0" }}
-              >
-                {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
-              </InputGroup.Text>
-              <Form.Control.Feedback type="invalid">
-                {errors.password}
-              </Form.Control.Feedback>
-            </InputGroup>
-          </Form.Group>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="비밀번호"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={!!errors.password}
+            helperText={errors.password}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
+                </IconButton>
+              ),
+            }}
+          />
 
           {/* Remember Me Checkbox */}
-          <Form.Group className="mb-3">
-            <Form.Check
-              type="checkbox"
-              label="Remember me"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
-            />
-          </Form.Group>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+                color="primary"
+              />
+            }
+            label="Remember me"
+          />
 
           {/* Submit Button */}
           <Button
             type="submit"
-            className="w-100"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 2, backgroundColor: "#C5705D", height: "3rem" }}
             disabled={isLoading}
-            style={{
-              backgroundColor: "#C5705D",
-              color: "white",
-              height: "3rem",
-              border: "none",
-            }}
           >
-            {isLoading ? <Spinner animation="border" size="sm" /> : "Login"}
+            {isLoading ? <CircularProgress size={24} /> : "Login"}
           </Button>
-        </Form>
-        <div className="text-center mt-3">
+        </form>
+        <div style={{ textAlign: "center", marginTop: "16px" }}>
           계정이 없으신가요?
           <Link to="/api/user/register" style={{ color: "#CB6040" }}>
             해원가입 하세요
