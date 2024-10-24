@@ -39,18 +39,13 @@ export const login = createAsyncThunk(
           "로그인에 실패했습니다. 정보를 확인하세요."
         );
       }
-      // Check rememberMe to set tokens
-      if (formData.rememberMe) {
-        localStorage.setItem("access_token", response.data.access_token);
-      } else {
-        sessionStorage.setItem("access_token", response.data.access_token);
-      }
       console.log("Login Response:", response);
       return response.data;
     } catch (error) {
       console.error("Login Error:", error);
       const errorMsg =
-        error.response?.data?.message || "로그인 실패. 정보를 확인하세요.";
+        error.response?.data?.message ||
+        "로그인에 실패했습니다. 정보를 확인하세요.";
 
       return thunkAPI.rejectWithValue(errorMsg);
     }
@@ -74,12 +69,14 @@ export const logoutUser = createAsyncThunk(
         return response.data;
       } else {
         // Handle unexpected status
-        return rejectWithValue("Logout failed. Please try again.");
+        return rejectWithValue("로그아웃에 실패했습니다. 다시 시도해 주세요.");
       }
     } catch (error) {
       console.error("Logout failed:", error);
       // Handle logout error
-      return rejectWithValue(error.response?.data || "Logout failed.");
+      return rejectWithValue(
+        error.response?.data || "로그아웃에 실패했습니다."
+      );
     }
   }
 );
@@ -89,16 +86,15 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      const accessToken =
+      
+      const access_token =
         localStorage.getItem("access_token") ||
         sessionStorage.getItem("access_token");
-      const username =
-        localStorage.getItem("username") || sessionStorage.getItem("username");
 
-      if (accessToken || username) {
+        console.log("checking if there's token:", access_token);
+      if (access_token) {
         state.isLoggedIn = true;
-        state.access_token = accessToken;
-        state.username = username;
+        state.access_token = access_token;
       }
     },
   },
@@ -112,6 +108,7 @@ const loginSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
+        console.log(action.payload);
         state.username = action.payload.username;
         state.access_token = action.payload.access_token;
       })

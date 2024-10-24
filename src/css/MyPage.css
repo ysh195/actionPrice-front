@@ -1,0 +1,37 @@
+.user-profile-container {
+  display: flex;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.sidebar {
+  width: 200px;
+  margin-right: 20px;
+}
+
+.tab-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tab-button:hover {
+  background: #e0e0e0;
+}
+
+.danger-button {
+  background: #ff4d4d;
+  color: white;
+}
+
+.content {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+}
