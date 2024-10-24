@@ -1,55 +1,40 @@
 import React from "react";
-import { Container, Row, Col, Nav } from "react-bootstrap";
+import "../css/Footer.css";
 
 const Footer = () => {
   return (
-    <footer
-      style={{
-        backgroundColor: "#C5705D",
-        color: "white",
-        padding: "2rem 0",
-      }}
-    >
-      <Container>
-        {/* Logo Image */}
-        <Row className="mb-3">
-          <Col className="text-center">
-            <img
-              src={""} // Replace with your logo source
-              alt="Company Logo"
-              style={{ width: "150px", height: "auto" }}
-            />
-          </Col>
-        </Row>
-
-        {/* Navigation Links */}
-        <Row className="mb-3 justify-content-center">
-          <Nav>
-            <Nav.Link href="#" className="text-white mx-3">
-              Home
-            </Nav.Link>
-            <Nav.Link href="#about" className="text-white mx-3">
-              About Us
-            </Nav.Link>
-            <Nav.Link href="#services" className="text-white mx-3">
-              Services
-            </Nav.Link>
-            <Nav.Link href="#contact" className="text-white mx-3">
-              Contact
-            </Nav.Link>
-          </Nav>
-        </Row>
-
-        {/* Copyright Text */}
-        <Row>
-          <Col>
-            <p className="text-center" style={{ margin: 0 }}>
-              © {new Date().getFullYear()} AuctionPrice. All rights reserved.
-            </p>
-          </Col>
-        </Row>
-      </Container>
-    </footer>
+    <div className="footer" id="footer">
+      <div className="footer-content">
+        <div className="footer-content-left">
+          <img src={""} alt="logo" />
+          <p>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum is simply dummy text of the printing and
+            typesetting industry.
+          </p>
+        </div>
+        <div className="footer-content-center">
+          <h2>COMPANY</h2>
+          <ul>
+            <li>Home</li>
+            <li>Contact us</li>
+            <li>Privacy policy</li>
+          </ul>
+        </div>
+        <div className="footer-content-right">
+          <h2>GET IN TOUCH</h2>
+          <ul>
+            <li>+82-2222-1111</li>
+            <li>contact@contact.com</li>
+          </ul>
+        </div>
+      </div>
+      <hr />
+      <p className="footer-copyright">
+        © {new Date().getFullYear()} AuctionPrice. All rights reserved.
+        Copyright
+      </p>
+    </div>
   );
 };
 

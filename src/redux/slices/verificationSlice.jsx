@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -29,10 +30,13 @@ export const checkUsername = createAsyncThunk(
         }
       );
       console.log("Slice check Username:", response.data);
+   
       return response.data; //"Username is available";
     } catch (error) {
       console.error("Slice Error response:", error.response);
-      return rejectWithValue(error.response?.data || "An error occurred.");
+      return rejectWithValue(
+        error.response?.data || "오류가 발생했습니다. 다시 시도해 주세요."
+      );
     }
   }
 );
@@ -52,7 +56,9 @@ export const checkEmailDup = createAsyncThunk(
       if (error.response && error.response.data) {
         return rejectWithValue(error.response.data.message);
       }
-      return rejectWithValue("Network error. Please try again.");
+      return rejectWithValue(
+        "네트워크 오류가 발생했습니다. 다시 시도해 주세요."
+      );
     }
   }
 );
@@ -66,20 +72,20 @@ export const sendVerificationCode = createAsyncThunk(
         `${BASE_URL}/user/sendVerificationCode`,
         formData
       );
-      console.log("sendVerificationCode:", response.data);
-      return response.data;
+      console.log("sendVerificationCode:", response);
+      return response.data; //인증코드가 성공적으로 발송되었습니다.
     } catch (error) {
       console.log("send Verification error:", error);
       const errorCode = error.response?.status; // Get the error status code
       let errorMessage;
       if (errorCode === 409) {
-        errorMessage = "The email is already in use.";
+        errorMessage = "해당 이메일은 이미 사용 중입니다.";
       } else if (errorCode === 400) {
-        errorMessage = "The email does not exist.";
+        errorMessage = "해당 이메일은 존재하지 않습니다.";
       } else {
         errorMessage =
           error.response?.data ||
-          "An error occurred while sending the verification code.";
+          "인증 코드를 전송하는 중 오류가 발생했습니다.";
       }
 
       return rejectWithValue(errorMessage);
@@ -98,11 +104,13 @@ export const verifyCode = createAsyncThunk(
         `${BASE_URL}/user/checkVerificationCode`,
         { username, email, password, verificationCode }
       );
-      return response.data;
+      console.log("verifyCode:", response);
+      return response.data.resultOfVerification;
+      
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
-          "Invalid verification code. Please try again."
+          "유효하지 않은 인증 코드입니다. 다시 시도해 주세요."
       );
     }
   }
@@ -112,12 +120,7 @@ const verificationSlice = createSlice({
   name: "verification",
   initialState,
   reducers: {
-    clearMessages(state) {
-      state.usernameFailMessage = null;
-      state.usernameSuccessMessage = null;
-      state.emailSuccessMessage = null;
-      state.emailFailMessage = null;
-    },
+
   },
   extraReducers: (builder) => {
     builder
@@ -185,5 +188,5 @@ const verificationSlice = createSlice({
   },
 });
 
-export const { clearMessages } = verificationSlice.actions;
+export const { } = verificationSlice.actions;
 export default verificationSlice.reducer;

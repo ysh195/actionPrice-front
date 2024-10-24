@@ -1,40 +1,19 @@
-import facebook_icon from "./images/facebook_icon.png";
-import twitter_icon from "./images/twitter_icon.png";
-import linkedin_icon from "./images/linkedin_icon.png";
+
 import logo from "./images/logo.png";
-import profile_icon from "./images/profile_icon.png";
-import plants from "./images/plants.png";
-import sympathy from "./images/sympathy.png";
-import gifts from "./images/gifts.png";
-import flowers from "./images/flowers.png";
 import veggies from "./images/veggies.jpg";
 import veggie2 from "./images/veggie2.jpg";
-import meat from "./images/meat.jpg";
-import fish from "./images/fish.jpg";
-import egg from "./images/egg.jpg";
 import egg1 from "./images/egg1.jpg";
 import dairy from "./images/dairy.jpg";
 import pork from "./images/pork.jpg";
 
 export const icons = {
-  linkedin_icon,
-  facebook_icon,
-  twitter_icon,
 
-  profile_icon,
   logo,
-  plants,
-  sympathy,
-  gifts,
-  flowers,
 };
 
 export const slide_images = {
   veggies,
   veggie2,
-  meat,
-  fish,
-  egg,
   egg1,
   dairy,
   pork,
@@ -42,19 +21,15 @@ export const slide_images = {
 
 export const category_list = [
   {
-    title: "Meat",
-    path: "/category1",
-    image: meat,
-  },
-  {
     title: "Veggie",
-    path: "/category2",
+    path: "/category1",
     image: veggies,
   },
+
   {
-    title: "Fish",
-    path: "/category3",
-    image: fish,
+    title: "egg",
+    path: "/category2",
+    image: egg1,
   },
 
   {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Image, Form } from "react-bootstrap";
+import "../css/CategoryDetails.css";
 
 const bigCategory = [
   { id: "1", name: "Meat" },
@@ -59,7 +59,7 @@ const CategoryDetails = () => {
   const [category3, setCategory3] = useState([]);
   const [selectedCategory1, setSelectedCategory1] = useState("");
   const [selectedCategory2, setSelectedCategory2] = useState("");
-  const [selectedCategory3, setSelectedCategory3] = useState(""); // New state for Category 3
+  const [selectedCategory3, setSelectedCategory3] = useState("");
 
   useEffect(() => {
     setCategory1(bigCategory);
@@ -90,75 +90,68 @@ const CategoryDetails = () => {
   }
 
   return (
-    <Container className="py-4">
+    <div className="category-details-container">
       <h4>{category.title}</h4>
-      <Card>
-        <Image
+      <div className="category-card">
+        <img
           src={category.image}
           alt={category.title}
-          fluid
-          style={{ height: "300px", objectFit: "cover" }}
+          className="category-image"
         />
-        <Card.Body>
-          <Card.Text>{category.description}</Card.Text>
-        </Card.Body>
-      </Card>
+        <div className="category-card-body">
+          <p>{category.description}</p>
+        </div>
+      </div>
 
-      <Row className="mt-4">
-        <Col md={4}>
-          <Form.Group controlId="bigCategory">
-            <Form.Label>Select Category 1</Form.Label>
-            <Form.Select
-              value={selectedCategory1}
-              onChange={(e) => handleCategory1Change(e.target.value)}
-            >
-              <option value="">None</option>
-              {category1.map((big) => (
-                <option key={big.id} value={big.id}>
-                  {big.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+      <div className="category-selection">
+        <div className="category-select">
+          <label>Select Category 1</label>
+          <select
+            value={selectedCategory1}
+            onChange={(e) => handleCategory1Change(e.target.value)}
+          >
+            <option value="">None</option>
+            {category1.map((big) => (
+              <option key={big.id} value={big.id}>
+                {big.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <Col md={4}>
-          <Form.Group controlId="middleCategory">
-            <Form.Label>Select Category 2</Form.Label>
-            <Form.Select
-              value={selectedCategory2}
-              onChange={(e) => handleCategory2Change(e.target.value)}
-              disabled={!selectedCategory1}
-            >
-              <option value="">None</option>
-              {category2.map((middle) => (
-                <option key={middle.id} value={middle.id}>
-                  {middle.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+        <div className="category-select">
+          <label>Select Category 2</label>
+          <select
+            value={selectedCategory2}
+            onChange={(e) => handleCategory2Change(e.target.value)}
+            disabled={!selectedCategory1}
+          >
+            <option value="">None</option>
+            {category2.map((middle) => (
+              <option key={middle.id} value={middle.id}>
+                {middle.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <Col md={4}>
-          <Form.Group controlId="smallCategory">
-            <Form.Label>Select Category 3</Form.Label>
-            <Form.Select
-              value={selectedCategory3} // Set the value to the selected state
-              onChange={(e) => handleCategory3Change(e.target.value)} // Update the state on change
-              disabled={!selectedCategory2}
-            >
-              <option value="">None</option>
-              {category3.map((small) => (
-                <option key={small.id} value={small.id}>
-                  {small.name}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
-      </Row>
-    </Container>
+        <div className="category-select">
+          <label>Select Category 3</label>
+          <select
+            value={selectedCategory3}
+            onChange={(e) => handleCategory3Change(e.target.value)}
+            disabled={!selectedCategory2}
+          >
+            <option value="">None</option>
+            {category3.map((small) => (
+              <option key={small.id} value={small.id}>
+                {small.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
   );
 };
 

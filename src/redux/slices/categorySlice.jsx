@@ -7,6 +7,8 @@ const initialState = {
   loading: false,
 };
 
+
+
 export const categorySlice = createSlice({
   name: "category",
   initialState,
