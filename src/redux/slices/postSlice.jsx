@@ -14,31 +14,46 @@ const API_URL = "http://localhost:8080/api/post";
 
 export const createPost = createAsyncThunk(
   "posts/createPost",
-  async (postData) => {
+  async (postData, { rejectWithValue }) => {
     console.log(postData);
-    const response = await axios.post(`${API_URL}/create`, postData);
-    console.log(response);
-    return response.data; // Assuming the response contains the created post
-    // return response.data.data.message;
+    try {
+      const response = await axios.post(`${API_URL}/create`, postData);
+      console.log("post response:", response);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await axios.get(`${API_URL}/list`);
-  return response.data;
-});
+export const fetchPosts = createAsyncThunk(
+  "posts/fetchPosts",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/list`);
+      console.log("post list:", response);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data); // Handle errors appropriately
+    }
+  }
+);
 
 export const onePostDetails = createAsyncThunk(
   "posts/fetchPostDetails",
-  async (id) => {
-    const response = await axios.get(`${API_URL}/${id}`);
-    return response.data; // Adjust based on the API response structure
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/${id}`);
+      return response.data; // Adjust based on the API response structure
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
 export const updatePost = createAsyncThunk("posts/updatePost", async (id) => {
   const response = await axios.put(`${API_URL}/${id}/update`, id);
-  return response.data; 
+  return response.data;
 });
 
 export const UpdatePostUrl = createAsyncThunk(
@@ -48,8 +63,6 @@ export const UpdatePostUrl = createAsyncThunk(
     return response.data; // Adjust based on your API response structure
   }
 );
-
-
 
 export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
   await axios.delete(`${API_URL}/${id}/delete`);
@@ -77,7 +90,12 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.loading = false;
-        state.postList = action.payload;
+        console.log("postList", action.payload);
+        // state.postList = action.payload;
+            state.postList = Array.isArray(action.payload)
+              ? action.payload
+              : [action.payload];
+
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.loading = false;

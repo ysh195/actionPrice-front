@@ -2,40 +2,51 @@
 /* eslint-disable react/display-name */
 import React, { useState } from "react";
 import axios from "axios";
-import { Paper, Typography, Button, TextField, Snackbar } from "@mui/material";
+import {
+  Paper,
+  Typography,
+  Button,
+  TextField,
+  Snackbar,
+  Box,
+} from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/slices/postSlice";
+import { useNavigate } from "react-router-dom";
 
 const Alert = React.forwardRef((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 ));
 
-const CreatePost = ({ onPostCreated }) => {
+const CreatePost = () => {
   const [newPost, setNewPost] = useState("");
   const [title, setTitle] = useState(""); // For the post title
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // For navigation
 
   const username = useSelector((state) => state.login.username);
-     console.log(username);
-
+  console.log(username);
 
   const handleCreatePost = async () => {
     try {
       const postData = {
         title,
         content: newPost,
-        username
+        username,
       };
-      await dispatch(createPost(postData)).unwrap();
-      console.log("postData:", postData);
+      const createdPost = await dispatch(createPost(postData)).unwrap();
+      console.log(createdPost)
+      navigate(`/api/post/${createdPost}/detail`);
+
       setNewPost("");
       setTitle("");
+
       setOpenSnackbar(true);
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -52,9 +63,7 @@ const CreatePost = ({ onPostCreated }) => {
       <Typography variant="h5" gutterBottom>
         문의 내용을 작성해주세요
       </Typography>
-      <TextField
-      value={username}></TextField>
-   
+      <TextField disabled id="outlined-disabled" value={username || ""} />
       <TextField
         label="제목"
         value={title}

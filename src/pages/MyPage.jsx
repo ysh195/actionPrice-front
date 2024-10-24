@@ -34,7 +34,6 @@ const MyPage = () => {
           <div>
             <h4>Personal Information</h4>
             <p>Name: {username || "Not provided"}</p>
-            <p>Name: {access_token || "Not provided"}</p>
             <p>Email: john.doe@example.com</p>
           </div>
         );

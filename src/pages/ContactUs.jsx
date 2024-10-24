@@ -13,15 +13,14 @@ import logo from "../assets/images/logo.png";
 const PostPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { postList = [], loading, error } = useSelector((state) => state.post);
+  const { postList, loading, error } = useSelector((state) => state.post);
+
+  console.log("postList:",postList)
 
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
 
-  const handlePostCreated = () => {
-    dispatch(fetchPosts()); // Refresh posts when a new post is created
-  };
 
   if (loading) {
     return <CircularProgress />;
