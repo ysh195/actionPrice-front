@@ -10,19 +10,28 @@ import { useSelector } from "react-redux";
 const PostActions = React.memo(({ postId, username }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-    const currentUser = useSelector((state) => state.login.username);
-
+  const logined_username = useSelector((state) => state.login.username);
+  console.log("logined_username:",logined_username);
 
   const handleEdit = () => {
     navigate(`/api/post/${postId}/update`);
   };
-  console.log(postId);
 
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      await dispatch(deletePost(postId));
-      navigate("/api/contact-us");
+    if (!logined_username) {
+      alert("You need to be logged in to delete a post.");
+      return;
     }
+    const result = await dispatch(deletePost({ postId, logined_username }));
+    if (deletePost.fulfilled.match(result)) {
+      console.log("Post deleted successfully:", result.payload);
+      // You can redirect or update the UI accordingly
+    } else {
+      console.error("Failed to delete post:", result.error);
+      // Handle the error accordingly
+    }
+
+    navigate("/api/contact-us");
   };
 
   const handleComment = () => {
@@ -52,7 +61,7 @@ const PostActions = React.memo(({ postId, username }) => {
             답글쓰기
           </Button>
         </Box>
-        {currentUser === username && (
+        {/* {logined_username === username && ( */}
           <Box>
             <Button
               variant="outlined"
@@ -62,11 +71,15 @@ const PostActions = React.memo(({ postId, username }) => {
             >
               글수정
             </Button>
-            <Button variant="outlined" color="error" onClick={handleDelete}>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleDelete}
+            >
               글삭제
             </Button>
           </Box>
-        )}
+        {/* )} */}
       </Box>
       <Divider sx={{ margin: "16px 0" }} />
     </>

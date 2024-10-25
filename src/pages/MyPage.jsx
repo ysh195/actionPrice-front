@@ -4,6 +4,8 @@ import { Button, Typography, Paper, Box, Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice";
 import { useNavigate } from "react-router-dom";
+import { deleteAccount } from "../redux/slices/userSlice";
+import Swal from "sweetalert2";
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -18,6 +20,26 @@ const MyPage = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/api/user/login");
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const result = await dispatch(deleteAccount(username));
+      console.log(result);
+      Swal.fire({
+        text: " 계정이 성공적으로 삭제되었습니다",
+        icon: "success",
+        timer: 3000,
+      });
+      navigate("/api/user/login");
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "계정 삭제에 실패하였습니다. 다시 시도해 주세요.",
+        showConfirmButton: true,
+      });
+    }
   };
 
   const renderContent = () => {
@@ -55,7 +77,7 @@ const MyPage = () => {
           <Box>
             <Typography>계정을 삭제하시겠습니까?</Typography>
             <Button
-              onClick={handleLogout}
+              onClick={handleDeleteAccount}
               color="error"
               variant="outlined"
               sx={{ marginTop: 2 }}

@@ -33,14 +33,15 @@ const CreatePost = () => {
 
   const handleCreatePost = async () => {
     try {
+      
       const postData = {
         title,
         content: newPost,
         username,
       };
       const createdPost = await dispatch(createPost(postData)).unwrap();
-      console.log(createdPost);
-      navigate(`/api/post/${createdPost}/detail`);
+      console.log("created post:", createdPost);
+      navigate(`/api/post/${createdPost.postId}/detail`);
 
       setNewPost("");
       setTitle("");
