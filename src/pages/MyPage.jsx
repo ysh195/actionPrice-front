@@ -1,20 +1,20 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { Button, Typography, Paper, Box, Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/slices/loginSlice"; 
+import { logoutUser } from "../redux/slices/loginSlice";
 import { useNavigate } from "react-router-dom";
-import "../css/MyPage.css";
+import { deleteAccount } from "../redux/slices/userSlice";
+import Swal from "sweetalert2";
 
 const MyPage = () => {
-  const [activeTab, setActiveTab] = useState("personalInfo");
+  const [activeTab, setActiveTab] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-    const username = useSelector((state) => state.login.username);
-        const access_token = useSelector((state) => state.login.access_token);
-    console.log(username)
+  const username = useSelector((state) => state.login.username);
 
-
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
+  const handleTabChange = (index) => {
+    setActiveTab(index);
   };
 
   const handleLogout = () => {
@@ -22,100 +22,156 @@ const MyPage = () => {
     navigate("/api/user/login");
   };
 
-  const withdrawMembership = () => {
-    dispatch(withdrawMembership());
-    navigate("/api/user/withdraw");
+  const handleDeleteAccount = async () => {
+    try {
+      const result = await dispatch(deleteAccount(username));
+      console.log(result);
+      Swal.fire({
+        text: " 계정이 성공적으로 삭제되었습니다",
+        icon: "success",
+        timer: 3000,
+      });
+      navigate("/api/user/login");
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "계정 삭제에 실패하였습니다. 다시 시도해 주세요.",
+        showConfirmButton: true,
+      });
+    }
   };
 
   const renderContent = () => {
     switch (activeTab) {
-      case "personalInfo":
+      case 0:
         return (
-          <div>
-            <h4>Personal Information</h4>
-            <p>Name: {username || "Not provided"}</p>
-            <p>Email: john.doe@example.com</p>
-          </div>
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Personal Information
+            </Typography>
+            <Typography>사용자 이름: {username || "Not provided"}</Typography>
+            <Typography>이메일: john.doe@example.com</Typography>
+          </Box>
         );
-      case "wishlist":
+      case 1:
+        return <Typography>찜한 상품 목록</Typography>; // Wishlist content here
+      case 2:
+        return <Typography>문의 내용들</Typography>; // My Posts content here
+      case 3:
         return (
-          <div>
-            <h4>Your Wishlist</h4>
-            <ul>
-              <li>Item 1</li>
-              <li>Item 2</li>
-              <li>Item 3</li>
-            </ul>
-          </div>
+          <Box>
+            <Typography>로그아웃 하시겠습니까?</Typography>
+            <Button
+              onClick={handleLogout}
+              color="warning"
+              variant="outlined"
+              sx={{ marginTop: 2 }}
+            >
+              로그아웃 확인
+            </Button>
+          </Box>
         );
-
-      case "myPosts":
+      case 4:
         return (
-          <div>
-            <h4>Your Posts</h4>
-            <ul>
-              <li>Item 1</li>
-              <li>Item 2</li>
-              <li>Item 3</li>
-            </ul>
-          </div>
-        );
-      case "logout":
-        return (
-          <div>
-            <h4>Logout</h4>
-            <p>Are you sure you want to log out?</p>
-            <button onClick={handleLogout} className="danger-button">
-              Confirm Logout
-            </button>
-          </div>
-        );
-
-      case "deleteUser":
-        return (
-          <div>
-            <h4>Delete Account</h4>
-            <p>Are you sure you want to delete your profile?</p>
-            <button onClick={withdrawMembership} className="danger-button">
-              Confirm Withdrawal
-            </button>
-          </div>
+          <Box>
+            <Typography>계정을 삭제하시겠습니까?</Typography>
+            <Button
+              onClick={handleDeleteAccount}
+              color="error"
+              variant="outlined"
+              sx={{ marginTop: 2 }}
+            >
+              삭제 확인
+            </Button>
+          </Box>
         );
       default:
-        return <div>Select an option from the sidebar.</div>;
+        return <Typography>Select an option from the sidebar.</Typography>;
     }
   };
 
   return (
-    <div className="user-profile-container">
-      <div className="sidebar">
-        <button
-          onClick={() => handleTabClick("personalInfo")}
-          className="tab-button"
+    <Paper
+      sx={{
+        display: "flex",
+        height: "100vh",
+        flexDirection: { xs: "column", md: "row" },
+        backgroundColor: "#F9F9F9",
+      }}
+    >
+      <Box
+        sx={{
+          width: { xs: "100%", md: "300px" },
+          borderRight: { md: "1px solid #C5705D" },
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 2,
+            border: "1px solid #C5705D",
+            borderRadius: 1,
+            width: "100%",
+            marginBottom: 5,
+            backgroundColor: "#ffffff",
+          }}
         >
-          Personal Info
-        </button>
-        <button
-          onClick={() => handleTabClick("wishlist")}
-          className="tab-button"
-        >
-          Wishlist
-        </button>
-        <button onClick={() => handleTabClick("myPosts")} className="tab-button">
-          My Posts
-        </button>
-        <button onClick={() => handleTabClick("logout")} className="tab-button">
-          Logout
-        </button>
-        <button
-          onClick={() => handleTabClick("deleteUser")}
-          className="tab-button"
-        >
-          Delete Account
-        </button>
-      </div>
-      <div className="content">{renderContent()}</div>
-    </div>
+          <Avatar
+            sx={{
+              width: 170,
+              height: 170,
+              backgroundColor: "#CB6040",
+              marginBottom: 3,
+            }}
+          />
+          <Typography variant="body1" gutterBottom>
+            {username}
+          </Typography>
+        </Box>
+        {[
+          "Personal Info",
+          "Wishlist",
+          "My Posts",
+          "Logout",
+          "Delete Account",
+        ].map((label, index) => (
+          <Button
+            key={index}
+            onClick={() => handleTabChange(index)}
+            variant={activeTab === index ? "contained" : "outlined"}
+            color={activeTab === index ? "primary" : "default"}
+            sx={{
+              width: "100%",
+              justifyContent: "flex-start",
+              marginBottom: 1,
+              textTransform: "none",
+              borderColor: "#CB6040",
+              color: activeTab === index ? "white" : "black",
+              backgroundColor: activeTab === index ? "#CB6040" : "transparent",
+              "&:hover": {
+                backgroundColor: activeTab === index ? "#D76B4C" : "#D76B4C",
+                transition: "background-color 0.3s",
+              },
+            }}
+          >
+            {label}
+          </Button>
+        ))}
+      </Box>
+
+      <Box
+        sx={{ flexGrow: 1, margin: 2, padding: 5, backgroundColor: "#ffffff" }}
+      >
+        {renderContent()}
+      </Box>
+    </Paper>
   );
 };
 

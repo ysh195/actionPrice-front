@@ -7,7 +7,6 @@ const initialState = {
   post: {},
   loading: false,
   error: null,
-  updateUrl: null,
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -17,7 +16,16 @@ export const createPost = createAsyncThunk(
   async (postData, { rejectWithValue }) => {
     console.log(postData);
     try {
-      const response = await axios.post(`${API_URL}/create`, postData);
+        const access_Token = localStorage.getItem("access_token");
+        if (!access_Token) {
+          alert("You need to log in to write a post.");
+          return rejectWithValue("User not logged in");
+        }
+      const response = await axios.post(`${API_URL}/create`, postData, {
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+        },
+      });
       console.log("post response:", response);
       return response.data;
     } catch (error) {
@@ -26,15 +34,30 @@ export const createPost = createAsyncThunk(
   }
 );
 
+// export const fetchPosts = createAsyncThunk(
+//   "posts/fetchPosts",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${API_URL}/list`);
+//       console.log("post list:", response);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data); // Handle errors appropriately
+//     }
+//   }
+// );
+
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async (_, { rejectWithValue }) => {
+  async (page = 0, { rejectWithValue }) => {
+    // Default to 0 if no page is passed
     try {
-      const response = await axios.get(`${API_URL}/list`);
+      const response = await axios.get(`${API_URL}/list`, { params: { page } });
       console.log("post list:", response);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data); // Handle errors appropriately
+      console.error("Fetch posts error:", error); // More detailed logging
+      return rejectWithValue(error.response?.data || "An error occurred");
     }
   }
 );
@@ -44,7 +67,8 @@ export const fetchPostById = createAsyncThunk(
   async (postId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/${postId}/detail`);
-      return response.data; // Adjust based on the API response structure
+
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -53,29 +77,59 @@ export const fetchPostById = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
-  async (postId, { rejectWithValue }) => {
+  async ({ postId, logined_username }, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_URL}/${postId}/delete`);
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to update a post.");
+        return;
+      }
+      const response = await axios.post(
+        `${API_URL}/${postId}/delete`,
+        { logined_username },
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+          },
+        }
+      );
+      console.log("deletePost response:", response);
       return postId; // Return the deleted post's id
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      console.log("deletePost error:", error);
+      return rejectWithValue(error.response?.data || "Error deleting post");
     }
   }
 );
-
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
-  async (postId) => {
-    const response = await axios.put(`${API_URL}/${postId}/update`, postId);
-    return response.data;
-  }
-);
+  async ({ postId, postData }, { rejectWithValue }) => {
+    try {
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to update a post.");
+        return;
+      }
 
-export const UpdatePostUrl = createAsyncThunk(
-  "posts/fetchUpdatePostUrl",
-  async (postId) => {
-    const response = await axios.get(`${API_URL}/${postId}/update`);
-    return response.data; // Adjust based on your API response structure
+      const response = await axios.post(
+        `${API_URL}/${postId}/update`,
+        postData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_Token}`,
+          },
+        }
+      );
+      console.log("updatePost response:", response);
+      return response.data;
+    } catch (error) {
+      console.log("updatePost error:", error);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue("An unexpected error occurred.");
+    }
   }
 );
 
@@ -111,19 +165,18 @@ const postSlice = createSlice({
       })
       // Create post
       .addCase(createPost.fulfilled, (state, action) => {
-         state.loading = false;
-        // state.postList.push(action.payload); 
-          const postsToAdd = Array.isArray(action.payload)
-            ? action.payload
-            : [action.payload];
-          state.postList.push(...postsToAdd);
-          console.log(postsToAdd);
+        state.loading = false;
+        // state.postList.push(action.payload);
+        const postsToAdd = Array.isArray(action.payload)
+          ? action.payload
+          : [action.payload];
+        state.postList.push(...postsToAdd);
       })
       // Edit post
       .addCase(updatePost.fulfilled, (state, action) => {
         const updatedPost = action.payload;
         const index = state.postList.findIndex(
-          (post) => post.id === updatedPost.id
+          (post) => post.postId === updatedPost.postId
         );
         if (index >= 0) {
           state.postList[index] = updatedPost;
@@ -132,7 +185,8 @@ const postSlice = createSlice({
       // Delete post
       .addCase(deletePost.fulfilled, (state, action) => {
         const id = action.payload;
-        state.postList = state.postList.filter((post) => post.id !== id);
+        state.postList = state.postList.filter((post) => post.postId !== id);
+        console.log(action.payload);
       })
       //fetchPostById
       .addCase(fetchPostById.pending, (state) => {
@@ -146,17 +200,6 @@ const postSlice = createSlice({
       .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message; // Set error message
-      })
-      .addCase(UpdatePostUrl.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(UpdatePostUrl.fulfilled, (state, action) => {
-        state.loading = false;
-        state.updateUrl = action.payload.data.url; // Adjust based on your response structure
-      })
-      .addCase(UpdatePostUrl.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
       });
   },
 });

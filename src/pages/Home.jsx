@@ -1,23 +1,20 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import EventSlide from "../components/EventSlide";
-import CategorySection from "../components/CategorySection";
-import B_EventSlide from "../Bootsrap/B_EventSlide";
+import CategorySection from "../components/Category/CategorySection";
+import Test2 from "../test/Test2";
 
-import B_CategorySection from "../Bootsrap/B_CategorySection";
-
-import M_CategorySection from "../Bootsrap/M_CategorySection";
 
 
 
 const Home = () => {
   return (
     <>
-      <div className="container">
-        {/* <EventSlide /> */}
-        <B_EventSlide />
-        {/* <CategorySection /> */}
-        {/* <B_CategorySection /> */}
-        <M_CategorySection />
+      <div>
+        <EventSlide />
+        <CategorySection />
+        {/* <Test2 /> */}
+
       </div>
     </>
   );

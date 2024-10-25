@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,38 +17,30 @@ import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [navMenuOpen, setNavMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const username = useSelector((state) => state.login.username);
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
+  const toggleNavMenu = () => {
+    setNavMenuOpen((prev) => !prev);
   };
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+  const toggleUserMenu = () => {
+    setUserMenuOpen((prev) => !prev);
   };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
   const handleLogout = () => {
     dispatch(logoutUser());
+    setUserMenuOpen(false);
     navigate("/api/user/login");
   };
 
   const handleLogin = () => {
     dispatch(login());
+    setUserMenuOpen(false);
     navigate("/");
   };
 
@@ -55,28 +48,20 @@ function Navbar() {
     <AppBar position="sticky" sx={{ backgroundColor: "#2C3E50" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Menu Button for mobile */}
+          {/* Mobile Menu Button */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
+            <IconButton onClick={toggleNavMenu} color="inherit">
               <MenuIcon />
             </IconButton>
             <Menu
+              open={navMenuOpen}
+              onClose={toggleNavMenu}
               id="menu-appbar"
-              anchorEl={anchorElNav}
               anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
               keepMounted
               transformOrigin={{ vertical: "top", horizontal: "left" }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
             >
-              <MenuItem onClick={handleCloseNavMenu}>
+              <MenuItem onClick={toggleNavMenu}>
                 <Typography
                   component={Link}
                   to="/"
@@ -85,7 +70,7 @@ function Navbar() {
                   Home
                 </Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>
+              <MenuItem onClick={toggleNavMenu}>
                 <Typography
                   component={Link}
                   to="/category"
@@ -94,7 +79,7 @@ function Navbar() {
                   Category
                 </Typography>
               </MenuItem>
-              <MenuItem onClick={handleCloseNavMenu}>
+              <MenuItem onClick={toggleNavMenu}>
                 <Typography
                   component={Link}
                   to="/api/contact-us"
@@ -136,7 +121,6 @@ function Navbar() {
             <Button
               component={Link}
               to="/"
-              onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               Home
@@ -144,7 +128,6 @@ function Navbar() {
             <Button
               component={Link}
               to="/category"
-              onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               Category
@@ -152,7 +135,6 @@ function Navbar() {
             <Button
               component={Link}
               to="/api/contact-us"
-              onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               Contact Us
@@ -162,21 +144,18 @@ function Navbar() {
           {/* User Menu */}
           {isLoggedIn ? (
             <Box sx={{ flexGrow: 0 }}>
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton onClick={toggleUserMenu} sx={{ p: 0 }}>
                 <AccountCircle sx={{ color: "white" }} />
               </IconButton>
 
               <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
+                open={userMenuOpen}
+                onClose={toggleUserMenu}
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
                 keepMounted
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={toggleUserMenu}>
                   <Typography
                     component={Link}
                     to={`/api/mypage/${username}`}
@@ -185,7 +164,7 @@ function Navbar() {
                     My Page
                   </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={toggleUserMenu}>
                   <Typography
                     component={Link}
                     to="/api/user/wishlist"

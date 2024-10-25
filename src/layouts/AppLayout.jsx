@@ -1,25 +1,23 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-
 import React from "react";
-import { Container } from "react-bootstrap";
 import Footer from "./Footer";
 import Navbar from "./NavBar";
+import { Box } from "@mui/material";
 
 const AppLayout = ({ children }) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-      }}
+    <Box
+      display="flex"
+      flexDirection="column"
+      minHeight="100vh" // Ensures the layout takes full height
     >
       <Navbar />
-      <Container className="flex-fill" style={{ flex: "1" }}>
+      <Box component="main" sx={{ flexGrow: 1 }}>
         {children}
-      </Container>
+      </Box>
       <Footer />
-    </div>
+    </Box>
   );
 };
 
