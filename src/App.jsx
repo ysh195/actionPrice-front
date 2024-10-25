@@ -36,9 +36,8 @@ function App() {
           />
           <Route path="api/contact-us" element={<ContactUs />} />
 
-
           <Route
-            path="api/user/mypage"
+            path="api/mypage/:username"
             element={<ProtectedRoute element={<MyPage />} />}
           />
           <Route

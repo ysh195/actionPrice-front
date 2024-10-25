@@ -9,7 +9,7 @@ import { Box, CircularProgress, Paper, Typography } from "@mui/material";
 const PostHeader = lazy(() => import("./PostHeader"));
 const PostContent = lazy(() => import("./PostContent"));
 const PostActions = lazy(() => import("./PostActions"));
-const CommentSection = lazy(() => import("../Comment/CommentSection"));
+const CommentSection = lazy(() => import("../Comment/CommentForm"));
 
 const PostDetailPage = () => {
   const { postId } = useParams();
@@ -41,10 +41,18 @@ const PostDetailPage = () => {
             title={post.title}
             username={post.username}
             createdAt={post.createdAt}
+            updatedAt={post.updatedAt}
           />
           <PostContent content={post.content} />
           <PostActions postId={post.postId} username={post.username} />
-          {/* <CommentSection comments={comments} /> */}
+          <section>
+            {/* <CommentForm loading={loading} error={error} onSubmit={onCommentCreate}/> */}
+            {/* {rootComments != null && rootComments.length > 0 && (
+            <div className="mt-4">
+              <CommentList comments={rootComments} />
+            </div>
+          )} */}
+          </section>
         </Paper>
       </Box>
     </Suspense>

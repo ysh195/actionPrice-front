@@ -25,18 +25,34 @@ export const createPost = createAsyncThunk(
   }
 );
 
+// export const fetchPosts = createAsyncThunk(
+//   "posts/fetchPosts",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${API_URL}/list`);
+//       console.log("post list:", response);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data); // Handle errors appropriately
+//     }
+//   }
+// );
+
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async (_, { rejectWithValue }) => {
+  async (page = 0, { rejectWithValue }) => {
+    // Default to 0 if no page is passed
     try {
-      const response = await axios.get(`${API_URL}/list`);
+      const response = await axios.get(`${API_URL}/list`, { params: { page } });
       console.log("post list:", response);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data); // Handle errors appropriately
+      console.error("Fetch posts error:", error); // More detailed logging
+      return rejectWithValue(error.response?.data || "An error occurred");
     }
   }
 );
+
 
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
