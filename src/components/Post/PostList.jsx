@@ -1,25 +1,18 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-
+import React from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Typography } from "@mui/material";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const PostTable = ({ postList }) => {
-  console.log("postList:", postList);
-  if (!Array.isArray(postList)) {
-    return <Typography>No posts available.</Typography>;
-  }
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Paper sx={{ width: "100%" }}>
       <TableContainer
         sx={{
           maxHeight: 440,
@@ -37,22 +30,29 @@ const PostTable = ({ postList }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {postList
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((post) => (
-                <TableRow key={post.id}>
+            {postList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  No posts available
+                </TableCell>
+              </TableRow>
+            ) : (
+              postList.map((post, id) => (
+                <TableRow key={id}>
                   <TableCell>{post.id}</TableCell>
                   <TableCell>
-                    <Link to={`/post/${post.id}/detail`}>{post.title}</Link>
+                    <Link to={`api/post/${post.id}/detail`}>{post.title}</Link>
                   </TableCell>
                   <TableCell>{post.username}</TableCell>
                   <TableCell>{post.created_at}</TableCell>
                 </TableRow>
-              ))}
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
     </Paper>
   );
 };
+
 export default PostTable;

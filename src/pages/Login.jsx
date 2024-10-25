@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+
 import {
   Container,
   Card,
@@ -15,7 +17,9 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+// import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -101,7 +105,11 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   edge="end"
                 >
-                  {showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}
+                  {showPassword ? (
+                    <VisibilityOutlinedIcon />
+                  ) : (
+                    <VisibilityOffOutlinedIcon />
+                  )}
                 </IconButton>
               ),
             }}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,19 +8,23 @@ import {
   CardMedia,
   CardContent,
   Typography,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 
 const CategorySection = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchImages = async () => {
     try {
       const response = await axios.get("http://localhost:8080/");
       const fetchedImages = response.data.images;
 
-      const category_list = [
+      const categoryList = [
         { title: "Cookie", image: fetchedImages.cookie },
         { title: "Egg", image: fetchedImages.egg },
         { title: "Meat", image: fetchedImages.meat },
@@ -27,9 +32,12 @@ const CategorySection = () => {
         { title: "Salted", image: fetchedImages.salted },
       ];
 
-      setCategories(category_list);
+      setCategories(categoryList);
     } catch (error) {
       console.error("Error fetching images:", error);
+      setError("Failed to load categories. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,8 +49,23 @@ const CategorySection = () => {
     navigate(`/category-details/${category.title}`);
   };
 
+  if (loading) {
+    return (
+      <Container id="categories" sx={{ py: 5, textAlign: "center" }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container id="categories" sx={{ py:5}}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
   return (
-    <Container id="categories" sx={{ py: 5 }}>
+    <Container id="categories" sx={{ py: 5}}>
       <Typography variant="h4" align="center" gutterBottom>
         Explore All Categories
       </Typography>
@@ -52,12 +75,18 @@ const CategorySection = () => {
             <Card
               onClick={() => handleCategoryClick(item)}
               sx={{ cursor: "pointer", height: "100%" }}
+              aria-label={`Go to ${item.title} category`}
             >
               <CardMedia
                 component="img"
                 image={`data:image/jpeg;base64,${item.image}`}
                 alt={item.title}
-                sx={{ height: 200, objectFit: "cover" }}
+                sx={{
+                  height: 200, // Set a fixed height
+
+                  width: "100%", // Full width
+                  objectFit: "cover", // Keep the aspect ratio
+                }}
               />
               <CardContent>
                 <Typography variant="h6" component="div">
