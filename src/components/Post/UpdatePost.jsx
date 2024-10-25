@@ -16,11 +16,11 @@ const UpdatePost = () => {
   const { post } = useSelector((state) => state.post);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const currentUser = useSelector((state) => state.login.username);
+  const username = useSelector((state) => state.login.username);
 
-  // useEffect(() => {
-  //   dispatch(fetchPostById(postId));
-  // }, [dispatch, postId]);
+  useEffect(() => {
+    dispatch(fetchPostById(postId));
+  }, [dispatch, postId]);
 
   useEffect(() => {
     if (post) {
@@ -31,7 +31,7 @@ const UpdatePost = () => {
 
   const handleUpdatePost = async () => {
     try {
-      const postData = { title, content, currentUser };
+      const postData = { title, content, username };
       const result = await dispatch(updatePost({ postId, postData }));
       console.log(result);
       if (updatePost.fulfilled.match(result)) {
@@ -114,7 +114,7 @@ const UpdatePost = () => {
           }}
         />
         {error && <Typography color="error">{error}</Typography>}
-        {currentUser === post.username && (
+        {username === post.username && (
           <Box
             sx={{
               display: "flex",

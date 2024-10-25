@@ -1,115 +1,196 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Button from "@mui/material/Button";
+
+import MenuItem from "@mui/material/MenuItem";
+import { Link, useNavigate } from "react-router-dom";
+import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { fetchPostById, updatePost } from "../redux/slices/postSlice";
-import { Paper, Typography, Button, Box, Snackbar, TextField, Alert } from "@mui/material";
 
-import PostHeader from "../components/Post/PostHeader"; // Import the PostHeader component
+function Navbar() {
+  const [navMenuOpen, setNavMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
 
-// const Alert = React.forwardRef((props, ref) => (
-//   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-// ));
-
-const EditPost = () => {
-  const { postId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { post, loading, error } = useSelector((state) => state.post);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  useEffect(() => {
-    dispatch(fetchPostById(postId)); // Fetch post details
-  }, [dispatch, postId]);
-
-  useEffect(() => {
-    if (post) {
-      setTitle(post.title);
-      setContent(post.content);
-    }
-  }, [post]);
-
-  const handleUpdatePost = async () => {
-    try {
-      await dispatch(updatePost({ id: postId, title, content }));
-      setOpenSnackbar(true);
-      // Optionally navigate back to post detail
-      navigate(`/api/post/${postId}/detail`);
-    } catch (error) {
-      console.error("Failed to update post:", error);
-    }
+  const toggleNavMenu = () => {
+    setNavMenuOpen((prev) => !prev);
   };
 
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
+  const toggleUserMenu = () => {
+    setUserMenuOpen((prev) => !prev);
+  };
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    setUserMenuOpen(false);
+    navigate("/api/user/login");
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
+  const handleLogin = () => {
+    dispatch(login());
+    setUserMenuOpen(false);
+    navigate("/");
+  };
 
   return (
-    <Paper sx={{ padding: 3, width: "80%", margin: "auto" }}>
-      <PostHeader
-        title={title}
-        username={post.username}
-        createdAt={post.createdAt}
-      />
-      <Box sx={{ marginTop: 2 }}>
-        <TextField
-          label="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          fullWidth
-          variant="outlined"
-          required
-        />
-        <TextField
-          label="Content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          multiline
-          rows={4}
-          fullWidth
-          variant="outlined"
-          required
-          sx={{ marginTop: 2 }}
-        />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: 2,
-          }}
-        >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpdatePost}
-          >
-            Update Post
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => navigate(-1)}
-          >
-            Cancel
-          </Button>
-        </Box>
-      </Box>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={handleSnackbarClose} severity="success">
-          Post updated successfully!
-        </Alert>
-      </Snackbar>
-    </Paper>
-  );
-};
+    <AppBar position="sticky" sx={{ backgroundColor: "#2C3E50" }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          {/* Mobile Menu Button */}
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            <IconButton onClick={toggleNavMenu} color="inherit">
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              open={navMenuOpen}
+              onClose={toggleNavMenu}
+              id="menu-appbar"
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              keepMounted
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+            >
+              <MenuItem onClick={toggleNavMenu}>
+                <Typography
+                  component={Link}
+                  to="/"
+                  sx={{ textDecoration: "none", color: "inherit" }}
+                >
+                  Home
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={toggleNavMenu}>
+                <Typography
+                  component={Link}
+                  to="/category"
+                  sx={{ textDecoration: "none", color: "inherit" }}
+                >
+                  Category
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={toggleNavMenu}>
+                <Typography
+                  component={Link}
+                  to="/api/contact-us"
+                  sx={{ textDecoration: "none", color: "inherit" }}
+                >
+                  Contact Us
+                </Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
 
-export default EditPost;
+          {/* Logo Positioned on the Left for Desktop */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "flex-start",
+            }}
+          >
+            <Typography
+              variant="h6"
+              noWrap
+              component={Link}
+              to="/"
+              sx={{
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".1rem",
+                color: "white",
+                textDecoration: "none",
+              }}
+            >
+              AuctionPrice
+            </Typography>
+          </Box>
+
+          {/* Desktop Menu Items */}
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            <Button
+              component={Link}
+              to="/"
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Home
+            </Button>
+            <Button
+              component={Link}
+              to="/category"
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Category
+            </Button>
+            <Button
+              component={Link}
+              to="/api/contact-us"
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Contact Us
+            </Button>
+          </Box>
+
+          {/* User Menu */}
+          {isLoggedIn ? (
+            <Box sx={{ flexGrow: 0 }}>
+              <IconButton onClick={toggleUserMenu} sx={{ p: 0 }}>
+                <AccountCircle sx={{ color: "white" }} />
+              </IconButton>
+
+              <Menu
+                open={userMenuOpen}
+                onClose={toggleUserMenu}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                keepMounted
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+              >
+                <MenuItem onClick={toggleUserMenu}>
+                  <Typography
+                    component={Link}
+                    to="/api/user/mypage"
+                    sx={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    My Page
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={toggleUserMenu}>
+                  <Typography
+                    component={Link}
+                    to="/api/user/wishlist"
+                    sx={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    WishList
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <Typography sx={{ color: "#d32f2f" }}>Logout</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+          ) : (
+            <Button
+              component={Link}
+              to="/api/user/login"
+              onClick={handleLogin}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
+
+export default Navbar;
