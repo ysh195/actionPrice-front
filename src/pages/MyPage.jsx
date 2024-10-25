@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Button, Typography, Paper, Box } from "@mui/material";
+import { Button, Typography, Paper, Box, Avatar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice";
 import { useNavigate } from "react-router-dom";
@@ -25,15 +25,17 @@ const MyPage = () => {
       case 0:
         return (
           <Box>
-            <Typography variant="h6">Personal Information</Typography>
+            <Typography variant="h6" gutterBottom>
+              Personal Information
+            </Typography>
             <Typography>사용자 이름: {username || "Not provided"}</Typography>
             <Typography>이메일: john.doe@example.com</Typography>
           </Box>
         );
       case 1:
-        return <Typography>찜한 상품 목록</Typography>; // Add Wishlist content here
+        return <Typography>찜한 상품 목록</Typography>; // Wishlist content here
       case 2:
-        return <Typography>문의 내용들</Typography>; // Add My Posts content here
+        return <Typography>문의 내용들</Typography>; // My Posts content here
       case 3:
         return (
           <Box>
@@ -68,8 +70,49 @@ const MyPage = () => {
   };
 
   return (
-    <Paper sx={{ display: "flex", padding: 2, height: "100vh" }}>
-      <Box sx={{ width: "200px", borderRight: "1px solid #ddd", padding: 1 }}>
+    <Paper
+      sx={{
+        display: "flex",
+        height: "100vh",
+        flexDirection: { xs: "column", md: "row" },
+        backgroundColor: "#F9F9F9",
+      }}
+    >
+      <Box
+        sx={{
+          width: { xs: "100%", md: "300px" },
+          borderRight: { md: "1px solid #C5705D" },
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            padding: 2,
+            border: "1px solid #C5705D",
+            borderRadius: 1,
+            width: "100%",
+            marginBottom: 5,
+            backgroundColor: "#ffffff",
+          }}
+        >
+          <Avatar
+            sx={{
+              width: 170,
+              height: 170,
+              backgroundColor: "#CB6040",
+              marginBottom: 3,
+            }}
+          />
+          <Typography variant="body1" gutterBottom>
+            {username}
+          </Typography>
+        </Box>
         {[
           "Personal Info",
           "Wishlist",
@@ -80,19 +123,19 @@ const MyPage = () => {
           <Button
             key={index}
             onClick={() => handleTabChange(index)}
-            variant={activeTab === index ? "contained" : "outlined"} // Keep active button filled if needed
+            variant={activeTab === index ? "contained" : "outlined"}
             color={activeTab === index ? "primary" : "default"}
             sx={{
               width: "100%",
               justifyContent: "flex-start",
               marginBottom: 1,
               textTransform: "none",
-              borderColor: activeTab === index ? "#C5705D" : "navy",
-              color: activeTab === index ? "white" : "navy",
-              backgroundColor: activeTab === index ? "#C5705D" : "transparent",
+              borderColor: "#CB6040",
+              color: activeTab === index ? "white" : "black",
+              backgroundColor: activeTab === index ? "#CB6040" : "transparent",
               "&:hover": {
-                backgroundColor:
-                  activeTab === index ? "#CB6040" : "rgba(0, 0, 128, 0.1)", 
+                backgroundColor: activeTab === index ? "#D76B4C" : "#D76B4C",
+                transition: "background-color 0.3s",
               },
             }}
           >
@@ -100,7 +143,12 @@ const MyPage = () => {
           </Button>
         ))}
       </Box>
-      <Box sx={{ flexGrow: 1, padding: 2 }}>{renderContent()}</Box>
+
+      <Box
+        sx={{ flexGrow: 1, margin: 2, padding: 5, backgroundColor: "#ffffff" }}
+      >
+        {renderContent()}
+      </Box>
     </Paper>
   );
 };

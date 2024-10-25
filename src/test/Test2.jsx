@@ -20,6 +20,7 @@ function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const username = useSelector((state) => state.login.username);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -157,7 +158,7 @@ function Navbar() {
                 <MenuItem onClick={toggleUserMenu}>
                   <Typography
                     component={Link}
-                    to="/api/user/mypage"
+                    to={`/api/mypage/${username}`}
                     sx={{ textDecoration: "none", color: "inherit" }}
                   >
                     My Page

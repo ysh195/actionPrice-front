@@ -1,16 +1,26 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
+import { styled } from "@mui/material";
 
 const PostTable = ({ postList }) => {
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: "#C5705D",
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 16,
+    },
+  }));
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer
@@ -23,10 +33,10 @@ const PostTable = ({ postList }) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>제목</TableCell>
-              <TableCell>사용자 이름</TableCell>
-              <TableCell>등록일</TableCell>
+              <StyledTableCell>ID</StyledTableCell>
+              <StyledTableCell>작성자</StyledTableCell>
+              <StyledTableCell>제목</StyledTableCell>
+              <StyledTableCell>등록일</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -37,14 +47,26 @@ const PostTable = ({ postList }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              postList.map((post, id) => (
-                <TableRow key={id}>
-                  <TableCell>{post.id}</TableCell>
-                  <TableCell>
-                    <Link to={`api/post/${post.id}/detail`}>{post.title}</Link>
-                  </TableCell>
+              postList.map((post, postId) => (
+                <TableRow key={postId}>
+                  <TableCell>{post.postId}</TableCell>
                   <TableCell>{post.username}</TableCell>
-                  <TableCell>{post.created_at}</TableCell>
+                  <TableCell>
+                    <Link
+                      to={`/api/post/${post.postId}/detail`}
+                      style={{
+                        color: "#2c3e50",
+                        
+                        textDecoration: "",
+                      }}
+                    >
+                      {post.title}
+                    </Link>
+                  </TableCell>
+
+                  <TableCell>
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </TableCell>
                 </TableRow>
               ))
             )}

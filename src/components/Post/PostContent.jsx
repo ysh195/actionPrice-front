@@ -8,15 +8,18 @@ const PostContent = React.memo(({ content }) => {
     <Typography
       variant="body1"
       sx={{
-        marginTop: 2,
-        minHeight: "100px", 
+        maxHeight: "400px",
+        display: "flex", // Enable flexbox
+        alignItems: "flex-start", // Align items to the start
+        margin: 2,
+        minHeight: "200px",
         overflowY: "auto", // Enable vertical scrolling if content exceeds height
-        overflowX: "hidden", // Hide horizontal overflow
+        overflowX: "auto", // Hide horizontal overflow
       }}
     >
       {content}
     </Typography>
   );
-})
+});
 PostContent.displayName = "PostContent";
 export default PostContent;

@@ -19,6 +19,8 @@ function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
+  const username = useSelector((state) => state.login.username);
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -177,7 +179,7 @@ function Navbar() {
                 <MenuItem onClick={handleCloseUserMenu}>
                   <Typography
                     component={Link}
-                    to="/api/user/mypage"
+                    to={`/api/mypage/${username}`}
                     sx={{ textDecoration: "none", color: "inherit" }}
                   >
                     My Page

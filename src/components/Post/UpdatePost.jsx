@@ -35,18 +35,20 @@ const UpdatePost = () => {
       const result = await dispatch(updatePost({ postId, postData }));
       console.log(result);
       if (updatePost.fulfilled.match(result)) {
-        // Handle success (e.g., navigate back or show a success message)
+        Swal.fire({
+          icon: "success",
+          text: "게시글 수정이 완료되었습니다.",
+          timer: 2000,
+        });
+        navigate(`/api/post/${postId}/detail`);
       } else {
-        // Handle failure
-        setError(result.payload); // Set the error from the response
+        setError(result.payload);
       }
-
-      // navigate(`/api/post/${postId}/detail`);
     } catch (err) {
-      console.err("Failed to update the post:", error);
+      console.err("게시글 업데이트에 실패했습니다", error);
       Swal.fire({
         icon: "error",
-        text: error || "Failed to update the post",
+        text: "게시글 업데이트에 실패했습니다.",
         showConfirmButton: true,
       });
     }
@@ -95,7 +97,7 @@ const UpdatePost = () => {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           multiline
-          rows={4}
+          rows={12}
           fullWidth
           variant="outlined"
           sx={{

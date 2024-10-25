@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +16,6 @@ import {
   TextField,
   Button,
   CircularProgress,
-  IconButton,
   Typography,
   Box,
 } from "@mui/material";
