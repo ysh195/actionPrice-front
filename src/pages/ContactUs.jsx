@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// PostPage.js
 import React, { useEffect} from "react";
 import { Paper, Typography, CircularProgress, Box, Button } from "@mui/material";
 
@@ -30,7 +29,7 @@ const PostPage = () => {
   }
 
   return (
-    <Paper sx={{ marginTop: 10, padding: 2, textAlign: "center" }}>
+    <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
       <img
         src={logo}
         alt="Logo"

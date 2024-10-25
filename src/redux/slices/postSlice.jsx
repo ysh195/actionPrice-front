@@ -55,7 +55,18 @@ export const deletePost = createAsyncThunk(
   "posts/deletePost",
   async (postId, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_URL}/${postId}/delete`);
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to update a post.");
+        return;
+      }
+      const response = await axios.post(`${API_URL}/${postId}/delete`, {
+        headers: {
+          // "Content-Type": "application/json",
+          Authorization: `Bearer ${access_Token}`,
+        },
+      });
+      console.log("deletePost response:", response);
       return postId; // Return the deleted post's id
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -67,11 +78,26 @@ export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${API_URL}/${postId}/update`, postData);
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to update a post.");
+        return;
+      }
+
+      const response = await axios.post(
+        `${API_URL}/${postId}/update`,
+        postData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_Token}`,
+          },
+        }
+      );
       console.log("updatePost response:", response);
       return response.data;
     } catch (error) {
-      console.log("updatePost error:", error)
+      console.log("updatePost error:", error);
       if (error.response) {
         return rejectWithValue(error.response.data);
       }
