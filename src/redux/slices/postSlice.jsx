@@ -16,7 +16,16 @@ export const createPost = createAsyncThunk(
   async (postData, { rejectWithValue }) => {
     console.log(postData);
     try {
-      const response = await axios.post(`${API_URL}/create`, postData);
+        const access_Token = localStorage.getItem("access_token");
+        if (!access_Token) {
+          alert("You need to log in to write a post.");
+          return rejectWithValue("User not logged in");
+        }
+      const response = await axios.post(`${API_URL}/create`, postData, {
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+        },
+      });
       console.log("post response:", response);
       return response.data;
     } catch (error) {
@@ -53,7 +62,6 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async (postId, { rejectWithValue }) => {
@@ -69,27 +77,30 @@ export const fetchPostById = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
-  async (postId, { rejectWithValue }) => {
+  async ({ postId, logined_username }, { rejectWithValue }) => {
     try {
       const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to update a post.");
         return;
       }
-      const response = await axios.post(`${API_URL}/${postId}/delete`, {
-        headers: {
-          // "Content-Type": "application/json",
-          Authorization: `Bearer ${access_Token}`,
-        },
-      });
+      const response = await axios.post(
+        `${API_URL}/${postId}/delete`,
+        { logined_username },
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+          },
+        }
+      );
       console.log("deletePost response:", response);
       return postId; // Return the deleted post's id
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      console.log("deletePost error:", error);
+      return rejectWithValue(error.response?.data || "Error deleting post");
     }
   }
 );
-
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
@@ -174,7 +185,8 @@ const postSlice = createSlice({
       // Delete post
       .addCase(deletePost.fulfilled, (state, action) => {
         const id = action.payload;
-        state.postList = state.postList.filter((post) => post.id !== id);
+        state.postList = state.postList.filter((post) => post.postId !== id);
+        console.log(action.payload);
       })
       //fetchPostById
       .addCase(fetchPostById.pending, (state) => {
