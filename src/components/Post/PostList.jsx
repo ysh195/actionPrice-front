@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { styled } from "@mui/material";
 
 const PostTable = ({ postList }) => {
+  console.log("abd",postList)
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#C5705D",

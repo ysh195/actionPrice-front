@@ -33,19 +33,16 @@ const CreatePost = () => {
 
   const handleCreatePost = async () => {
     try {
-      
       const postData = {
         title,
         content: newPost,
         username,
       };
-      const createdPost = await dispatch(createPost(postData)).unwrap();
-      console.log("created post:", createdPost);
-      navigate(`/api/post/${createdPost.postId}/detail`);
+      const result = await dispatch(createPost(postData)).unwrap();
 
+      navigate(`/api/post/${result}/detail`);
       setNewPost("");
       setTitle("");
-
       setOpenSnackbar(true);
     } catch (error) {
       setError(error.message);
@@ -103,6 +100,7 @@ const CreatePost = () => {
           required
           sx={{ marginTop: 2, marginBottom: 2 }}
         />
+
         <Button variant="outlined" onClick={handleCreatePost}>
           게시글 등록
         </Button>

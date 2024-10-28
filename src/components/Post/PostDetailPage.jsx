@@ -16,6 +16,8 @@ const PostDetailPage = () => {
   const dispatch = useDispatch();
   const { post, loading, error } = useSelector((state) => state.post);
 
+  console.log("post:",post)
+
   useEffect(() => {
     dispatch(fetchPostById(postId));
   }, [dispatch, postId]);
@@ -39,12 +41,12 @@ const PostDetailPage = () => {
         <Paper sx={{ padding: 2 }}>
           <PostHeader
             title={post.title}
-            username={post.username}
+            post_owner={post.username}
             createdAt={post.createdAt}
             updatedAt={post.updatedAt}
           />
           <PostContent content={post.content} />
-          <PostActions postId={post.postId} username={post.username} />
+          <PostActions postId={post.postId} post_owner={post.username} />
           <section>
             {/* <CommentForm loading={loading} error={error} onSubmit={onCommentCreate}/> */}
             {/* {rootComments != null && rootComments.length > 0 && (

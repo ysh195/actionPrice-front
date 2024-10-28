@@ -1,10 +1,34 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import { Button, Typography, Paper, Box, Avatar } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Typography,
+  Paper,
+  Box,
+  Avatar,
+  CircularProgress,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice";
-import { useNavigate } from "react-router-dom";
-import { deleteAccount } from "../redux/slices/userSlice";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  deleteAccount,
+  getMyPosts,
+  getPersonalInfo,
+} from "../redux/slices/userSlice";
+import PostList from "../components/Post/PostList";
 import Swal from "sweetalert2";
 
 const MyPage = () => {
@@ -12,6 +36,15 @@ const MyPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const username = useSelector((state) => state.login.username);
+  const email = useSelector((state) => state.user.email);
+  const { myPosts } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (username) {
+      dispatch(getPersonalInfo(username));
+      dispatch(getMyPosts({ username, keyword: "", pageNum: 0 }));
+    }
+  }, [dispatch, username]);
 
   const handleTabChange = (index) => {
     setActiveTab(index);
@@ -23,16 +56,15 @@ const MyPage = () => {
   };
 
   const handleDeleteAccount = async () => {
-    try {
-      const result = await dispatch(deleteAccount(username));
-      console.log(result);
+    const result = await dispatch(deleteAccount(username));
+    if (deleteAccount.fulfilled.match(result)) {
       Swal.fire({
-        text: " 계정이 성공적으로 삭제되었습니다",
+        text: "계정이 성공적으로 삭제되었습니다",
         icon: "success",
         timer: 3000,
       });
       navigate("/api/user/login");
-    } catch (error) {
+    } else {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -51,13 +83,70 @@ const MyPage = () => {
               Personal Information
             </Typography>
             <Typography>사용자 이름: {username || "Not provided"}</Typography>
-            <Typography>이메일: john.doe@example.com</Typography>
+            <Typography>이메일: {email || "Not provided"}</Typography>
           </Box>
         );
       case 1:
         return <Typography>찜한 상품 목록</Typography>; // Wishlist content here
       case 2:
-        return <Typography>문의 내용들</Typography>; // My Posts content here
+        return (
+          <Box sx={{ padding: 3 }}>
+            <Typography variant="h5" gutterBottom>
+              {username}님의 게시글 목록
+            </Typography>
+
+            <TableContainer
+              sx={{
+                maxHeight: 440,
+                marginTop: 2,
+                marginBottom: 2,
+              }}
+            >
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>작성자</TableCell>
+                    <TableCell>제목</TableCell>
+                    <TableCell>등록일</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {myPosts.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center">
+                        No posts available
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    myPosts.map((post, postId) => (
+                      <TableRow key={postId}>
+                        <TableCell>{post.postId}</TableCell>
+                        <TableCell>{post.username}</TableCell>
+                        <TableCell>
+                          <Link
+                            to={`/api/post/${post.postId}/detail`}
+                            style={{
+                              color: "#2c3e50",
+
+                              textDecoration: "",
+                            }}
+                          >
+                            {post.title}
+                          </Link>
+                        </TableCell>
+
+                        <TableCell>
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        );
       case 3:
         return (
           <Box>
