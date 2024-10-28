@@ -12,12 +12,14 @@ const PostActions = React.memo(({ postId, post_owner }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logined_username = useSelector((state) => state.login.username);
-  console.log("logined_username:", logined_username);
 
+
+  //function: handleEdit //
   const handleEdit = () => {
     navigate(`/api/post/${postId}/update`);
   };
 
+  //function: handleDelete //
   const handleDelete = async () => {
     if (!logined_username) {
       alert("You need to be logged in to delete a post.");
@@ -26,10 +28,10 @@ const PostActions = React.memo(({ postId, post_owner }) => {
     const result = await dispatch(deletePost({ postId, logined_username }));
     if (deletePost.fulfilled.match(result)) {
       console.log("Post deleted successfully:", result.payload);
-       <Stack sx={{ width: "100%" }} spacing={2}>
-         <Alert severity="success">게시글이 삭제 되었습니다.</Alert>;
-       </Stack>;
-        
+      <Stack sx={{ width: "100%" }} spacing={2}>
+        <Alert severity="success">게시글이 삭제 되었습니다.</Alert>;
+      </Stack>;
+
       Swal.fire({
         icon: "success",
         text: "게시글이 삭제 되었습니다.",
@@ -41,7 +43,7 @@ const PostActions = React.memo(({ postId, post_owner }) => {
 
     navigate("/api/contact-us");
   };
-
+  //function: handleComment //
   const handleComment = () => {
     // 답글 작성 로직
   };

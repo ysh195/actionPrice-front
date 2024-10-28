@@ -11,10 +11,10 @@ const initialState = {
 
 const API_URL = "http://localhost:8080/api/post";
 
+//function: createPost //
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
-    console.log(postData);
     try {
       const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
@@ -24,6 +24,8 @@ export const createPost = createAsyncThunk(
       const response = await axios.post(`${API_URL}/create`, postData, {
         headers: {
           Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
       });
       console.log("post response:", response);
@@ -34,19 +36,7 @@ export const createPost = createAsyncThunk(
   }
 );
 
-// export const fetchPosts = createAsyncThunk(
-//   "posts/fetchPosts",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(`${API_URL}/list`);
-//       console.log("post list:", response);
-//       return response.data;
-//     } catch (error) {
-//       return rejectWithValue(error.response.data); // Handle errors appropriately
-//     }
-//   }
-// );
-
+//function: fetchPosts //
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
   async (page = 0, { rejectWithValue }) => {
@@ -62,11 +52,16 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+//function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async (postId, { rejectWithValue }) => {
+  async ({postId, commentPageNum = 0}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${postId}/detail`);
+      const response = await axios.get(`${API_URL}/${postId}/detail`, {
+        params: { commentPageNum },
+      });
+
+      console.log("fetchPostById response:", response);
 
       return response.data;
     } catch (error) {
@@ -74,7 +69,7 @@ export const fetchPostById = createAsyncThunk(
     }
   }
 );
-
+//function: deletePost //
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
   async ({ postId, logined_username }, { rejectWithValue }) => {
@@ -91,6 +86,8 @@ export const deletePost = createAsyncThunk(
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
@@ -107,6 +104,7 @@ export const deletePost = createAsyncThunk(
     }
   }
 );
+//function: updatePost //
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
@@ -122,8 +120,9 @@ export const updatePost = createAsyncThunk(
         postData,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
@@ -197,11 +196,11 @@ const postSlice = createSlice({
       //fetchPostById
       .addCase(fetchPostById.pending, (state) => {
         state.loading = true;
-        state.error = null; // Reset error on new request
+        state.error = null; 
       })
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("aaaa", action.payload);
+        console.log("state.post", action.payload);
         state.post = action.payload; // Set post data
       })
       .addCase(fetchPostById.rejected, (state, action) => {

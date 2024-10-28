@@ -38,11 +38,9 @@ const CreatePost = () => {
         content: newPost,
         username,
       };
-      const result = await dispatch(createPost(postData)).unwrap();
-
-      navigate(`/api/post/${result}/detail`);
-      setNewPost("");
-      setTitle("");
+      const createdPost = await dispatch(createPost(postData)).unwrap();
+      console.log("createdPost:", createdPost);
+      navigate(`/api/post/${createdPost.postId}/detail`);
       setOpenSnackbar(true);
     } catch (error) {
       setError(error.message);
