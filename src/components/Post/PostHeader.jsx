@@ -2,7 +2,7 @@
 import React from "react";
 import { Typography, Divider, Box } from "@mui/material";
 //prevent unnecessary re-renders when the props have not changed.
-const PostHeader = React.memo(({ title, username, createdAt, updatedAt }) => {
+const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
   return (
     <div>
       <Typography variant="h5" align="center" gutterBottom>
@@ -18,7 +18,7 @@ const PostHeader = React.memo(({ title, username, createdAt, updatedAt }) => {
           paddingX: 2,
         }}
       >
-        <Typography variant="subtitle1">작성자:{username}</Typography>
+        <Typography variant="subtitle1">작성자:{post_owner}</Typography>
         <Box
           sx={{
             display: "flex",

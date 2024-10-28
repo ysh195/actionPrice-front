@@ -4,7 +4,7 @@ import axios from "axios";
 
 const initialState = {
   postList: [],
-  post: {},
+  post: "",
   loading: false,
   error: null,
 };
@@ -16,11 +16,11 @@ export const createPost = createAsyncThunk(
   async (postData, { rejectWithValue }) => {
     console.log(postData);
     try {
-        const access_Token = localStorage.getItem("access_token");
-        if (!access_Token) {
-          alert("You need to log in to write a post.");
-          return rejectWithValue("User not logged in");
-        }
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to write a post.");
+        return rejectWithValue("User not logged in");
+      }
       const response = await axios.post(`${API_URL}/create`, postData, {
         headers: {
           Authorization: `Bearer ${access_Token}`,
@@ -78,6 +78,7 @@ export const fetchPostById = createAsyncThunk(
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
   async ({ postId, logined_username }, { rejectWithValue }) => {
+    console.log("Post ID:", postId, "Logged-in Username:", logined_username);
     try {
       const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
@@ -94,7 +95,12 @@ export const deletePost = createAsyncThunk(
         }
       );
       console.log("deletePost response:", response);
-      return postId; // Return the deleted post's id
+      // Check if deletion was successful
+      if (response.status === 200) {
+        return postId; // Return the deleted post's id
+      } else {
+        throw new Error("Failed to delete the post");
+      }
     } catch (error) {
       console.log("deletePost error:", error);
       return rejectWithValue(error.response?.data || "Error deleting post");
@@ -195,6 +201,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
+        console.log("aaaa", action.payload);
         state.post = action.payload; // Set post data
       })
       .addCase(fetchPostById.rejected, (state, action) => {
