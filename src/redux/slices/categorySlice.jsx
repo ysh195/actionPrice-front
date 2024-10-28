@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+
 
 const initialState = {
   categories: [],

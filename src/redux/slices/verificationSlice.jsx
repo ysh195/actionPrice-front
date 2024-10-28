@@ -27,10 +27,16 @@ export const checkUsername = createAsyncThunk(
         `${BASE_URL}/user/checkForDuplicateUsername`,
         {
           username,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json", // Specify the content type
+            Accept: "application/json", // Specify the accepted response type
+          },
         }
       );
       console.log("Slice check Username:", response.data);
-   
+
       return response.data; //"Username is available";
     } catch (error) {
       console.error("Slice Error response:", error.response);
@@ -70,7 +76,13 @@ export const sendVerificationCode = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/user/sendVerificationCode`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json", // Specify the content type
+            Accept: "application/json", // Specify the accepted response type
+          },
+        }
       );
       console.log("sendVerificationCode:", response);
       return response.data; //인증코드가 성공적으로 발송되었습니다.
@@ -102,11 +114,16 @@ export const verifyCode = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/user/checkVerificationCode`,
-        { username, email, password, verificationCode }
+        { username, email, password, verificationCode },
+        {
+          headers: {
+            "Content-Type": "application/json", // Specify the content type
+            Accept: "application/json", // Specify the accepted response type
+          },
+        }
       );
       console.log("verifyCode:", response);
       return response.data.resultOfVerification;
-      
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message ||
@@ -119,9 +136,7 @@ export const verifyCode = createAsyncThunk(
 const verificationSlice = createSlice({
   name: "verification",
   initialState,
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       //desc: -----------------checkUsername check--------------------
@@ -188,5 +203,5 @@ const verificationSlice = createSlice({
   },
 });
 
-export const { } = verificationSlice.actions;
+export const {} = verificationSlice.actions;
 export default verificationSlice.reducer;

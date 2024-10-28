@@ -23,17 +23,15 @@ export const registerUser = createAsyncThunk(
     try {
       // console.log("Payload sent to API:", {formData});
 
-      const response = await axios.post(
-        `${BASE_URL}/user/register`,
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/user/register`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       console.log("Registration successful:", response.data);
       console.log(response);
       return response.data;
-      
     } catch (error) {
       console.error("Registration error:", error);
       return rejectWithValue(
@@ -48,9 +46,7 @@ export const registerUser = createAsyncThunk(
 const registerSlice = createSlice({
   name: "register",
   initialState,
-  reducers: {
-  
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -60,7 +56,7 @@ const registerSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        console.log(action.payload)
+        console.log(action.payload);
         state.user = action.payload;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -71,5 +67,5 @@ const registerSlice = createSlice({
   },
 });
 
-export const { } = registerSlice.actions;
+export const {} = registerSlice.actions;
 export default registerSlice.reducer;
