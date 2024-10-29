@@ -6,13 +6,6 @@ import {
   Paper,
   Box,
   Avatar,
-  CircularProgress,
-  Card,
-  CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   TableContainer,
   Table,
   TableHead,
@@ -28,7 +21,6 @@ import {
   getMyPosts,
   getPersonalInfo,
 } from "../redux/slices/userSlice";
-import PostList from "../components/Post/PostList";
 import Swal from "sweetalert2";
 
 const MyPage = () => {

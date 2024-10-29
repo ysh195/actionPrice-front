@@ -1,24 +1,38 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect} from "react";
-import { Paper, Typography, CircularProgress, Box, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Paper,
+  Typography,
+  CircularProgress,
+  Box,
+  Button,
+} from "@mui/material";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts } from "../redux/slices/postSlice";
-import PostList from "../components/Post/PostList";
+import { fetchPosts, setCurrentPage } from "../redux/slices/postSlice";
+import PostListView from "../components/Post/PostListView";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import logo from "../assets/images/logo.png";
+import PostSearch from "../components/Post/PostSearch";
 
 const PostPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { postList, loading, error } = useSelector((state) => state.post);
+  const [pageNum, setPageNum] = useState(1);
 
-  console.log("postList:", postList);
+  console.log("check postList in PostPage:", postList);
 
+  // Fetch posts on component mount or pageNum changes
   useEffect(() => {
-    dispatch(fetchPosts());
-  }, [dispatch]);
+    dispatch(fetchPosts({ pageNum, keyword: "" })); // Initial fetch without keyword
+  }, [dispatch, pageNum]);
+
+  const handleSearch = (keyword) => {
+    setPageNum(1);
+    dispatch(fetchPosts({ pageNum: 1, keyword }));
+  };
 
   if (loading) {
     return <CircularProgress />;
@@ -45,9 +59,10 @@ const PostPage = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "flex-start",
           width: "100%",
           marginBottom: 2,
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         <Button
@@ -57,8 +72,9 @@ const PostPage = () => {
         >
           문의하기
         </Button>
+        <PostSearch onSearch={handleSearch} />
       </Box>
-      <PostList postList={postList} />
+      <PostListView postList={postList} />
     </Paper>
   );
 };

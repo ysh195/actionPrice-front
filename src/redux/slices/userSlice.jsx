@@ -82,7 +82,7 @@ export const getMyPosts = createAsyncThunk(
       );
 
       console.log("getMyPosts response:", response);
-      return response.data;
+      return response.data.postList;
     } catch (error) {
       console.log("getMyPosts error:", error);
       return rejectWithValue(error.response?.data || "Error fetching posts");

@@ -8,11 +8,10 @@ import { deletePost } from "../../redux/slices/postSlice";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
-const PostActions = React.memo(({ postId, post_owner }) => {
+const PostActions = React.memo(({ postId, post_owner, onCommentClick }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logined_username = useSelector((state) => state.login.username);
-
 
   //function: handleEdit //
   const handleEdit = () => {
@@ -25,28 +24,39 @@ const PostActions = React.memo(({ postId, post_owner }) => {
       alert("You need to be logged in to delete a post.");
       return;
     }
-    const result = await dispatch(deletePost({ postId, logined_username }));
-    if (deletePost.fulfilled.match(result)) {
-      console.log("Post deleted successfully:", result.payload);
-      <Stack sx={{ width: "100%" }} spacing={2}>
-        <Alert severity="success">게시글이 삭제 되었습니다.</Alert>;
-      </Stack>;
-
-      Swal.fire({
-        icon: "success",
-        text: "게시글이 삭제 되었습니다.",
-        timer: 2000,
-      });
+    // Show confirmation popup
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this post!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+    // Check if the user confirmed the deletion
+    if (confirmation.isConfirmed) {
+      const result = await dispatch(deletePost({ postId, logined_username }));
+      if (deletePost.fulfilled.match(result)) {
+        console.log("Post deleted successfully:", result.payload);
+        Swal.fire({
+          icon: "success",
+          text: "게시글이 삭제 되었습니다.",
+          timer: 2000,
+        });
+      } else {
+        console.error("Failed to delete post:", result.error);
+      }
+      navigate("/api/contact-us");
     } else {
-      console.error("Failed to delete post:", result.error);
+      console.log("Post deletion canceled.");
     }
-
-    navigate("/api/contact-us");
   };
   //function: handleComment //
-  const handleComment = () => {
-    // 답글 작성 로직
-  };
+    const handleComment = () => {
+      onCommentClick(); 
+    };
 
   return (
     <>

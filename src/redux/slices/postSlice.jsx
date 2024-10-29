@@ -4,9 +4,16 @@ import axios from "axios";
 
 const initialState = {
   postList: [],
-  post: "",
+  commentList: [],
+  post: {},
   loading: false,
   error: null,
+  currentPageNum: "",
+  totalPageNum: "",
+  listSize: "",
+  totalCommentPage: "",
+  currentCommentPage: "",
+  totalCommentNumber: "",
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -39,14 +46,16 @@ export const createPost = createAsyncThunk(
 //function: fetchPosts //
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async (page = 0, { rejectWithValue }) => {
+  async ({ pageNum = 1, keyword = "" }, { rejectWithValue }) => {
     // Default to 0 if no page is passed
     try {
-      const response = await axios.get(`${API_URL}/list`, { params: { page } });
-      console.log("post list:", response);
+      const response = await axios.get(`${API_URL}/list`, {
+        params: { pageNum, keyword },
+      });
+      console.log("Fetched posts:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Fetch posts error:", error); // More detailed logging
+      console.error("Fetch posts error:", error);
       return rejectWithValue(error.response?.data || "An error occurred");
     }
   }
@@ -55,16 +64,16 @@ export const fetchPosts = createAsyncThunk(
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async ({postId, commentPageNum = 0}, { rejectWithValue }) => {
+  async ({ postId, commentPageNum = 0 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/${postId}/detail`, {
         params: { commentPageNum },
       });
-
-      console.log("fetchPostById response:", response);
-
+      console.log("fetchPostById response:", response.data);
       return response.data;
     } catch (error) {
+      console.error("Error fetching post by ID:", error); // Log the error
+
       return rejectWithValue(error.response.data);
     }
   }
@@ -92,12 +101,7 @@ export const deletePost = createAsyncThunk(
         }
       );
       console.log("deletePost response:", response);
-      // Check if deletion was successful
-      if (response.status === 200) {
-        return postId; // Return the deleted post's id
-      } else {
-        throw new Error("Failed to delete the post");
-      }
+      return response.data;
     } catch (error) {
       console.log("deletePost error:", error);
       return rejectWithValue(error.response?.data || "Error deleting post");
@@ -148,6 +152,9 @@ const postSlice = createSlice({
     clearPostDetail: (state) => {
       state.post = null; // Action to clear post detail
     },
+    setCurrentPage(state, action) {
+      state.currentPageNum = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -158,11 +165,13 @@ const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("postList", action.payload);
-        // state.postList = action.payload;
-        state.postList = Array.isArray(action.payload)
-          ? action.payload
-          : [action.payload];
+        console.log(action.payload);
+        state.postList = Array.isArray(action.payload.postList)
+          ? action.payload.postList
+          : [action.payload.postList];
+        state.totalPageNum = action.payload.totalPageNum;
+        state.currentPageNum = action.payload.currentPageNum;
+        state.listSize = action.payload.listSize;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.loading = false;
@@ -171,14 +180,12 @@ const postSlice = createSlice({
       // Create post
       .addCase(createPost.fulfilled, (state, action) => {
         state.loading = false;
-        // state.postList.push(action.payload);
-        const postsToAdd = Array.isArray(action.payload)
-          ? action.payload
-          : [action.payload];
-        state.postList.push(...postsToAdd);
+
+        state.postList = action.payload;
       })
       // Edit post
       .addCase(updatePost.fulfilled, (state, action) => {
+        // The updated post returned from the server
         const updatedPost = action.payload;
         const index = state.postList.findIndex(
           (post) => post.postId === updatedPost.postId
@@ -189,6 +196,7 @@ const postSlice = createSlice({
       })
       // Delete post
       .addCase(deletePost.fulfilled, (state, action) => {
+        console.log("delete:", action.payload);
         const id = action.payload;
         state.postList = state.postList.filter((post) => post.postId !== id);
         console.log(action.payload);
@@ -196,20 +204,24 @@ const postSlice = createSlice({
       //fetchPostById
       .addCase(fetchPostById.pending, (state) => {
         state.loading = true;
-        state.error = null; 
+        state.error = null;
       })
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("state.post", action.payload);
-        state.post = action.payload; // Set post data
+        state.post = action.payload;
+        state.commentList = action.payload.commentList;
+        state.totalCommentPage = action.payload.totalPageNum;
+        state.currentCommentPage = action.payload.currentPageNum;
+        state.totalCommentNumber = action.payload.listSize;
       })
       .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message; // Set error message
+        state.error = action.payload; // Set error message
       });
   },
 });
 
 // Export actions and reducer
-export const { clearError, clearPostDetail } = postSlice.actions;
+export const { clearError, clearPostDetail, setCurrentPage } =
+  postSlice.actions;
 export default postSlice.reducer;

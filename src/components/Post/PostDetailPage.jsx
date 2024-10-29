@@ -1,40 +1,52 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, Suspense, lazy, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
 
 import { Box, CircularProgress, Paper, Typography } from "@mui/material";
-
-import { CommentList } from "../Comment/CommentList";
 import CommentForm from "../Comment/CommentForm";
+import { CommentList } from "../Comment/CommentList";
 
 const PostHeader = lazy(() => import("./PostHeader"));
 const PostContent = lazy(() => import("./PostContent"));
 const PostActions = lazy(() => import("./PostActions"));
-const CommentSection = lazy(() => import("../Comment/CommentForm"));
 
 const PostDetailPage = () => {
+  // retrieves the postId from the URL.
   const { postId } = useParams();
   const dispatch = useDispatch();
-  const { post, loading, error } = useSelector((state) => state.post);
-   const { commentList} = useSelector((state) => state.comment);
   const [commentPageNum, setCommentPageNum] = useState(0);
 
-  console.log("post:",post)
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const { post, loading, commentList, error } = useSelector(
+    (state) => state.post
+  );
+  const [localCommentList, setLocalCommentList] = useState(commentList);
+
+  const handleShowCommentForm = () => {
+    setShowCommentForm((prev) => !prev);
+  };
+
+
+
+  console.log("check post in PostDetailPage component:", post);
+  console.log("check commentList in PostDetailPage component:", commentList);
 
   useEffect(() => {
-    dispatch(fetchPostById({ postId, commentPageNum })); // Fetch the post details
+    dispatch(fetchPostById({ postId, commentPageNum }));
   }, [dispatch, postId, commentPageNum]);
 
+  useEffect(() => {
+    setLocalCommentList(commentList); // Sync local state with Redux state
+  }, [commentList]); // Update local state whenever Redux state changes
 
-  const handleNextPage = () => {
-    setCommentPageNum((prev) => prev + 1);
-  };
+    const handleNewComment = (newComment) => {
+      console.log("New comment added:", newComment);
+          setLocalCommentList((prevComments) => [...prevComments, newComment]);
 
-  const handlePreviousPage = () => {
-    setCommentPageNum((prev) => Math.max(prev - 1, 0));
-  };
+    };
+
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
@@ -60,21 +72,25 @@ const PostDetailPage = () => {
             updatedAt={post.updatedAt}
           />
           <PostContent content={post.content} />
-          <PostActions postId={post.postId} post_owner={post.username} />
+          <PostActions
+            postId={post.postId}
+            post_owner={post.username}
+            onCommentClick={handleShowCommentForm}
+          />
           <section>
-            {/* <CommentForm loading={loading} error={error}/> */}
-
             <div className="mt-4">
-              <CommentForm postId={postId} />
-              <CommentList comments={commentList} postId={postId} />
+              {showCommentForm && (
+                <CommentForm postId={postId} onNewComment={handleNewComment} />
+              )}
+              <CommentList commentList={commentList} postId={postId} />
             </div>
-            <button
+            {/* <button
               onClick={handlePreviousPage}
               disabled={commentPageNum === 0}
             >
-              Previous
+              Previous ||
             </button>
-            <button onClick={handleNextPage}>Next</button>
+            <button onClick={handleNextPage}>Next</button> */}
           </section>
         </Paper>
       </Box>

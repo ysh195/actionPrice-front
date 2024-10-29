@@ -10,33 +10,14 @@ const initialState = {
 
 const API_URL = "http://localhost:8080/api/post";
 
-export const fetchCommentsByPostId = createAsyncThunk(
-  "comments/fetchCommentsByPostId",
-  async ({ postId, page = 0, size = 10 }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/comments`, {
-        params: { postId, page, size },
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      console.log("fetchCommentsByPostId response:", response);
-      return response.data; // Ensure this returns the Page object
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const addComment = createAsyncThunk(
-  "comments/addComment",
+//function: createComment //
+export const createComment = createAsyncThunk(
+  "comments/createComment",
   async ({ postId, username, content }, { rejectWithValue }) => {
-    console.log("getting addComment datas:", postId, username, content);
     try {
       const response = await axios.post(
         `${API_URL}/${postId}/detail`,
-        { postId, username, content },
+        { username, content },
         {
           headers: {
             "Content-Type": "application/json",
@@ -44,10 +25,58 @@ export const addComment = createAsyncThunk(
           },
         }
       );
-      console.log("addComment response:", response);
+      console.log("create comment API Response:", response);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateComment = createAsyncThunk(
+  "comments/updateComment",
+  async (
+    { postId, commentId, username, content },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/${postId}/detail/${commentId}/update`,
+        {
+          username,
+          content,
+        }
+      );
+      console.log("updateComment response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      return rejectWithValue(
+        error.response?.data || "Failed to update comment"
+      );
+    }
+  }
+);
+
+export const deleteComment = createAsyncThunk(
+  "comments/deleteComment",
+  async ({ postId, commentId, logined_username }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/${postId}/detail/${commentId}/delete`,
+        {
+          data: { logined_username }, // Pass the username in the request body
+        }
+      );
+      console.log("deleteComment response:", response);
+  
+      return response.data;
+     
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      return rejectWithValue(
+        error.response?.data || "Failed to delete comment"
+      );
     }
   }
 );
@@ -58,31 +87,47 @@ export const commentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCommentsByPostId.pending, (state) => {
+      .addCase(createComment.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchCommentsByPostId.fulfilled, (state, action) => {
+      .addCase(createComment.fulfilled, (state, action) => {
         state.loading = false;
-        state.comments = action.payload.content; // Assuming payload has a content array
+        console.log("createComment payload", action.payload);
+        state.commentList.push(action.payload);
       })
-      .addCase(fetchCommentsByPostId.rejected, (state, action) => {
+      .addCase(createComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(addComment.pending, (state) => {
-        state.loading = true;
+      .addCase(updateComment.fulfilled, (state, action) => {
+        console.log("updatedComment", action.payload);
+        const updatedComment = action.payload;
+        const index = state.commentList.findIndex(
+          (comment) => comment.id === updatedComment.id
+        ); // Find the index of the updated comment
+        if (index !== -1) {
+          state.commentList[index] = updatedComment;
+        }
       })
-      .addCase(addComment.fulfilled, (state, action) => {
-        state.loading = false;
-        // state.comments.push(action.payload);
-        const commentToAdd = Array.isArray(action.payload)
-          ? action.payload
-          : [action.payload];
-        state.commentList.push(...commentToAdd);
+      .addCase(updateComment.pending, (state) => {
+        state.status = "loading";
       })
-      .addCase(addComment.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
+      .addCase(updateComment.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        // Remove the deleted comment from the state
+        state.commentList = state.commentList.filter(
+          (comment) => comment.id !== action.payload.commentId
+        );
+      })
+      .addCase(deleteComment.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteComment.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
       });
   },
 });
