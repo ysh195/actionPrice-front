@@ -4,6 +4,8 @@ import React from "react";
 import { Typography } from "@mui/material";
 
 const PostContent = React.memo(({ content }) => {
+  console.log("PostDetailPage rendered");
+
   return (
     <Typography
       variant="body1"

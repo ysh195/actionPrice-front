@@ -1,22 +1,50 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import CommentItem from "./CommentItem";
+import { useDispatch } from "react-redux";
+import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
 
-import Comment from "./Comment";
+
+export function CommentList({ commentList, postId }) {
+  const dispatch = useDispatch();
 
 
-export function CommentList({ CommentList }) {
-  // Ensure postId is passed as a prop
+
+  const handleDelete = (commentId, logined_username) => {
+    dispatch(deleteComment({ postId, commentId, logined_username }));
+  };
+
   return (
-    <Box>
-      {CommentList && CommentList.length > 0 ? (
-        CommentList.map((comment) => (
-          <Box key={comment.id} mb={2}>
-            <Comment {...comment} />
-            {/* Assuming Comment takes props for rendering */}
+    <Box sx={{ mt: 2 }}>
+      {Array.isArray(commentList) && commentList.length > 0 ? (
+        commentList.map((comment) => (
+          <Box
+            key={comment.commentId}
+            sx={{
+              border: 1,
+              borderColor: "grey.300",
+              borderRadius: 2,
+              p: 2,
+              mb: 2,
+              bgcolor: "background.paper",
+              transition: "0.2s",
+              "&:hover": {
+                boxShadow: 2,
+              },
+            }}
+          >
+            <CommentItem
+              comment={comment}
+              // handleCommentUpdate={handleCommentUpdate}
+              handleDelete={handleDelete}
+            />
           </Box>
         ))
       ) : (
-        <p>No comments yet.</p>
+        <Typography variant="body2" color="text.secondary">
+          No comments yet.
+        </Typography>
       )}
     </Box>
   );

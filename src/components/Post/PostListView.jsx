@@ -9,10 +9,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
-import { styled } from "@mui/material";
+import { Pagination, styled } from "@mui/material";
 
-const PostTable = ({ postList }) => {
-  console.log("abd",postList)
+const PostListView = ({ postList }) => {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#C5705D",
@@ -22,16 +21,18 @@ const PostTable = ({ postList }) => {
       fontSize: 16,
     },
   }));
+
+  console.log("check postList in PostList component:", postList);
+
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer
         sx={{
-          maxHeight: 440,
           marginTop: 2,
           marginBottom: 2,
         }}
       >
-        <Table stickyHeader aria-label="sticky table">
+        <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
               <StyledTableCell>ID</StyledTableCell>
@@ -48,8 +49,8 @@ const PostTable = ({ postList }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              postList.map((post, postId) => (
-                <TableRow key={postId}>
+              postList.map((post) => (
+                <TableRow key={post.postId}>
                   <TableCell>{post.postId}</TableCell>
                   <TableCell>{post.username}</TableCell>
                   <TableCell>
@@ -57,14 +58,11 @@ const PostTable = ({ postList }) => {
                       to={`/api/post/${post.postId}/detail`}
                       style={{
                         color: "#2c3e50",
-                        
-                        textDecoration: "",
                       }}
                     >
                       {post.title}
                     </Link>
                   </TableCell>
-
                   <TableCell>
                     {new Date(post.createdAt).toLocaleDateString()}
                   </TableCell>
@@ -74,8 +72,15 @@ const PostTable = ({ postList }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      {/* <Pagination
+        count={totalPageNum}
+        page={currentPageNum +1 } 
+        onChange={handlePageChange}
+        variant="outlined"
+        sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
+      /> */}
     </Paper>
   );
 };
 
-export default PostTable;
+export default PostListView;

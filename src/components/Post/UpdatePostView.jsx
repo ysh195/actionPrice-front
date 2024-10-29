@@ -7,21 +7,25 @@ import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import PostHeader from "./PostHeader";
 import Swal from "sweetalert2";
 
-const UpdatePost = () => {
+const UpdatePostView = () => {
   const { postId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
   const { post } = useSelector((state) => state.post);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState(post.title || "");
+  const [content, setContent] = useState(post.content || "");
   const username = useSelector((state) => state.login.username);
 
   useEffect(() => {
-    dispatch(fetchPostById(postId));
+    const fetchPost = async () => {
+      await dispatch(fetchPostById(postId));
+    };
+    fetchPost();
   }, [dispatch, postId]);
 
+  // Update title and content when post changes
   useEffect(() => {
     if (post) {
       setTitle(post.title);
@@ -33,7 +37,7 @@ const UpdatePost = () => {
     try {
       const postData = { title, content, username };
       const result = await dispatch(updatePost({ postId, postData }));
-      console.log(result);
+      console.log("handleUpdatePost result", result);
       if (updatePost.fulfilled.match(result)) {
         Swal.fire({
           icon: "success",
@@ -42,10 +46,10 @@ const UpdatePost = () => {
         });
         navigate(`/api/post/${postId}/detail`);
       } else {
-        setError(result.payload);
+        setError(result.payload || "Failed to update post.");
       }
     } catch (err) {
-      console.err("게시글 업데이트에 실패했습니다", error);
+      console.error("게시글 업데이트에 실패했습니다", err);
       Swal.fire({
         icon: "error",
         text: "게시글 업데이트에 실패했습니다.",
@@ -116,34 +120,33 @@ const UpdatePost = () => {
           }}
         />
         {error && <Typography color="error">{error}</Typography>}
-        {username === post.username && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: 2,
-            }}
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: 2,
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpdatePost}
+            sx={{ marginRight: 1 }}
           >
-            <Button
-              variant="contained" // Changed to contained for better visibility
-              color="primary"
-              onClick={handleUpdatePost}
-              sx={{ marginRight: 1 }}
-            >
-              수정하기
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={() => window.history.back()}
-            >
-              취소
-            </Button>
-          </Box>
-        )}
+            수정하기
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => window.history.back()}
+          >
+            취소
+          </Button>
+        </Box>
       </Paper>
     </Box>
   );
 };
 
-export default UpdatePost;
+export default UpdatePostView;

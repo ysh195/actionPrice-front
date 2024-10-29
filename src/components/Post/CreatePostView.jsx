@@ -20,30 +20,31 @@ const Alert = React.forwardRef((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 ));
 
-const CreatePost = () => {
-  const [newPost, setNewPost] = useState("");
-  const [title, setTitle] = useState(""); // For the post title
+const CreatePostView = () => {
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate(); // For navigation
 
   const username = useSelector((state) => state.login.username);
-  console.log(username);
 
   const handleCreatePost = async () => {
-    try {
-      const postData = {
-        title,
-        content: newPost,
-        username,
-      };
-      const createdPost = await dispatch(createPost(postData)).unwrap();
-      console.log("createdPost:", createdPost);
-      navigate(`/api/post/${createdPost.postId}/detail`);
-      setOpenSnackbar(true);
-    } catch (error) {
-      setError(error.message);
+    if (title && content && username) {
+      try {
+        const postData = {
+          title,
+          content,
+          username,
+        };
+        const createdPost = await dispatch(createPost(postData)).unwrap();
+        console.log("createdPost:", createdPost);
+        navigate(`/api/post/${createdPost.postId}/detail`);
+        setOpenSnackbar(true);
+      } catch (error) {
+        setError(error.message);
+      }
     }
   };
 
@@ -52,7 +53,7 @@ const CreatePost = () => {
   };
   const handleCancel = () => {
     setTitle("");
-    setNewPost("");
+    setContent("");
   };
 
   if (error) {
@@ -91,8 +92,8 @@ const CreatePost = () => {
           label="문의 내용"
           multiline
           rows={5}
-          value={newPost}
-          onChange={(e) => setNewPost(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           variant="outlined"
           fullWidth
           required
@@ -126,4 +127,4 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default CreatePostView;

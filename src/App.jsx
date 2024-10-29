@@ -12,10 +12,10 @@ import { useEffect } from "react";
 import { autoLogin } from "./redux/slices/loginSlice";
 
 import AppLayout from "./layouts/AppLayout";
-import CreatePost from "./components/Post/CreatePost";
+import CreatePostView from "./components/Post/CreatePostView";
 import PostDetailPage from "./components/Post/PostDetailPage";
-import UpdatePost from "./components/Post/UpdatePost";
-import PostList from "./components/Post/PostList";
+import UpdatePostView from "./components/Post/UpdatePostView";
+import PostListView from "./components/Post/PostListView";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -42,16 +42,16 @@ function App() {
           />
           <Route
             path="api/post/create"
-            element={<ProtectedRoute element={<CreatePost />} />}
+            element={<ProtectedRoute element={<CreatePostView />} />}
           />
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
 
           <Route
             path="api/post/:postId/update"
-            element={<ProtectedRoute element={<UpdatePost />} />}
+            element={<ProtectedRoute element={<UpdatePostView />} />}
           />
           <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
-          <Route path="api/post/list" element={<PostList />} />
+          <Route path="api/post/list" element={<PostListView />} />
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>
