@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchPostById, updatePost } from "../../redux/slices/postSlice";
+import { fetchPostById, fetchPostForUpdate, updatePost } from "../../redux/slices/postSlice";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import PostHeader from "./PostHeader";
 import Swal from "sweetalert2";
 
 const UpdatePostView = () => {
-  const { postId } = useParams();
+ const { postId, username } = useParams();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
@@ -19,15 +20,10 @@ const UpdatePostView = () => {
   const [content, setContent] = useState(post.content || "");
   // const username = useSelector((state) => state.login.username);
 
-
   console.log("check post in PostDetailPage component:", post);
-  useEffect(() => {
-    const fetchPost = async () => {
-      await dispatch(fetchPostById(postId));
-      setLoading(false); // Set loading to false after fetching
-    };
-    fetchPost();
-  }, [dispatch, postId]);
+ useEffect(() => {
+   dispatch(fetchPostForUpdate({ postId, username }));
+ }, [dispatch, postId, username]);
 
   // Update title and content when post changes
   useEffect(() => {
@@ -85,7 +81,7 @@ const UpdatePostView = () => {
         <Typography variant="h5" gutterBottom>
           게시글 수정
         </Typography>
-        <PostHeader username={post.username} createdAt={post.createdAt} />
+        <PostHeader post_owner={username} createdAt={post.createdAt} />
         <TextField
           label="제목"
           value={title}
