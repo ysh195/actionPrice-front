@@ -48,7 +48,7 @@ const PostActions = React.memo(({ postId, post_owner, onCommentClick }) => {
       } else {
         console.error("Failed to delete post:", result.error);
       }
-      navigate("/api/contact-us");
+      navigate("/api/contact-us/:pageNum/:keyword?");
     } else {
       console.log("Post deletion canceled.");
     }

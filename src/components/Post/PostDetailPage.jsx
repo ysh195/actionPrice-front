@@ -28,8 +28,6 @@ const PostDetailPage = () => {
     setShowCommentForm((prev) => !prev);
   };
 
-
-
   console.log("check post in PostDetailPage component:", post);
   console.log("check commentList in PostDetailPage component:", commentList);
 

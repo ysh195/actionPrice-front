@@ -12,15 +12,19 @@ const UpdatePostView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true); // Loading state
 
   const { post } = useSelector((state) => state.post);
   const [title, setTitle] = useState(post.title || "");
   const [content, setContent] = useState(post.content || "");
-  const username = useSelector((state) => state.login.username);
+  // const username = useSelector((state) => state.login.username);
 
+
+  console.log("check post in PostDetailPage component:", post);
   useEffect(() => {
     const fetchPost = async () => {
       await dispatch(fetchPostById(postId));
+      setLoading(false); // Set loading to false after fetching
     };
     fetchPost();
   }, [dispatch, postId]);
@@ -34,9 +38,16 @@ const UpdatePostView = () => {
   }, [post]);
 
   const handleUpdatePost = async () => {
+    if (!title || !content) {
+      setError("제목과 내용을 모두 입력하세요."); // Ensure title and content are not empty
+      return;
+    }
+
+    const postData = { title, content, username:post.username };
     try {
-      const postData = { title, content, username };
-      const result = await dispatch(updatePost({ postId, postData }));
+      const result = await dispatch(
+        updatePost({ postId: Number(postId), postData })
+      );
       console.log("handleUpdatePost result", result);
       if (updatePost.fulfilled.match(result)) {
         Swal.fire({
