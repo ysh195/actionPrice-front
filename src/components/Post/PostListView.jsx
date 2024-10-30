@@ -9,8 +9,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
-import { styled } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { styled, Typography } from "@mui/material";
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -24,6 +24,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const PostListView = ({ postList }) => {
   console.log("check postList in PostList component:", postList);
+    if (!postList || postList.length === 0) {
+      return <Typography>No posts available.</Typography>;
+    }
 
   return (
     <Paper sx={{ width: "100%" }}>

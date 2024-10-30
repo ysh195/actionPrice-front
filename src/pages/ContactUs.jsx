@@ -19,58 +19,81 @@ import { createSelector } from "@reduxjs/toolkit";
 const ContactUs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { pageNum: paramPageNum, keyword: paramKeyword } = useParams();
+  const { pageNum: paramPageNum } = useParams();
   const [pageNum, setPageNum] = useState(Number(paramPageNum) || 1);
-  const [keyword, setKeyword] = useState(
-    paramKeyword && paramKeyword !== ":keyword" ? paramKeyword : ""
-  );
+  const [keyword, setKeyword] = useState("");
 
-  // Base selector to get post state
   const selectPostState = (state) => state.post;
 
-  // Memoized selector
   const selectPostData = createSelector([selectPostState], (post) => ({
     postList: post.postList,
     loading: post.loading,
     error: post.error,
     totalPageNum: parseInt(post.totalPageNum, 10) || 1,
-    currentPageNum: parseInt(post.currentPageNum, 10) || 1,
   }));
-      const { postList, loading, error, totalPageNum, currentPageNum } =
-        useSelector(selectPostData);
-  //frontend expects pageNum starting from 1, its 0 in backend
-  // Fetch posts based on pageNum and keyword
+
+  const { postList, loading, error, totalPageNum } =
+    useSelector(selectPostData);
+  const [noResults, setNoResults] = useState(false);
+
+  // Fetch posts when pageNum or keyword changes
   useEffect(() => {
     console.log("Fetching posts with:", { pageNum: pageNum - 1, keyword });
 
     dispatch(fetchPosts({ pageNum: pageNum - 1, keyword })); // Adjust for API
   }, [dispatch, pageNum, keyword]);
 
-  // Update the URL when pageNum or keyword changes
   useEffect(() => {
-    console.log("Navigating to:", `/api/contact-us/${pageNum}/${keyword}`);
-    navigate(`/api/contact-us/${pageNum}/${keyword}`, { replace: true });
+    // Update the URL only when the current page or keyword changes
+    const currentPath = keyword
+      ? `/api/contact-us/${pageNum}/${keyword}`
+      : `/api/contact-us/${pageNum}`;
+
+    if (currentPath !== window.location.pathname) {
+      console.log("Navigating to:", currentPath);
+      navigate(currentPath, { replace: true });
+    }
   }, [pageNum, keyword, navigate]);
 
+  useEffect(() => {
+    if (postList.length === 0 && keyword) {
+      setNoResults(true); // Set no results state if keyword is present
+    } else {
+      setNoResults(false); // Reset no results state
+    }
+  }, [postList, keyword]);
+
   const handleSearch = (searchKeyword) => {
-    const safeKeyword = searchKeyword || ""; // Default to empty if no search
-    setKeyword(safeKeyword);
+    setKeyword(searchKeyword); // Set the keyword for searching
     setPageNum(1); // Reset to the first page
-    navigate(`/api/contact-us/1/${safeKeyword}`); // Navigate with the new keyword
+  };
+
+  const handleResetSearch = () => {
+    setKeyword(""); // Reset keyword
+    setPageNum(1); // Reset to the first page
   };
 
   const handlePageChange = (event, value) => {
     if (value < 1) return; // Prevent navigating to less than page 1
-
     setPageNum(value); // Update the current page
   };
 
+  // Render loading spinner
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
+        <CircularProgress />
+      </Paper>
+    );
   }
 
+  // Render error message
   if (error) {
-    return <Typography color="error">{`Error: ${error}`}</Typography>;
+    return (
+      <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
+        <Typography color="error">{`Error: ${error}`}</Typography>
+      </Paper>
+    );
   }
 
   return (
@@ -78,11 +101,7 @@ const ContactUs = () => {
       <img
         src={logo}
         alt="Logo"
-        style={{
-          maxHeight: "30px",
-          marginBottom: "10px",
-          display: "flex",
-        }}
+        style={{ maxHeight: "30px", marginBottom: "10px", display: "flex" }}
       />
       <Typography variant="h5" gutterBottom sx={{ marginTop: 3 }}>
         문의 상황
@@ -103,12 +122,21 @@ const ContactUs = () => {
         >
           문의하기
         </Button>
-        <PostSearch onSearch={handleSearch} />
+        <PostSearch
+          keyword={keyword}
+          onSearch={handleSearch} // Ensure this is the function that sets the keyword
+          onReset={handleResetSearch}
+        />
       </Box>
+      {noResults && (
+        <Typography color="error" sx={{ marginTop: 2 }}>
+          No results found for: "{keyword}"
+        </Typography>
+      )}
       <PostListView postList={postList} />
       <Pagination
         count={totalPageNum} // Total number of pages from Redux state
-        page={currentPageNum} // Current page
+        page={pageNum} // Current page
         onChange={handlePageChange}
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}

@@ -62,6 +62,16 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+//function: fetchPostForUpdate //
+// Async thunk for fetching post for update
+export const fetchPostForUpdate = createAsyncThunk(
+  'post/fetchPostForUpdate',
+  async ({ postId, username }) => {
+    const response = await axios.get(`${API_URL}/${postId}/update/${username}`);
+    return response.data;
+  }
+);
+
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
@@ -109,6 +119,9 @@ export const deletePost = createAsyncThunk(
     }
   }
 );
+
+
+
 //function: updatePost //
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
@@ -119,7 +132,6 @@ export const updatePost = createAsyncThunk(
         alert("You need to log in to update a post.");
         return;
       }
-
       const response = await axios.post(
         `${API_URL}/${postId}/update`,
         postData,
@@ -159,6 +171,11 @@ const postSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    //create post
+      .addCase(createPost.fulfilled, (state, action) => {
+        state.loading = false;
+        state.postList = action.payload;
+      })
       // Fetch posts
       .addCase(fetchPosts.pending, (state) => {
         state.loading = true;
@@ -178,12 +195,6 @@ const postSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      // Create post
-      .addCase(createPost.fulfilled, (state, action) => {
-        state.loading = false;
-
-        state.postList = action.payload;
-      })
       // Edit post
       .addCase(updatePost.fulfilled, (state, action) => {
         // The updated post returned from the server
@@ -194,6 +205,18 @@ const postSlice = createSlice({
         if (index >= 0) {
           state.postList[index] = updatedPost;
         }
+      })
+      //fetchPostForUpdate
+      .addCase(fetchPostForUpdate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPostForUpdate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.post = action.payload;
+      })
+      .addCase(fetchPostForUpdate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
       // Delete post
       .addCase(deletePost.fulfilled, (state, action) => {

@@ -1,22 +1,40 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 
-const PostSearch = ({ onSearch }) => {
-    const [searchKeyword, setSearchKeyword] = useState("");
+const PostSearch = ({ onSearch, onReset, keyword }) => {
+  const [searchKeyword, setSearchKeyword] = useState(keyword);
+  const [isSearching, setIsSearching] = useState(true);
+
+  // Effect to sync the keyword from props
+  useEffect(() => {
+    setSearchKeyword(keyword);
+    if (!keyword) {
+      setIsSearching(false);
+    }
+  }, [keyword]);
 
   const handleSearch = () => {
-    onSearch(searchKeyword); 
-    setSearchKeyword("");
+    onSearch(searchKeyword);
+    setIsSearching(true);
+    console.log(isSearching);
+  };
+
+  const handleReset = () => {
+    setSearchKeyword(""); // Reset the search input
+    onReset(); // Call the reset function
+    setIsSearching(false); // Reset searching state
+    console.log(isSearching);
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <input
         type="text"
-        value={searchKeyword}
-        onChange={(e) => setSearchKeyword(e.target.value)}
+        value={searchKeyword} // Controlled component
+        onChange={(e) => setSearchKeyword(e.target.value)} // Update state on change
         placeholder="게시글 검색"
         style={{
           marginRight: "8px",
@@ -33,6 +51,13 @@ const PostSearch = ({ onSearch }) => {
       >
         검색
       </Button>
+      {isSearching &&
+        searchKeyword && ( // Show icon only when searching and keyword exists
+          <ClearIcon
+            onClick={handleReset}
+            sx={{ marginLeft: 1, cursor: "pointer" }}
+          />
+        )}
     </div>
   );
 };
