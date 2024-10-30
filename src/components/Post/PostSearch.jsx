@@ -4,19 +4,19 @@ import React, { useState } from "react";
 import { Button } from "@mui/material";
 
 const PostSearch = ({ onSearch }) => {
-  const [keyword, setKeyword] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
 
   const handleSearch = () => {
-    onSearch(keyword); 
-    setKeyword("");
+    onSearch(searchKeyword); 
+    setSearchKeyword("");
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <input
         type="text"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        value={searchKeyword}
+        onChange={(e) => setSearchKeyword(e.target.value)}
         placeholder="게시글 검색"
         style={{
           marginRight: "8px",

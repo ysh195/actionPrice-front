@@ -49,6 +49,7 @@ export const fetchPosts = createAsyncThunk(
   async ({ pageNum = 1, keyword = "" }, { rejectWithValue }) => {
     // Default to 0 if no page is passed
     try {
+
       const response = await axios.get(`${API_URL}/list`, {
         params: { pageNum, keyword },
       });

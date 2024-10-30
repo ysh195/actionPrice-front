@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,19 +9,20 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
-import { Pagination, styled } from "@mui/material";
+import { styled } from "@mui/material";
+import { useDispatch } from "react-redux";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#C5705D",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 16,
+  },
+}));
 
 const PostListView = ({ postList }) => {
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#C5705D",
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 16,
-    },
-  }));
-
   console.log("check postList in PostList component:", postList);
 
   return (
@@ -72,13 +73,6 @@ const PostListView = ({ postList }) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <Pagination
-        count={totalPageNum}
-        page={currentPageNum +1 } 
-        onChange={handlePageChange}
-        variant="outlined"
-        sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
-      /> */}
     </Paper>
   );
 };

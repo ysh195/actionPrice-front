@@ -9,8 +9,6 @@ import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
 export function CommentList({ commentList, postId }) {
   const dispatch = useDispatch();
 
-
-
   const handleDelete = (commentId, logined_username) => {
     dispatch(deleteComment({ postId, commentId, logined_username }));
   };

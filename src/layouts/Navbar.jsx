@@ -97,7 +97,7 @@ function Navbar() {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="/api/contact-us"
+                  to="api/contact-us/:pageNum/:keyword"
                   sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Contact Us
@@ -151,7 +151,7 @@ function Navbar() {
             </Button>
             <Button
               component={Link}
-              to="/api/contact-us"
+              to="api/contact-us/:pageNum/:keyword"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >

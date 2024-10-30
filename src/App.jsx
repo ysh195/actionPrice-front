@@ -15,7 +15,6 @@ import AppLayout from "./layouts/AppLayout";
 import CreatePostView from "./components/Post/CreatePostView";
 import PostDetailPage from "./components/Post/PostDetailPage";
 import UpdatePostView from "./components/Post/UpdatePostView";
-import PostListView from "./components/Post/PostListView";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -34,7 +33,12 @@ function App() {
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}
           />
-          <Route path="api/contact-us" element={<ContactUs />} />
+          {/* <Route path="api/contact-us" element={<ContactUs />} /> */}
+
+          <Route
+            path="/api/contact-us/:pageNum/:keyword?"
+            element={<ContactUs />}
+          />
 
           <Route
             path="api/mypage/:username"
@@ -51,7 +55,7 @@ function App() {
             element={<ProtectedRoute element={<UpdatePostView />} />}
           />
           <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
-          <Route path="api/post/list" element={<PostListView />} />
+
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>
