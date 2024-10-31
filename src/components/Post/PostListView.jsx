@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,20 +9,23 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Link } from "react-router-dom";
-import { Pagination, styled } from "@mui/material";
+import { styled, Typography } from "@mui/material";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#C5705D",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 16,
+  },
+}));
 
 const PostListView = ({ postList }) => {
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#C5705D",
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 16,
-    },
-  }));
-
   console.log("check postList in PostList component:", postList);
+  if (!postList || postList.length === 0) {
+    return <Typography>No posts available.</Typography>;
+  }
 
   return (
     <Paper sx={{ width: "100%" }}>
@@ -36,9 +39,10 @@ const PostListView = ({ postList }) => {
           <TableHead>
             <TableRow>
               <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell>작성자</StyledTableCell>
-              <StyledTableCell>제목</StyledTableCell>
               <StyledTableCell>등록일</StyledTableCell>
+
+              <StyledTableCell>제목</StyledTableCell>
+              <StyledTableCell>작성자</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -52,7 +56,10 @@ const PostListView = ({ postList }) => {
               postList.map((post) => (
                 <TableRow key={post.postId}>
                   <TableCell>{post.postId}</TableCell>
-                  <TableCell>{post.username}</TableCell>
+                  <TableCell>
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </TableCell>
+
                   <TableCell>
                     <Link
                       to={`/api/post/${post.postId}/detail`}
@@ -63,22 +70,13 @@ const PostListView = ({ postList }) => {
                       {post.title}
                     </Link>
                   </TableCell>
-                  <TableCell>
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{post.username}</TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
-      {/* <Pagination
-        count={totalPageNum}
-        page={currentPageNum +1 } 
-        onChange={handlePageChange}
-        variant="outlined"
-        sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
-      /> */}
     </Paper>
   );
 };

@@ -1,36 +1,71 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Snackbar, Typography } from "@mui/material";
 import CommentEditView from "./CommentEditView";
+import { useDispatch } from "react-redux";
+import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
 
-const CommentItem = ({ comment, handleDelete, handleCommentUpdate }) => {
+const CommentItem = ({ comment, postId, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const dispatch = useDispatch();
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const handleUpdate = () => {
-    handleCommentUpdate(comment.commentId, content);
-    setIsEditing(false);
-  };
-  const handleCancel = () => {
-    setContent(comment.content); // Reset to original content
-    setIsEditing(false);
+  const handleUpdateComment = async () => {
+    try {
+      await dispatch(
+        updateComment({
+          postId,
+          commentId: comment.commentId,
+          username: comment.username,
+          content,
+        })
+      ).unwrap(); // To handle resolved/rejected states
+      setIsEditing(false);
+    } catch (error) {
+      setErrorMessage("Failed to update comment.");
+    }
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this comment?"
+    );
+    if (confirmDelete) {
+      try {
+        await dispatch(
+          deleteComment({
+            postId,
+            commentId: comment.commentId,
+            username: comment.username,
+          })
+        ).unwrap();
+        if (onDelete) {
+          onDelete(comment.commentId); // Call the onDelete function to update the list
+        }
+      } catch (error) {
+        setErrorMessage("Failed to delete comment.");
+      }
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setErrorMessage(null);
+  };
   return (
-    <Box
-      sx={{ border: 1, borderColor: "grey.300", borderRadius: 2, p: 2, mb: 2 }}
-    >
+    <Box sx={{ border:1, borderColor: "grey.300", borderRadius: 2, p: 2 }}>
       {isEditing ? (
         <CommentEditView
           content={content}
           setContent={setContent}
-          handleCommentUpdate={handleUpdate}
-          handleCancel={handleCancel}
+          onUpdate={handleUpdateComment}
+          onCancel={() => setIsEditing(false)}
         />
       ) : (
         <>
@@ -51,15 +86,11 @@ const CommentItem = ({ comment, handleDelete, handleCommentUpdate }) => {
               <Typography
                 variant="subtitle1"
                 color="primary.main"
-                sx={{ mr: 2, color: "gray" }} // Add margin-right for spacing
+                sx={{ mb: 1, color: "gray" }}
               >
                 {comment.username}
               </Typography>
-              <Typography
-                variant="subtitle1"
-                color="primary.main"
-                sx={{ mb: 1, color: "gray" }}
-              >
+              <Typography variant="caption" color="textSecondary">
                 {new Date(comment.createdAt).toLocaleDateString()}
               </Typography>
             </Box>
@@ -71,16 +102,18 @@ const CommentItem = ({ comment, handleDelete, handleCommentUpdate }) => {
             <Button variant="outlined" onClick={handleEditClick}>
               Edit
             </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={() => handleDelete(comment.commentId)}
-            >
+            <Button variant="outlined" color="error" onClick={handleDelete}>
               Delete
             </Button>
           </Box>
         </>
       )}
+      <Snackbar
+        open={Boolean(errorMessage)}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={errorMessage}
+      />
     </Box>
   );
 };

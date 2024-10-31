@@ -1,16 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import React from "react";
+import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
 
-const CommentEditView = ({
-  content,
-  setContent,
-  handleCommentUpdate,
-  handleCancel,
-}) => {
-
+const CommentEditView = ({ content, setContent, onUpdate, onCancel }) => {
   return (
     <Box
       sx={{
@@ -33,18 +28,14 @@ const CommentEditView = ({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={4}
-        placeholder="Update your comment here..."
+        required
         sx={{ mb: 2 }}
       />
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCommentUpdate}
-        >
+        <Button variant="contained" color="primary" onClick={onUpdate}>
           Update Comment
         </Button>
-        <Button variant="outlined" color="error" onClick={handleCancel}>
+        <Button variant="outlined" color="error" onClick={onCancel}>
           Cancel
         </Button>
       </Box>

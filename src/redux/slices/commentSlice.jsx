@@ -6,6 +6,9 @@ const initialState = {
   commentList: [],
   loading: false,
   error: null,
+  currentPageNum: 0,
+  totalPageNum: 0,
+  listSize: 0,
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -25,7 +28,7 @@ export const createComment = createAsyncThunk(
           },
         }
       );
-      console.log("create comment API Response:", response);
+      console.log("create comment API Response:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -33,12 +36,10 @@ export const createComment = createAsyncThunk(
   }
 );
 
+//function: updateComment //
 export const updateComment = createAsyncThunk(
   "comments/updateComment",
-  async (
-    { postId, commentId, username, content },
-    { rejectWithValue }
-  ) => {
+  async ({ postId, commentId, username, content }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/${postId}/detail/${commentId}/update`,
@@ -58,20 +59,17 @@ export const updateComment = createAsyncThunk(
   }
 );
 
+//function: deleteComment //
 export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
-  async ({ postId, commentId, logined_username }, { rejectWithValue }) => {
+  async ({ postId, commentId, username }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${API_URL}/${postId}/detail/${commentId}/delete`,
-        {
-          data: { logined_username }, // Pass the username in the request body
-        }
+        { username }
       );
-      console.log("deleteComment response:", response);
-  
+      console.log("deleteComment response:", response.data);
       return response.data;
-     
     } catch (error) {
       console.error("Error deleting comment:", error);
       return rejectWithValue(
@@ -80,27 +78,51 @@ export const deleteComment = createAsyncThunk(
     }
   }
 );
+//function: fetchComments //
+export const fetchComments = createAsyncThunk(
+  "comments/fetchComments",
+  async ({ postId, page=0, size=10 }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/comments`, {
+        params: { postId, page, size },
+      });
+      console.log("fetchComments response:", response.data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch comments"
+      );
+    }
+  }
+);
 
 export const commentSlice = createSlice({
   name: "comment",
   initialState,
-  reducers: {},
+  reducers: {
+    addComment: (state, action) => {
+      state.commentList.push(action.payload); // Safely push new comment
+    },
+  },
   extraReducers: (builder) => {
     builder
+
+      //create Comment
       .addCase(createComment.pending, (state) => {
         state.loading = true;
       })
       .addCase(createComment.fulfilled, (state, action) => {
         state.loading = false;
-        console.log("createComment payload", action.payload);
         state.commentList.push(action.payload);
       })
       .addCase(createComment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+      //update Comment
       .addCase(updateComment.fulfilled, (state, action) => {
         console.log("updatedComment", action.payload);
+        state.loading = false;
         const updatedComment = action.payload;
         const index = state.commentList.findIndex(
           (comment) => comment.id === updatedComment.id
@@ -116,6 +138,7 @@ export const commentSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
+      //delete Comment
       .addCase(deleteComment.fulfilled, (state, action) => {
         // Remove the deleted comment from the state
         state.commentList = state.commentList.filter(
@@ -127,7 +150,32 @@ export const commentSlice = createSlice({
       })
       .addCase(deleteComment.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload;
+      })
+      //fetch Comment
+      .addCase(fetchComments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchComments.fulfilled, (state, action) => {
+        state.loading = false;
+        if (Array.isArray(action.payload.commentList)) {
+          state.commentList = action.payload.commentList;
+        } else {
+          console.error(
+            "commentList is not an array:",
+            action.payload.commentList
+          );
+        }
+        state.totalPageNum = action.payload.totalPageNum;
+        state.currentPageNum = action.payload.currentPageNum;
+    
+
+        state.listSize = action.payload.listSize;
+      })
+      .addCase(fetchComments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

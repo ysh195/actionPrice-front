@@ -5,48 +5,40 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
 
 import { Box, CircularProgress, Paper, Typography } from "@mui/material";
-import CommentForm from "../Comment/CommentForm";
+import CreateCommentForm from "../Comment/CreateCommentForm";
 import { CommentList } from "../Comment/CommentList";
 
-const PostHeader = lazy(() => import("./PostHeader"));
-const PostContent = lazy(() => import("./PostContent"));
-const PostActions = lazy(() => import("./PostActions"));
+const PostHeader = React.memo(lazy(() => import("./PostHeader")));
+const PostContent = React.memo(lazy(() => import("./PostContent")));
+const PostActions = React.memo(lazy(() => import("./PostActions")));
 
 const PostDetailPage = () => {
-  // retrieves the postId from the URL.
   const { postId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [commentPageNum, setCommentPageNum] = useState(0);
-
   const [showCommentForm, setShowCommentForm] = useState(false);
+
   const { post, loading, commentList, error } = useSelector(
     (state) => state.post
   );
-  const [localCommentList, setLocalCommentList] = useState(commentList);
+
 
   const handleShowCommentForm = () => {
     setShowCommentForm((prev) => !prev);
   };
 
-
-
-  console.log("check post in PostDetailPage component:", post);
-  console.log("check commentList in PostDetailPage component:", commentList);
-
   useEffect(() => {
     dispatch(fetchPostById({ postId, commentPageNum }));
   }, [dispatch, postId, commentPageNum]);
 
-  useEffect(() => {
-    setLocalCommentList(commentList); // Sync local state with Redux state
-  }, [commentList]); // Update local state whenever Redux state changes
 
-    const handleNewComment = (newComment) => {
-      console.log("New comment added:", newComment);
-          setLocalCommentList((prevComments) => [...prevComments, newComment]);
 
-    };
 
+  const handleEdit = () => {
+  console.log("Navigating to edit page...");
+    navigate(`/api/post/${postId}/update/${post?.username}`);
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
@@ -76,21 +68,13 @@ const PostDetailPage = () => {
             postId={post.postId}
             post_owner={post.username}
             onCommentClick={handleShowCommentForm}
+            onEdit={handleEdit}
           />
           <section>
             <div className="mt-4">
-              {showCommentForm && (
-                <CommentForm postId={postId} onNewComment={handleNewComment} />
-              )}
-              <CommentList commentList={commentList} postId={postId} />
+              {showCommentForm && <CreateCommentForm postId={postId} />}
+              <CommentList postId={postId} />
             </div>
-            {/* <button
-              onClick={handlePreviousPage}
-              disabled={commentPageNum === 0}
-            >
-              Previous ||
-            </button>
-            <button onClick={handleNextPage}>Next</button> */}
           </section>
         </Paper>
       </Box>
