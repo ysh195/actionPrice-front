@@ -24,6 +24,9 @@ const CommentForm = ({ postId }) => {
     }
   };
 
+
+  const handleAdminAnswer = () =>{}
+
   return (
     <Box
       sx={{
@@ -59,7 +62,16 @@ const CommentForm = ({ postId }) => {
           color="primary"
           onClick={handleCreateComment}
         >
-          {loading ? "Loading..." : "Add Comment"}
+          {loading ? "Loading..." : "추가"}
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading || !content.trim()} // Disable if loading or input is empty
+          color="primary"
+          onClick={handleAdminAnswer}
+        >
+          {loading ? "Loading..." : "Admin"}
         </Button>
       </Box>
       {error && (

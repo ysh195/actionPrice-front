@@ -33,7 +33,6 @@ function App() {
             path="/category-details/:categoryTitle"
             element={<CategoryDetails />}
           />
-          {/* <Route path="api/contact-us" element={<ContactUs />} /> */}
 
           <Route
             path="api/contact-us/:pageNum/:keyword?"
@@ -48,7 +47,7 @@ function App() {
             element={<ProtectedRoute element={<CreatePostView />} />}
           />
           <Route
-            path="api/post/:postId/detail"
+            path="api/post/:postId/detail/:commentPageNum?"
             element={<ProtectedRoute element={<PostDetailPage />} />}
           />
           <Route
