@@ -1,27 +1,31 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Box, CircularProgress, Pagination, Typography } from "@mui/material";
 import CommentItem from "./CommentItem";
-import { useDispatch } from "react-redux";
-import { fetchComments } from "../../redux/slices/commentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchComments,
+  resetComments,
+  setCommentCurrentPage,
+} from "../../redux/slices/commentSlice";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export function CommentList({ postId }) {
   const dispatch = useDispatch();
-  const [localCommentList, setLocalCommentList] = useState([]);
+  const navigate = useNavigate();
   const { commentList, loading, error, totalPageNum, currentPageNum } =
     useSelector((state) => state.comment);
 
-  console.log("check commentList in commentList component:", commentList);
+  const [localCommentList, setLocalCommentList] = useState([]);
 
-  const validCurrentPage = Number.isInteger(currentPageNum)
-    ? currentPageNum
-    : 0;
-  const validTotalPageNum = Number.isInteger(totalPageNum) ? totalPageNum : 0;
-  // Fetch comments when the component mounts or when the postId changes
+  // Fetch comments when postId changes
   useEffect(() => {
-    dispatch(fetchComments({ postId, page: 0, size: 10 }));
+    if (postId) {
+      dispatch(resetComments());
+      dispatch(setCommentCurrentPage(0)); // Reset to page 0 when postId changes
+      console.log("Fetching comments for postId:", postId);
+      dispatch(fetchComments({ postId, page:0, size: 10 })); // Fetch comments for the first page
+    }
   }, [dispatch, postId]);
 
   // Update local state when Redux state changes
@@ -32,13 +36,20 @@ export function CommentList({ postId }) {
   const handlePageChange = (event, newPage) => {
     const pageToFetch = newPage - 1; // Convert to 0-based index for fetching
     if (pageToFetch >= 0 && pageToFetch < totalPageNum) {
+      console.log("Changing to page:", newPage); // Log page change
+
+      // Update the URL with the new page number
+      navigate(`/api/post/${postId}/detail/${newPage}`);
+
+      // Dispatch action to set the current page
+      dispatch(setCommentCurrentPage(pageToFetch)); // Set the current page in Redux
+
+      // Fetch comments for the new page
       dispatch(fetchComments({ postId, page: pageToFetch, size: 10 }));
     }
   };
 
-  // pass a callback function from the CommentList to the CommentItem to handle the deletion and update the local state
   const handleDeleteComment = (commentId) => {
-    // Remove the comment from the local state immediately
     setLocalCommentList((prevComments) =>
       prevComments.filter((comment) => comment.commentId !== commentId)
     );
@@ -78,8 +89,8 @@ export function CommentList({ postId }) {
         </Typography>
       )}
       <Pagination
-        count={validTotalPageNum} // Total number of pages from Redux state
-        page={validCurrentPage} // Display 1-based index to users
+        count={totalPageNum} // Total number of pages from Redux state
+        page={currentPageNum + 1} // Convert to 1-based index for display
         onChange={handlePageChange}
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}

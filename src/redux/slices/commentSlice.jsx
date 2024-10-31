@@ -103,6 +103,14 @@ export const commentSlice = createSlice({
     addComment: (state, action) => {
       state.commentList.push(action.payload); // Safely push new comment
     },
+    setCommentCurrentPage: (state, action) => {
+      state.currentPageNum = action.payload; // Set the current page explicitly
+    },
+    resetComments(state) {
+      state.commentList = [];
+      state.totalPageNum = 0;
+      state.currentPageNum = 0;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -168,8 +176,6 @@ export const commentSlice = createSlice({
           );
         }
         state.totalPageNum = action.payload.totalPageNum;
-        state.currentPageNum = action.payload.currentPageNum;
-    
 
         state.listSize = action.payload.listSize;
       })
@@ -180,6 +186,7 @@ export const commentSlice = createSlice({
   },
 });
 
-export const {} = commentSlice.actions;
+export const { addComment, setCommentCurrentPage, resetComments } =
+  commentSlice.actions;
 
 export default commentSlice.reducer;
