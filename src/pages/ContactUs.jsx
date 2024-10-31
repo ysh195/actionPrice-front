@@ -21,6 +21,7 @@ const ContactUs = () => {
   const navigate = useNavigate();
   const { pageNum: paramPageNum } = useParams();
   const [pageNum, setPageNum] = useState(Number(paramPageNum) || 1);
+
   const [keyword, setKeyword] = useState("");
 
   const selectPostState = (state) => state.post;

@@ -8,12 +8,9 @@ const initialState = {
   post: {},
   loading: false,
   error: null,
-  currentPageNum: "",
-  totalPageNum: "",
-  listSize: "",
-  totalCommentPage: "",
-  currentCommentPage: "",
-  totalCommentNumber: "",
+  currentPageNum: 0,
+  totalPageNum: 0,
+  listSize: 0,
 };
 
 const API_URL = "http://localhost:8080/api/post";
@@ -46,10 +43,9 @@ export const createPost = createAsyncThunk(
 //function: fetchPosts //
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async ({ pageNum = 1, keyword = "" }, { rejectWithValue }) => {
+  async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
     // Default to 0 if no page is passed
     try {
-
       const response = await axios.get(`${API_URL}/list`, {
         params: { pageNum, keyword },
       });
@@ -120,8 +116,6 @@ export const deletePost = createAsyncThunk(
   }
 );
 
-
-
 //function: updatePost //
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
@@ -179,11 +173,11 @@ const postSlice = createSlice({
       // Fetch posts
       .addCase(fetchPosts.pending, (state) => {
         state.loading = true;
-        state.error = null; // Reset error
+        state.error = null; 
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
+
         state.postList = Array.isArray(action.payload.postList)
           ? action.payload.postList
           : [action.payload.postList];
@@ -233,10 +227,6 @@ const postSlice = createSlice({
       .addCase(fetchPostById.fulfilled, (state, action) => {
         state.loading = false;
         state.post = action.payload;
-        state.commentList = action.payload.commentList;
-        state.totalCommentPage = action.payload.totalPageNum;
-        state.currentCommentPage = action.payload.currentPageNum;
-        state.totalCommentNumber = action.payload.listSize;
       })
       .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;

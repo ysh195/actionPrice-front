@@ -39,7 +39,7 @@ export const login = createAsyncThunk(
           "로그인에 실패했습니다. 정보를 확인하세요."
         );
       }
-      console.log("Login Response:", response);
+      console.log("Login Response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Login Error:", error);

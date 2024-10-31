@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
 
 import { Box, CircularProgress, Paper, Typography } from "@mui/material";
-import CommentForm from "../Comment/CommentForm";
+import CreateCommentForm from "../Comment/CreateCommentForm";
 import { CommentList } from "../Comment/CommentList";
 
 const PostHeader = React.memo(lazy(() => import("./PostHeader")));
@@ -22,7 +22,7 @@ const PostDetailPage = () => {
   const { post, loading, commentList, error } = useSelector(
     (state) => state.post
   );
-  const [localCommentList, setLocalCommentList] = useState(commentList);
+
 
   const handleShowCommentForm = () => {
     setShowCommentForm((prev) => !prev);
@@ -32,13 +32,8 @@ const PostDetailPage = () => {
     dispatch(fetchPostById({ postId, commentPageNum }));
   }, [dispatch, postId, commentPageNum]);
 
-  useEffect(() => {
-    setLocalCommentList(commentList); // Sync local state with Redux state
-  }, [commentList]);
 
-  const handleNewComment = (newComment) => {
-    setLocalCommentList((prevComments) => [...prevComments, newComment]);
-  };
+
 
   const handleEdit = () => {
   console.log("Navigating to edit page...");
@@ -77,10 +72,8 @@ const PostDetailPage = () => {
           />
           <section>
             <div className="mt-4">
-              {showCommentForm && (
-                <CommentForm postId={postId} onNewComment={handleNewComment} />
-              )}
-              <CommentList commentList={localCommentList} postId={postId} />
+              {showCommentForm && <CreateCommentForm postId={postId} />}
+              <CommentList postId={postId} />
             </div>
           </section>
         </Paper>
