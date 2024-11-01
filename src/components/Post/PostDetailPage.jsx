@@ -5,43 +5,59 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
 
 import { Box, CircularProgress, Paper, Typography } from "@mui/material";
-import CommentForm from "../Comment/CommentForm";
+import CreateCommentForm from "../Comment/CreateCommentForm";
 import { CommentList } from "../Comment/CommentList";
+import { fetchComments } from "../../redux/slices/commentSlice";
 
 const PostHeader = React.memo(lazy(() => import("./PostHeader")));
 const PostContent = React.memo(lazy(() => import("./PostContent")));
 const PostActions = React.memo(lazy(() => import("./PostActions")));
 
 const PostDetailPage = () => {
-  const { postId } = useParams();
+  const { postId, commentPageNum } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [commentPageNum, setCommentPageNum] = useState(0);
   const [showCommentForm, setShowCommentForm] = useState(false);
 
-  const { post, loading, commentList, error } = useSelector(
-    (state) => state.post
-  );
-  const [localCommentList, setLocalCommentList] = useState(commentList);
+  const { post, loading, error } = useSelector((state) => state.post);
+
+  const currentPageNum = parseInt(commentPageNum, 10) || 0; // Parse commentPageNum
 
   const handleShowCommentForm = () => {
     setShowCommentForm((prev) => !prev);
   };
 
   useEffect(() => {
-    dispatch(fetchPostById({ postId, commentPageNum }));
-  }, [dispatch, postId, commentPageNum]);
+    console.log("PostDetailPage mounted with postId:", postId);
+    dispatch(fetchPostById(postId)); // Fetch the post
+  }, [dispatch, postId]);
 
   useEffect(() => {
-    setLocalCommentList(commentList); // Sync local state with Redux state
-  }, [commentList]);
+    // Fetch comments only if post data is available
+    if (post) {
+      console.log(
+        "Fetching comments for postId:",
+        postId,
+        "Page:",
+        currentPageNum
+      );
+      dispatch(fetchComments({ postId, page: currentPageNum, size: 10 }));
+    }
+  }, [dispatch, post, postId, currentPageNum]); // Depend on post
 
-  const handleNewComment = (newComment) => {
-    setLocalCommentList((prevComments) => [...prevComments, newComment]);
-  };
+  // useEffect(() => {
+  //   console.log(
+  //     "PostDetailPage mounted with postId:",
+  //     postId,
+  //     "and commentPageNum:",
+  //     commentPageNum
+  //   );
+
+  //   dispatch(fetchPostById({ postId, commentPageNum }));
+  // }, [dispatch, postId, commentPageNum]);
 
   const handleEdit = () => {
-  console.log("Navigating to edit page...");
+    console.log("Navigating to edit page...");
     navigate(`/api/post/${postId}/update/${post?.username}`);
   };
 
@@ -77,10 +93,8 @@ const PostDetailPage = () => {
           />
           <section>
             <div className="mt-4">
-              {showCommentForm && (
-                <CommentForm postId={postId} onNewComment={handleNewComment} />
-              )}
-              <CommentList commentList={localCommentList} postId={postId} />
+              {showCommentForm && <CreateCommentForm postId={postId} />}
+              <CommentList postId={postId} />
             </div>
           </section>
         </Paper>

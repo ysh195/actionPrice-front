@@ -11,7 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../redux/slices/postSlice";
 import PostListView from "../components/Post/PostListView";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import PostSearch from "../components/Post/PostSearch";
 import { createSelector } from "@reduxjs/toolkit";
@@ -19,8 +19,7 @@ import { createSelector } from "@reduxjs/toolkit";
 const ContactUs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { pageNum: paramPageNum } = useParams();
-  const [pageNum, setPageNum] = useState(Number(paramPageNum) || 1);
+
   const [keyword, setKeyword] = useState("");
 
   const selectPostState = (state) => state.post;
@@ -30,52 +29,41 @@ const ContactUs = () => {
     loading: post.loading,
     error: post.error,
     totalPageNum: parseInt(post.totalPageNum, 10) || 1,
+    currentPageNum: parseInt(post.currentPageNum) || 1,
   }));
 
-  const { postList, loading, error, totalPageNum } =
+  const { postList, loading, error, totalPageNum, currentPageNum } =
     useSelector(selectPostData);
-  const [noResults, setNoResults] = useState(false);
 
-  // Fetch posts when pageNum or keyword changes
+  // Fetch posts when currentPageNum or keyword changes
   useEffect(() => {
-    console.log("Fetching posts with:", { pageNum: pageNum - 1, keyword });
+    dispatch(fetchPosts({ pageNum: currentPageNum - 1, keyword })); // Adjust for API
+  }, [dispatch, currentPageNum, keyword]);
 
-    dispatch(fetchPosts({ pageNum: pageNum - 1, keyword })); // Adjust for API
-  }, [dispatch, pageNum, keyword]);
-
+  // Update URL when keyword changes
   useEffect(() => {
-    // Update the URL only when the current page or keyword changes
     const currentPath = keyword
-      ? `/api/contact-us/${pageNum}/${keyword}`
-      : `/api/contact-us/${pageNum}`;
+      ? `/api/contact-us/${currentPageNum}/${keyword}`
+      : `/api/contact-us/${currentPageNum}`;
 
-    if (currentPath !== window.location.pathname) {
-      console.log("Navigating to:", currentPath);
-      navigate(currentPath, { replace: true });
-    }
-  }, [pageNum, keyword, navigate]);
-
-  useEffect(() => {
-    if (postList.length === 0 && keyword) {
-      setNoResults(true); // Set no results state if keyword is present
-    } else {
-      setNoResults(false); // Reset no results state
-    }
-  }, [postList, keyword]);
+    navigate(currentPath, { replace: true });
+  }, [currentPageNum, keyword, navigate]);
 
   const handleSearch = (searchKeyword) => {
-    setKeyword(searchKeyword); // Set the keyword for searching
-    setPageNum(1); // Reset to the first page
+    setKeyword(searchKeyword);
+    navigate(`/api/contact-us/1/${searchKeyword}`); // Reset to the first page with keyword
   };
 
   const handleResetSearch = () => {
     setKeyword(""); // Reset keyword
-    setPageNum(1); // Reset to the first page
+    navigate(`/api/contact-us/1`); // Reset to the first page
   };
 
   const handlePageChange = (event, value) => {
     if (value < 1) return; // Prevent navigating to less than page 1
-    setPageNum(value); // Update the current page
+    navigate(`/api/contact-us/${value}/${keyword}`); // Update URL on page change
+
+    dispatch(fetchPosts({ pageNum: value - 1, keyword })); // Adjust for API (0-based)
   };
 
   // Render loading spinner
@@ -124,19 +112,14 @@ const ContactUs = () => {
         </Button>
         <PostSearch
           keyword={keyword}
-          onSearch={handleSearch} // Ensure this is the function that sets the keyword
+          onSearch={handleSearch}
           onReset={handleResetSearch}
         />
       </Box>
-      {noResults && (
-        <Typography color="error" sx={{ marginTop: 2 }}>
-          No results found for: "{keyword}"
-        </Typography>
-      )}
       <PostListView postList={postList} />
       <Pagination
         count={totalPageNum} // Total number of pages from Redux state
-        page={pageNum} // Current page
+        page={currentPageNum} // Current page
         onChange={handlePageChange}
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}

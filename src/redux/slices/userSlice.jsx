@@ -53,7 +53,7 @@ export const getPersonalInfo = createAsyncThunk(
           },
         }
       );
-      console.log("personalInfo response:", response);
+      console.log("personalInfo response:", response.data);
 
       return response.data;
     } catch (error) {
@@ -81,7 +81,7 @@ export const getMyPosts = createAsyncThunk(
         }
       );
 
-      console.log("getMyPosts response:", response);
+      console.log("getMyPosts response:", response.data);
       return response.data.postList;
     } catch (error) {
       console.log("getMyPosts error:", error);

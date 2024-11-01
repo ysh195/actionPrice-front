@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createComment } from "../../redux/slices/commentSlice";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
-const CommentForm = ({ postId, onNewComment }) => {
+const CommentForm = ({ postId }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.comment);
   const username = useSelector((state) => state.login.username);
@@ -13,15 +13,19 @@ const CommentForm = ({ postId, onNewComment }) => {
 
   const handleCreateComment = async () => {
     try {
-       const newComment = await dispatch(
-         createComment({ postId, content, username })
-       ).unwrap();
+      const newComment = await dispatch(
+        createComment({ postId, content, username })
+      ).unwrap();
+
+      console.log("newComment", newComment);
       setContent("");
-      onNewComment(newComment); // Notify parent about the new comment
     } catch (error) {
       console.error("Error adding comment:", error);
     }
   };
+
+
+  const handleAdminAnswer = () =>{}
 
   return (
     <Box
@@ -58,7 +62,16 @@ const CommentForm = ({ postId, onNewComment }) => {
           color="primary"
           onClick={handleCreateComment}
         >
-          {loading ? "Loading..." : "Add Comment"}
+          {loading ? "Loading..." : "추가"}
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading || !content.trim()} // Disable if loading or input is empty
+          color="primary"
+          onClick={handleAdminAnswer}
+        >
+          {loading ? "Loading..." : "Admin"}
         </Button>
       </Box>
       {error && (

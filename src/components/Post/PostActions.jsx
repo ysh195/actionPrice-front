@@ -14,8 +14,6 @@ const PostActions = React.memo(
     const navigate = useNavigate();
     const logined_username = useSelector((state) => state.login.username);
 
-    console.log(postId, post_owner);
-
     //function: handleDelete //
     const handleDelete = async () => {
       if (!logined_username) {
