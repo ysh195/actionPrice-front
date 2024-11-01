@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { useState } from "react";
@@ -10,6 +11,8 @@ import {
   Snackbar,
   Container,
   Box,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +26,8 @@ const Alert = React.forwardRef((props, ref) => (
 const CreatePostView = () => {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
+  const [isSecret, setIsSecret] = useState(false); // State for secret mode
+
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -37,6 +42,7 @@ const CreatePostView = () => {
           title,
           content,
           username,
+          published: !isSecret,
         };
         const createdPost = await dispatch(createPost(postData)).unwrap();
         console.log("createdPost:", createdPost);
@@ -47,19 +53,18 @@ const CreatePostView = () => {
       }
     }
   };
-
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
   const handleCancel = () => {
     setTitle("");
     setContent("");
+    setIsSecret(false); // Reset secret mode on cancel
   };
 
   if (error) {
     return <Typography color="error">{`Error: ${error}`}</Typography>;
   }
-
   return (
     <Container
       sx={{
@@ -98,6 +103,16 @@ const CreatePostView = () => {
           fullWidth
           required
           sx={{ marginTop: 2, marginBottom: 2 }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isSecret}
+              onChange={(e) => setIsSecret(e.target.checked)}
+              color="primary"
+            />
+          }
+          label="비밀 모드 (다른 사용자가 볼 수 없습니다)"
         />
 
         <Button variant="outlined" onClick={handleCreatePost}>

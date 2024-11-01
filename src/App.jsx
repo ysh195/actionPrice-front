@@ -30,7 +30,7 @@ function App() {
           <Route path="api/user/login" exact element={<Login />} />
           <Route path="api/user/register" exact element={<Register />} />
           <Route
-            path="/category-details/:categoryTitle"
+            path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryDetails />}
           />
 

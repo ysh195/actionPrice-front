@@ -88,7 +88,7 @@ function Navbar() {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="/category"
+                  to="api/category/:large?/:middle?/:small?/:rank?"
                   sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Category
@@ -143,7 +143,7 @@ function Navbar() {
             </Button>
             <Button
               component={Link}
-              to="/category"
+              to="api/category/:large"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >

@@ -1,100 +1,117 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { largeCategoryList } from "../../assets/assest.js";
+
 import {
   Container,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Typography,
-  Button,
   CircularProgress,
   Alert,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Box,
+  TextField,
+  Button,
 } from "@mui/material";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchMiddleCategories,
+  fetchSmallCategories,
+  fetchRankCategories,
+  fetchData,
+  setMiddleCategory,
+  setSmallCategory,
+  setRankCategory,
+} from "../../redux/slices/categorySlice";
 
 const CategoryDetail = () => {
-  const { categoryTitle } = useParams(); // Get the category title from the URL
-  const [middleCategoryList, setMiddleCategoryList] = useState([]);
-  const [smallCategoryList, setSmallCategoryList] = useState([]);
-  const [levelList, setLevelList] = useState([]);
-  const [middleCategory, setMiddleCategory] = useState("");
-  const [smallCategory, setSmallCategory] = useState("");
-  const [level, setLevel] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [submittedData, setSubmittedData] = useState(null); // State to store submitted data
+  const { large } = useParams(); // Get the category title from the URL
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const {
+    selectedMiddle,
+    selectedSmall,
+    selectedRank,
+    middleCategoryList,
+    smallCategoryList,
+    rankCategoryList,
+    dataList,
+    loading,
+    error,
+  } = useSelector((state) => state.category);
+  const [selectedLarge, setSelectedLarge] = useState(large || "");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [pageNum, setPageNum] = useState(1); // Start with page 1
+
+  console.log("largeCategoryList:", largeCategoryList);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const middleResponse = await axios.get(
-          `/api/categories/large/middle/${categoryTitle}`
+    // Reset other categories when large category changes
+    if (selectedLarge) {
+      console.log("selectedLarge", selectedLarge);
+      dispatch(setMiddleCategory(""));
+      dispatch(setSmallCategory(""));
+      dispatch(setRankCategory(""));
+      dispatch(fetchMiddleCategories(selectedLarge));
+    }
+  }, [dispatch, selectedLarge]);
+  const handleCategoryChange = (type, value) => {
+    switch (type) {
+      case "large":
+        // setSelectedLarge(value);
+        // navigate(`/api/category/${value}`);
+        setSelectedLarge(value);
+        dispatch(setMiddleCategory(""));
+        dispatch(setSmallCategory(""));
+        dispatch(setRankCategory(""));
+        dispatch(fetchMiddleCategories(value)); // Pass the value directly
+        navigate(`/api/category/${value}`); // Update URL
+        break;
+
+      case "middle":
+        dispatch(setMiddleCategory(value));
+        dispatch(setSmallCategory(""));
+        dispatch(setRankCategory(""));
+        dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
+        navigate(`/api/category/${selectedLarge}/${value}`);
+
+        break;
+      case "small":
+        dispatch(setSmallCategory(value));
+        dispatch(setRankCategory(""));
+        dispatch(
+          fetchRankCategories({
+            large: selectedLarge,
+            middle: selectedMiddle,
+            small: value,
+          })
         );
-        setMiddleCategoryList(middleResponse.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching middle categories:", err);
-        setError("Failed to load categories. Please try again later.");
-        setLoading(false);
-      }
-    };
+        navigate(`/api/category/${selectedLarge}/${selectedMiddle}/${value}`);
 
-    fetchCategories();
-  }, [categoryTitle]);
-
-  const handleMiddleCategoryChange = async (event) => {
-    const selectedMiddle = event.target.value;
-    setMiddleCategory(selectedMiddle);
-    setSmallCategory(""); // Reset small category
-    setLevelList([]); // Reset levels
-
-    try {
-      const response = await axios.get(
-        `/api/categories/small/${categoryTitle}/${selectedMiddle}`
-      );
-      setSmallCategoryList(response.data);
-    } catch (err) {
-      console.error("Error fetching small categories:", err);
-      setError("Failed to load small categories. Please try again later.");
+        break;
+      case "rank":
+        dispatch(setRankCategory(value));
+        break;
+      default:
+        break;
     }
   };
 
-  const handleSmallCategoryChange = async (event) => {
-    const selectedSmall = event.target.value;
-    setSmallCategory(selectedSmall);
-
-    try {
-      const response = await axios.get(
-        `/api/categories/levels/${categoryTitle}/${selectedSmall}`
-      );
-      setLevelList(response.data);
-    } catch (err) {
-      console.error("Error fetching levels:", err);
-      setError("Failed to load levels. Please try again later.");
-    }
-  };
-
-  const handleLevelChange = (event) => {
-    setLevel(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    const data = {
-      middleCategory,
-      smallCategory,
-      level,
+  const handleSearch = () => {
+    const params = {
+      large: selectedLarge,
+      middle: selectedMiddle,
+      small: selectedSmall,
+      rank: selectedRank,
+      startDate,
+      endDate,
+      pageNum,
     };
-    setSubmittedData(data); // Set submitted data
+    dispatch(fetchData(params));
   };
 
   if (loading) {
@@ -115,74 +132,96 @@ const CategoryDetail = () => {
 
   return (
     <Container>
-      <Typography variant="h5" gutterBottom>
-        {categoryTitle} Details
-      </Typography>
       <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
         <FormControl fullWidth margin="normal">
+          <InputLabel>Large Category</InputLabel>
+          <Select
+            value={selectedLarge}
+            onChange={(e) => handleCategoryChange("large", e.target.value)}
+          >
+            {largeCategoryList.map((category) => (
+              <MenuItem key={category.id} value={category.name}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal" disabled={!selectedLarge}>
           <InputLabel>Middle Category</InputLabel>
-          <Select value={middleCategory} onChange={handleMiddleCategoryChange}>
-            {/* {middleCategoryList.map((item) => (
-            <MenuItem key={item.id} value={item.name}>
-              {item.name}
-            </MenuItem>
-          ))} */}
+          <Select
+            value={selectedMiddle}
+            disabled={!selectedLarge}
+            onChange={(e) => handleCategoryChange("middle", e.target.value)}
+          >
+            {middleCategoryList.map((category) => (
+              <MenuItem key={category.id} value={category.name}>
+                {category.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal" disabled={!middleCategory}>
+        <FormControl fullWidth margin="normal" disabled={!selectedMiddle}>
           <InputLabel>Small Category</InputLabel>
-          <Select value={smallCategory} onChange={handleSmallCategoryChange}>
-            {/* {smallCategoryList.map((item) => (
-            <MenuItem key={item.id} value={item.name}>
-              {item.name}
-            </MenuItem>
-          ))} */}
+          <Select
+            value={selectedSmall}
+            disabled={!selectedMiddle}
+            onChange={(e) => handleCategoryChange("small", e.target.value)}
+          >
+            {smallCategoryList.map((category) => (
+              <MenuItem key={category.id} value={category.name}>
+                {category.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal" disabled={!smallCategory}>
-          <InputLabel>Level</InputLabel>
-          <Select value={level} onChange={handleLevelChange}>
-            {/* {levelList.map((levelItem) => (
-            <MenuItem key={levelItem.id} value={levelItem.name}>
-              {levelItem.name}
-            </MenuItem>
-          ))} */}
+        <FormControl fullWidth margin="normal" disabled={!selectedSmall}>
+          <InputLabel>Rank Category</InputLabel>
+          <Select
+            value={selectedRank}
+            disabled={!selectedSmall}
+            onChange={(e) => handleCategoryChange("rank", e.target.value)}
+          >
+            {rankCategoryList.map((category) => (
+              <MenuItem key={category.id} value={category.name}>
+                {category.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Box>
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        disabled={!middleCategory || !smallCategory || !level}
-      >
-        Submit
-      </Button>
-
-      {/* Render table if data has been submitted */}
-      {submittedData && (
-        <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Middle Category</TableCell>
-                <TableCell>Small Category</TableCell>
-                <TableCell>Level</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>{submittedData.middleCategory}</TableCell>
-                <TableCell>{submittedData.smallCategory}</TableCell>
-                <TableCell>{submittedData.level}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <Box>
+        <TextField
+          type="date"
+          label="Start Date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+        <TextField
+          type="date"
+          label="End Date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+    
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={
+            !selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank
+          }
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+        {/* <ul>
+          {dataList.map((product) => (
+            <li key={product.id}>{product.name}</li> // Adjust based on your product structure
+          ))}
+        </ul> */}
+      </Box>
     </Container>
   );
 };

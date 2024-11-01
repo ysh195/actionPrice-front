@@ -28,9 +28,12 @@ const handlePageChange = (event, newPage) => {
 
 
   const handleDeleteComment = (commentId) => {
+     console.log("Deleting comment with ID:", commentId);
     setLocalCommentList((prevComments) =>
       prevComments.filter((comment) => comment.commentId !== commentId)
     );
+      dispatch(fetchComments({ postId, page: currentPageNum - 1 }));
+
   };
 
   // Render loading spinner

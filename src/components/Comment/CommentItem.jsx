@@ -6,6 +6,7 @@ import CommentEditView from "./CommentEditView";
 import { useDispatch } from "react-redux";
 import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 const CommentItem = ({ comment, postId, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -36,30 +37,42 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this comment?"
-    );
-    if (confirmDelete) {
-      try {
-        await dispatch(
-          deleteComment({
-            postId,
-            commentId: comment.commentId,
-            username: logined_username,
-          })
-        ).unwrap();
-        if (onDelete) {
-          onDelete(comment.commentId); // Call the onDelete function to update the list
-        }
-      } catch (error) {
-        setErrorMessage("Failed to delete comment.");
-      }
+    if (logined_username !== comment.username) {
+      Swal.fire({
+        title: "Error",
+        icon: "error",
+        text: "You are not allowed to delete this comment.",
+        showConfirmButton: true,
+      });
+
+      return;
+    }
+    const { isConfirmed } = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover this comment!",
+      icon: "warning",
+      showCancelButton: true,
+    });
+
+    if (isConfirmed) {
+      await dispatch(
+        deleteComment({
+          postId,
+          commentId: comment.commentId,
+          username: logined_username,
+        })
+      ).unwrap();
+      onDelete(comment.commentId);
+      Swal.fire({
+        title: "Deleted",
+        icon: "success",
+        text: "게시글이 삭제 되었습니다.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setErrorMessage(null);
-  };
   return (
     <Box sx={{ border: 1, borderColor: "grey.300", borderRadius: 2, p: 2 }}>
       {isEditing ? (
@@ -113,7 +126,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
       <Snackbar
         open={Boolean(errorMessage)}
         autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
+        onClose={() => setErrorMessage(null)}
         message={errorMessage}
       />
     </Box>

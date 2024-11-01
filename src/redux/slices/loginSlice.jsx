@@ -9,6 +9,7 @@ const initialState = {
   errorMessage: "",
   isLoggedIn: false,
   access_token: null,
+  role:""
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -111,6 +112,7 @@ const loginSlice = createSlice({
         state.isLoggedIn = true;
 
         state.username = action.payload.username;
+        state.role = action.payload.role;
         state.access_token = action.payload.access_token;
         localStorage.setItem("username", action.payload.username);
         localStorage.setItem("access_token", action.payload.access_token);
