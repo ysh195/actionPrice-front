@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { largeCategoryList } from "../../assets/assest.js"; 
+import { largeCategoryList } from "../../assets/assest.js";
 import {
   Container,
   Grid,
@@ -12,7 +12,6 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import axios from "axios";
 
 const CategorySection = () => {
   const navigate = useNavigate();
@@ -23,18 +22,6 @@ const CategorySection = () => {
 
   const fetchImages = async () => {
     try {
-      // const response = await axios.get("http://localhost:8080/");
-      // const fetchedImages = response.data.images;
-
-      // const largeCategoryList = [
-      //   { id: 1, title: "채소류", image: fetchedImages.meat },
-      //   { id: 2, title: "축산물", image: fetchedImages.egg },
-      //   { id: 3, title: "과일류", image: fetchedImages.cookie },
-      //   { id: 4, title: "식량작물", image: fetchedImages.veggie },
-      //   { id: 5, title: "수산물", image: fetchedImages.veggie },
-      //   { id: 6, title: "특용작물", image: fetchedImages.salted },
-      // ];
-
       setCategories(largeCategoryList);
     } catch (error) {
       console.error("Error fetching images:", error);
@@ -50,6 +37,9 @@ const CategorySection = () => {
   const handleCategoryClick = (category) => {
     navigate(`api/category/${category.name}`);
   };
+  // const handleCategoryClick = (category) => {
+  //   navigate(`/api/category?large=${encodeURIComponent(category.name)}`);
+  // };
 
   if (loading) {
     return (

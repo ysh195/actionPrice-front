@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { largeCategoryList } from "../../assets/assest.js";
 
 import {
@@ -26,10 +26,25 @@ import {
   setRankCategory,
 } from "../../redux/slices/categorySlice";
 
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 const CategoryDetail = () => {
-  const { large } = useParams(); // Get the category title from the URL
+  const { large } = useParams();
+  const query = useQuery();
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
+
+  // Extract query parameters
+  const startDate = query.get("startDate") || "";
+  const endDate = query.get("endDate") || "";
+  const pageNum = query.get("pageNum") || 1; // Default to page 1
+  const [selectedLarge, setSelectedLarge] = useState(large || "");
+
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
+  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [selectedPageNum, setSelectedPageNum] = useState(pageNum);
 
   const {
     selectedMiddle,
@@ -42,10 +57,6 @@ const CategoryDetail = () => {
     loading,
     error,
   } = useSelector((state) => state.category);
-  const [selectedLarge, setSelectedLarge] = useState(large || "");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [pageNum, setPageNum] = useState(1); // Start with page 1
 
   console.log("largeCategoryList:", largeCategoryList);
 
@@ -62,14 +73,14 @@ const CategoryDetail = () => {
   const handleCategoryChange = (type, value) => {
     switch (type) {
       case "large":
-        // setSelectedLarge(value);
-        // navigate(`/api/category/${value}`);
         setSelectedLarge(value);
         dispatch(setMiddleCategory(""));
         dispatch(setSmallCategory(""));
         dispatch(setRankCategory(""));
         dispatch(fetchMiddleCategories(value)); // Pass the value directly
-        navigate(`/api/category/${value}`); // Update URL
+        navigate(`/api/category/${value}`);
+        // navigate(`/api/category?large=${value}`);
+
         break;
 
       case "middle":
@@ -78,6 +89,7 @@ const CategoryDetail = () => {
         dispatch(setRankCategory(""));
         dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
         navigate(`/api/category/${selectedLarge}/${value}`);
+        // navigate(`/api/category?large=${selectedLarge}&middle=${value}`);
 
         break;
       case "small":
@@ -91,10 +103,16 @@ const CategoryDetail = () => {
           })
         );
         navigate(`/api/category/${selectedLarge}/${selectedMiddle}/${value}`);
+        // navigate(
+        //   `/api/category?large=${selectedLarge}&middle=${selectedMiddle}&small=${value}`
+        // );
 
         break;
       case "rank":
         dispatch(setRankCategory(value));
+        navigate(
+          `/api/category/${selectedLarge}/${selectedMiddle}/${selectedSmall}/${value}`
+        );
         break;
       default:
         break;
@@ -102,16 +120,20 @@ const CategoryDetail = () => {
   };
 
   const handleSearch = () => {
-    const params = {
-      large: selectedLarge,
-      middle: selectedMiddle,
-      small: selectedSmall,
-      rank: selectedRank,
-      startDate,
-      endDate,
-      pageNum,
-    };
-    dispatch(fetchData(params));
+    const url = `/api/category/${selectedLarge}/${selectedMiddle}/${selectedSmall}/${selectedRank}?startDate=${selectedStartDate}&endDate=${selectedEndDate}&pageNum=${selectedPageNum}`;
+    navigate(url);
+
+    dispatch(
+      fetchData({
+        large: selectedLarge,
+        middle: selectedMiddle,
+        small: selectedSmall,
+        rank: selectedRank,
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+        pageNum,
+      })
+    );
   };
 
   if (loading) {
@@ -196,16 +218,16 @@ const CategoryDetail = () => {
         <TextField
           type="date"
           label="Start Date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
+          value={selectedStartDate}
+          onChange={(e) => setSelectedStartDate(e.target.value)}
         />
         <TextField
           type="date"
           label="End Date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
+          value={selectedEndDate}
+          onChange={(e) => setSelectedEndDate(e.target.value)}
         />
-    
+
         <Button
           variant="contained"
           color="primary"

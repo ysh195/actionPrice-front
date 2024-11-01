@@ -15,59 +15,120 @@ const initialState = {
 };
 
 const BASE_URL = "http://localhost:8080/api";
+//desc: fetchMiddleCategories url style //
+// export const fetchMiddleCategories = createAsyncThunk(
+//   "categories/fetchMiddleCategories",
+//   async (large) => {
+//     const encodedLarge = encodeURIComponent(large);
+//     const response = await axios.get(`${BASE_URL}/category`, {
+//       params: { large: encodedLarge }, // Use params to create query parameters
+//     });
+//     console.log("fetchMiddleCategories:", response.data);
+//     return response.data;
+//   }
+// );
 
 //function: Get Middle Category List //
 export const fetchMiddleCategories = createAsyncThunk(
   "categories/fetchCategories",
   async (large) => {
-    const encodedLarge = encodeURIComponent(large);
-    const response = await axios.get(`${BASE_URL}/category/${encodedLarge}`);
+    const response = await axios.get(`${BASE_URL}/category/${large}`);
     console.log("fetchMiddleCategories:", response.data);
-    return response.data; // Assuming this returns an array of large categories
+    return response.data;
   }
 );
+
+//desc: Get Small Category url style //
+// export const fetchSmallCategories = createAsyncThunk(
+//   "categories/fetchSmallCategories",
+//   async ({ large, middle }) => {
+//     const params = {
+//       large: encodeURIComponent(large),
+//       middle: encodeURIComponent(middle),
+//     };
+
+//     const response = await axios.get(`${BASE_URL}/category`, {
+//       params, // Use the params object to create query parameters
+//     });
+
+//     console.log("fetchSmallCategories:", response.data);
+//     return response.data;
+//   }
+// );
 //function: Get Small Category List //
-// Async thunk for fetching middle categories based on selected large category
 export const fetchSmallCategories = createAsyncThunk(
   "categories/fetchMiddleCategories",
   async ({ large, middle }) => {
-    const encodedLarge = encodeURIComponent(large);
-    const encodedMiddle = encodeURIComponent(middle);
-    const response = await axios.get(
-      `${BASE_URL}/category/${encodedLarge}/${encodedMiddle}`
-    );
+    const response = await axios.get(`${BASE_URL}/category/${large}/${middle}`);
     console.log("fetchSmallCategories:", response.data);
 
     return response.data;
   }
 );
 
+//desc: fetchRankCategories url style //
+// export const fetchRankCategories = createAsyncThunk(
+//   "categories/fetchProductRankCategories",
+//   async ({ large, middle, small }) => {
+//     const params = {
+//       large: encodeURIComponent(large),
+//       middle: encodeURIComponent(middle),
+//       small: encodeURIComponent(small),
+//     };
+
+//     const response = await axios.get(`${BASE_URL}/category`, {
+//       params, // Use the params object to create query parameters
+//     });
+
+//     console.log("fetchRankCategories:", response.data);
+//     return response.data;
+//   }
+// );
+
 //function: Get Rank Categories//
-// Async thunk for fetching small categories based on selected large and middle category
 export const fetchRankCategories = createAsyncThunk(
   "categories/fetchProductRankCategories",
   async ({ large, middle, small }) => {
-    const encodedLarge = encodeURIComponent(large);
-    const encodedMiddle = encodeURIComponent(middle);
-    const encodedSmall = encodeURIComponent(small);
     const response = await axios.get(
-      `${BASE_URL}/category/${encodedLarge}/${encodedMiddle}/${encodedSmall}`
+      `${BASE_URL}/category/${large}/${middle}/${small}`
     );
     console.log("fetchRankCategories:", response.data);
     return response.data;
   }
 );
+
+//desc: fetchRankCategories url style //
+// export const fetchData = createAsyncThunk(
+//   "categories/fetchCategoryResults",
+//   async ({
+//     large,
+//     middle,
+//     small,
+//     rank,
+//     startDate = "",
+//     endDate = "",
+//     pageNum = 1,
+//   }) => {
+//     const response = await axios.get(`${BASE_URL}/category`, {
+//       large,
+//       middle,
+//       small,
+//       rank,
+//       startDate,
+//       endDate,
+//       pageNum,
+//     });
+//     console.log("fetchData:", response.data);
+//     return response.data;
+//   }
+// );
+
 //function: fetchData //
-// Async thunk for fetching results based on categories and additional parameters
 export const fetchData = createAsyncThunk(
   "categories/fetchCategoryResults",
   async ({ large, middle, small, rank, startDate, endDate, pageNum }) => {
-    const encodedLarge = encodeURIComponent(large);
-    const encodedMiddle = encodeURIComponent(middle);
-    const encodedSmall = encodeURIComponent(small);
-    const encodedRank = encodeURIComponent(rank);
     const response = await axios.get(
-      `${BASE_URL}/category/${encodedLarge}/${encodedMiddle}/${encodedSmall}/${encodedRank}`,
+      `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
       {
         params: { startDate, endDate, pageNum },
       }
@@ -147,7 +208,7 @@ export const categorySlice = createSlice({
       })
       .addCase(fetchData.fulfilled, (state, action) => {
         state.loading = false;
-        state.dataList = action.payload; // Assuming payload contains the product list
+        state.dataList = action.payload.list;
       })
       .addCase(fetchData.rejected, (state, action) => {
         state.loading = false;
