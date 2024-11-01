@@ -61,7 +61,7 @@ export const fetchPosts = createAsyncThunk(
 //function: fetchPostForUpdate //
 // Async thunk for fetching post for update
 export const fetchPostForUpdate = createAsyncThunk(
-  'post/fetchPostForUpdate',
+  "post/fetchPostForUpdate",
   async ({ postId, username }) => {
     const response = await axios.get(`${API_URL}/${postId}/update/${username}`);
     return response.data;
@@ -71,16 +71,13 @@ export const fetchPostForUpdate = createAsyncThunk(
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async ({ postId, commentPageNum = 0 }, { rejectWithValue }) => {
+  async (postId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${postId}/detail`, {
-        params: { commentPageNum },
-      });
-      console.log("fetchPostById response:", response.data);
+      const response = await axios.get(`${API_URL}/${postId}/detail`);
+      console.log("fetchPostById response:", response);
       return response.data;
     } catch (error) {
       console.error("Error fetching post by ID:", error); // Log the error
-
       return rejectWithValue(error.response.data);
     }
   }
@@ -165,7 +162,7 @@ const postSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    //create post
+      //create post
       .addCase(createPost.fulfilled, (state, action) => {
         state.loading = false;
         state.postList = action.payload;
@@ -173,7 +170,7 @@ const postSlice = createSlice({
       // Fetch posts
       .addCase(fetchPosts.pending, (state) => {
         state.loading = true;
-        state.error = null; 
+        state.error = null;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.loading = false;
