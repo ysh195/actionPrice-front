@@ -14,47 +14,26 @@ const PostContent = React.memo(lazy(() => import("./PostContent")));
 const PostActions = React.memo(lazy(() => import("./PostActions")));
 
 const PostDetailPage = () => {
-  const { postId, commentPageNum } = useParams();
+  const { postId, page = 1 } = useParams();
+ console.log("Post ID:", postId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showCommentForm, setShowCommentForm] = useState(false);
-
   const { post, loading, error } = useSelector((state) => state.post);
-
-  const currentPageNum = parseInt(commentPageNum, 10) || 0; // Parse commentPageNum
+  const { currentPageNum } = useSelector((state) => state.comment);
 
   const handleShowCommentForm = () => {
     setShowCommentForm((prev) => !prev);
   };
 
-  useEffect(() => {
-    console.log("PostDetailPage mounted with postId:", postId);
-    dispatch(fetchPostById(postId)); // Fetch the post
-  }, [dispatch, postId]);
+useEffect(() => {
+  // Fetch the post by ID
+  dispatch(fetchPostById(postId));
 
-  useEffect(() => {
-    // Fetch comments only if post data is available
-    if (post) {
-      console.log(
-        "Fetching comments for postId:",
-        postId,
-        "Page:",
-        currentPageNum
-      );
-      dispatch(fetchComments({ postId, page: currentPageNum, size: 10 }));
-    }
-  }, [dispatch, post, postId, currentPageNum]); // Depend on post
+  // Fetch comments for the current page
+  dispatch(fetchComments({ postId, page: Number(page) - 1 })); // Adjust page for zero-based index
+}, [dispatch, postId, page]);
 
-  // useEffect(() => {
-  //   console.log(
-  //     "PostDetailPage mounted with postId:",
-  //     postId,
-  //     "and commentPageNum:",
-  //     commentPageNum
-  //   );
-
-  //   dispatch(fetchPostById({ postId, commentPageNum }));
-  // }, [dispatch, postId, commentPageNum]);
 
   const handleEdit = () => {
     console.log("Navigating to edit page...");

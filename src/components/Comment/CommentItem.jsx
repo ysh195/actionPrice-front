@@ -5,11 +5,13 @@ import { Box, Button, Divider, Snackbar, Typography } from "@mui/material";
 import CommentEditView from "./CommentEditView";
 import { useDispatch } from "react-redux";
 import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
+import { useSelector } from "react-redux";
 
 const CommentItem = ({ comment, postId, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [errorMessage, setErrorMessage] = useState(null);
+  const logined_username = useSelector((state) => state.login.username);
 
   const dispatch = useDispatch();
 
@@ -23,7 +25,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
         updateComment({
           postId,
           commentId: comment.commentId,
-          username: comment.username,
+          username: logined_username,
           content,
         })
       ).unwrap(); // To handle resolved/rejected states
@@ -43,7 +45,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
           deleteComment({
             postId,
             commentId: comment.commentId,
-            username: comment.username,
+            username: logined_username,
           })
         ).unwrap();
         if (onDelete) {
@@ -59,7 +61,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
     setErrorMessage(null);
   };
   return (
-    <Box sx={{ border:1, borderColor: "grey.300", borderRadius: 2, p: 2 }}>
+    <Box sx={{ border: 1, borderColor: "grey.300", borderRadius: 2, p: 2 }}>
       {isEditing ? (
         <CommentEditView
           content={content}

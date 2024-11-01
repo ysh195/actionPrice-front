@@ -25,11 +25,12 @@ const CategorySection = () => {
       const fetchedImages = response.data.images;
 
       const categoryList = [
-        { title: "Cookie", image: fetchedImages.cookie },
-        { title: "Egg", image: fetchedImages.egg },
-        { title: "Meat", image: fetchedImages.meat },
-        { title: "Veggie", image: fetchedImages.veggie },
-        { title: "Salted", image: fetchedImages.salted },
+        { title: "채소류", image: fetchedImages.meat },
+        { title: "축산물", image: fetchedImages.egg },
+        { title: "과일류", image: fetchedImages.cookie },
+        { title: "식량작물", image: fetchedImages.veggie },
+        { title: "수산물", image: fetchedImages.veggie },
+        { title: "특용작물", image: fetchedImages.salted },
       ];
 
       setCategories(categoryList);
@@ -59,15 +60,15 @@ const CategorySection = () => {
 
   if (error) {
     return (
-      <Container id="categories" sx={{ py:5}}>
+      <Container id="categories" sx={{ py: 5 }}>
         <Alert severity="error">{error}</Alert>
       </Container>
     );
   }
   return (
-    <Container id="categories" sx={{ py: 5}}>
+    <Container id="categories" sx={{ py: 5 }}>
       <Typography variant="h4" align="center" gutterBottom>
-        Explore All Categories
+        메인 카테고리 선택
       </Typography>
       <Grid container spacing={2}>
         {categories.map((item, index) => (
@@ -83,7 +84,6 @@ const CategorySection = () => {
                 alt={item.title}
                 sx={{
                   height: 200, // Set a fixed height
-
                   width: "100%", // Full width
                   objectFit: "cover", // Keep the aspect ratio
                 }}

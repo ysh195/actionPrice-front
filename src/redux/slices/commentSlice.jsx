@@ -176,7 +176,7 @@ export const commentSlice = createSlice({
           );
         }
         state.totalPageNum = action.payload.totalPageNum;
-
+        state.currentPageNum = action.payload.currentPageNum;
         state.listSize = action.payload.listSize;
       })
       .addCase(fetchComments.rejected, (state, action) => {

@@ -47,7 +47,7 @@ function App() {
             element={<ProtectedRoute element={<CreatePostView />} />}
           />
           <Route
-            path="api/post/:postId/detail/:commentPageNum?"
+            path="api/post/:postId/detail/:page?"
             element={<ProtectedRoute element={<PostDetailPage />} />}
           />
           <Route
