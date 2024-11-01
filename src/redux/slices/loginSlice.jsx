@@ -64,6 +64,7 @@ export const logoutUser = createAsyncThunk(
 
         Cookies.remove("REMEMBERME");
         localStorage.removeItem("access_token");
+        localStorage.removeItem("username");
 
         return response.data;
       } else {
