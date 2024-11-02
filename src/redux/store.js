@@ -6,6 +6,7 @@ import verificationReducer from "./slices/verificationSlice";
 import userReducer from "./slices/userSlice";
 import postReducer from "./slices/postSlice";
 import commentReducer from "./slices/commentSlice";
+import adminPageReducer from "./slices/adminPageSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
     user: userReducer,
     post: postReducer,
     comment: commentReducer,
+    adminPage: adminPageReducer,
   },
 });

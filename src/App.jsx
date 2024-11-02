@@ -16,6 +16,7 @@ import CreatePostView from "./components/Post/CreatePostView";
 import PostDetailPage from "./components/Post/PostDetailPage";
 import UpdatePostView from "./components/Post/UpdatePostView";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPage from "./components/Admin/AdminPage"
 
 function App() {
   const dispatch = useDispatch();
@@ -56,6 +57,8 @@ function App() {
           />
 
           <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
+
+          <Route path="api/admin/userlist" element={<AdminPage />} />
 
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
