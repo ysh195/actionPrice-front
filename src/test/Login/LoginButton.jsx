@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
+import { colors } from "../../assets/assest";
 
 const LoginButton = ({ isLoading }) => (
   <button
@@ -7,7 +9,7 @@ const LoginButton = ({ isLoading }) => (
     style={{
       width: "100%",
       padding: "0.5rem",
-      backgroundColor: "#C5705D",
+      backgroundColor: colors.tableHead,
       color: "white",
       border: "none",
       borderRadius: "5px",

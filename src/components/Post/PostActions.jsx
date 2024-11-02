@@ -68,7 +68,7 @@ const PostActions = React.memo(
           <Box>
             <Button
               variant="outlined"
-              onClick={() => navigate("/api/contact-us/:pageNum/:keyword?")}
+              onClick={() => navigate("/api/contact-us")}
               sx={{ marginRight: 1 }}
             >
               목록보기

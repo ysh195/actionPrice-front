@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import LoginForm from "./LoginForm";
+import { colors } from "../../assets/assest";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -60,8 +62,6 @@ const Login = () => {
 console.log("Current showPassword state:", showPassword);
 
   return (
-    
-    
     <div
       style={{
         display: "flex",
@@ -79,7 +79,7 @@ console.log("Current showPassword state:", showPassword);
           width: "100%",
         }}
       >
-        <h2 style={{ textAlign: "center", color: "#49557e" }}>Login</h2>
+        <h2 style={{ textAlign: "center", color: colors.hover1 }}>Login</h2>
         <LoginForm
           username={username}
           password={password}
@@ -95,7 +95,7 @@ console.log("Current showPassword state:", showPassword);
         />
         <div style={{ textAlign: "center", marginTop: "1rem" }}>
           계정이 없으신가요?{" "}
-          <Link to="/api/user/register" style={{ color: "#CB6040" }}>
+          <Link to="/api/user/register" style={{ color: colors.button2 }}>
             해원가입 하세요
           </Link>
         </div>

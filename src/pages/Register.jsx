@@ -19,6 +19,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import { colors } from "../assets/assest";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -181,7 +182,7 @@ const Register = () => {
       }}
     >
       <Card sx={{ p: 5, borderRadius: 2, boxShadow: 3 }}>
-        <Typography variant="h4" align="center" sx={{ color: "#49557e" }}>
+        <Typography variant="h4" align="center" sx={{ color: colors.hover1 }}>
           회원가입
         </Typography>
         <form onSubmit={handleRegister}>
@@ -255,8 +256,8 @@ const Register = () => {
               sx={{
                 height: "3rem",
                 ml: 1,
-                bgcolor: isCodeSent ? "#d3d3d3" : "#C5705D",
-                color: isCodeSent ? "#666" : "#fff",
+                bgcolor: isCodeSent ? colors.disable : colors.tableHead,
+                color: isCodeSent ? "#666" : "white",
               }}
             >
               코드 발성
@@ -285,8 +286,8 @@ const Register = () => {
                 sx={{
                   height: "3rem",
                   ml: 1,
-                  bgcolor: "#C5705D",
-                  color: "#fff",
+                  bgcolor: colors.tableHead,
+                  color: "white",
                 }}
               >
                 {isLoading ? <CircularProgress size={24} /> : "코드 인증"}
@@ -302,7 +303,7 @@ const Register = () => {
               fullWidth
               sx={{
                 height: "3rem",
-                bgcolor: "#C5705D",
+                bgcolor: colors.tableHead,
                 color: "white",
                 mt: 2,
               }}
@@ -313,7 +314,7 @@ const Register = () => {
         </form>
         <Box textAlign="center" mt={3}>
           계장이 있으신가요?{" "}
-          <Link to="/api/user/login" style={{ color: "#CB6040" }}>
+          <Link to="/api/user/login" style={{ color: colors.button2 }}>
             로그인 하세요
           </Link>
         </Box>

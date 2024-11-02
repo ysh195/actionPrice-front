@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -9,17 +10,18 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
-
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { colors } from '../assets/assest.js'; 
+
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const username = useSelector((state) => state.login.username);
+  const { username, role } = useSelector((state) => state.login);
 
 
   const dispatch = useDispatch();
@@ -52,7 +54,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: "#2C3E50" }}>
+    <AppBar position="sticky" sx={{ backgroundColor: colors.primary }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Menu Button for mobile */}
@@ -97,7 +99,7 @@ function Navbar() {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="api/contact-us/:pageNum/:keyword"
+                  to="api/contact-us"
                   sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Contact Us
@@ -151,7 +153,7 @@ function Navbar() {
             </Button>
             <Button
               component={Link}
-              to="api/contact-us/:pageNum/:keyword"
+              to="api/contact-us"
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
             >
@@ -161,43 +163,62 @@ function Navbar() {
 
           {/* User Menu */}
           {isLoggedIn ? (
-            <Box sx={{ flexGrow: 0 }}>
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <AccountCircle sx={{ color: "white" }} />
-              </IconButton>
+            <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+              {/* //todo: change role !== 'ROLE_ADMIN' after the auth is done  */}
+              {role !== "ROLE_ADMIN" && (
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Button
+                    component={Link}
+                    to="/api/admin/userlist"
+                    sx={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      marginRight: 1,
+                    }}
+                  >
+                    Admin Page
+                  </Button>
+                </MenuItem>
+              )}
+              <Box>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <AccountCircle sx={{ color: "white" }} />
+                </IconButton>
 
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                keepMounted
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography
-                    component={Link}
-                    to={`/api/mypage/${username}`}
-                    sx={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    My Page
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography
-                    component={Link}
-                    to="/api/user/wishlist"
-                    sx={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    WishList
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <Typography sx={{ color: "#d32f2f" }}>Logout</Typography>
-                </MenuItem>
-              </Menu>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                  keepMounted
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      component={Link}
+                      to={`/api/mypage/${username}`}
+                      sx={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      My Page
+                    </Typography>
+                  </MenuItem>
+
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      component={Link}
+                      to="/api/user/wishlist"
+                      sx={{ textDecoration: "none", color: "inherit" }}
+                    >
+                      WishList
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <Typography sx={{ color: colors.warning }}>Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
             </Box>
           ) : (
             <Button

@@ -1,39 +1,35 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, Suspense, lazy, useState } from "react";
+import React, { useEffect, Suspense, lazy, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
-
 import { Box, CircularProgress, Paper, Typography } from "@mui/material";
 import CreateCommentForm from "../Comment/CreateCommentForm";
 import { CommentList } from "../Comment/CommentList";
-import { fetchComments } from "../../redux/slices/commentSlice";
 
 const PostHeader = React.memo(lazy(() => import("./PostHeader")));
 const PostContent = React.memo(lazy(() => import("./PostContent")));
 const PostActions = React.memo(lazy(() => import("./PostActions")));
 
 const PostDetailPage = () => {
-  const { postId, page = 1 } = useParams();
- console.log("Post ID:", postId);
+  const { postId } = useParams();
+  console.log("Post ID:", postId);
+  const [searchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1; // Default to 1 if no page param
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const { post, loading, error } = useSelector((state) => state.post);
-  const { currentPageNum } = useSelector((state) => state.comment);
+
+  useEffect(() => {
+    if (!postId) return; // Early return if no postId
+    dispatch(fetchPostById({ postId, page: page - 1 }));
+  }, [dispatch, postId, page]);
 
   const handleShowCommentForm = () => {
     setShowCommentForm((prev) => !prev);
   };
-
-useEffect(() => {
-  // Fetch the post by ID
-  dispatch(fetchPostById(postId));
-
-  // Fetch comments for the current page
-  dispatch(fetchComments({ postId, page: Number(page) - 1 })); // Adjust page for zero-based index
-}, [dispatch, postId, page]);
-
 
   const handleEdit = () => {
     console.log("Navigating to edit page...");

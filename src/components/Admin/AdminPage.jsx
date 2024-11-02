@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 // src/pages/AdminPage.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,33 +9,52 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Link } from "react-router-dom";
-import { styled } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserList, blockUser, resetRefreshToken, selectUserList } from '../../redux/slices/adminPageSlice';
+import { colors } from "../../assets/assest.js";
+
+import { Link, useSearchParams } from "react-router-dom";
+import { Box, Pagination, styled, Typography } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchUserList,
+  blockUser,
+  resetRefreshToken,
+  selectUserList,
+} from "../../redux/slices/adminPageSlice";
 import { Button, TextField } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: "#C5705D",
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 16,
-    },
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: colors.tableHead,
+    color: colors.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 16,
+  },
 }));
 
 const AdminPage = () => {
   const dispatch = useDispatch();
-  const { userList, currentPageNum, hasNext, keyword } = useSelector(selectUserList);
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams(); //show the current page number in the URL
+  const currentPageNum = useSelector((state) => state.adminPage.currentPageNum);
+  const keyword = searchParams.get("keyword") || "";
+  const { userList, totalPageNum, hasNext } = useSelector(selectUserList);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
+  // Fetch user list based on page number and keyword
   useEffect(() => {
     dispatch(fetchUserList({ pageNum: currentPageNum - 1, keyword }));
-  }, [dispatch, currentPageNum, keyword]);
+    setSearchParams({ pageNum: currentPageNum, keyword }); // Update URL with current page number
+  }, [dispatch, currentPageNum, keyword, setSearchParams]);
 
   const handleSearch = () => {
-    dispatch(fetchUserList({ pageNum: 0, keyword: searchKeyword }));
+    // Update the searchParams in the URL
+    setSearchParams({ keyword: searchKeyword, pageNum: 1 }); // Reset to page 1 on new search
+    dispatch(fetchUserList({ pageNum: 0, keyword: searchKeyword })); // Fetch user list with new keyword
+  };
+
+  const handlePageChange = (event, value) => {
+    if (value < 1) return; // Prevent navigating to less than page 1
+    setSearchParams({ pageNum: value, keyword });
   };
 
   const handleBlockUser = (username) => {
@@ -45,115 +65,156 @@ const AdminPage = () => {
     dispatch(resetRefreshToken(username));
   };
 
-  const baseUrl = "http://localhost:3000/api/mypage";
-
   return (
-    <div>
-      <h1>사용자 목록</h1>
+    <Box
+      sx={{
+        m: 3,
+        p: 3,
+        borderRadius: 2,
+        boxShadow: 2,
+        backgroundColor: colors.white,
+      }}
+    >
+      <Typography variant="h4" sx={{ mb: 3, textAlign: "center" }}>
+        사용자 목록
+      </Typography>
 
-      <TextField
-        type="text"
-        value={searchKeyword}
-        onChange={(e) => setSearchKeyword(e.target.value)}
-        placeholder="Search by username or email"
-      />
-
-      <Button 
-        type="submit"
-        variant="contained"                              
-        color="primary"
-        onClick={handleSearch}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          mb: 2,
+        }}
       >
-        Search
-      </Button>
-
-      <Paper sx={{ width: "100%" }}>
-        <TableContainer
-            sx={{
-            marginTop: 2,
-            marginBottom: 2,
-            }}
+        <TextField
+          type="text"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          placeholder="Search by username or email"
+          sx={{ mr: 2, width: "250px" }}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          backgroundColor="colors.primary"
+          onClick={handleSearch}
+          sx={{ backgroundColor: colors.button1 }}
         >
-            <Table aria-label="sticky table">
+          Search
+        </Button>
+      </Box>
 
-                <TableHead>
-                  <TableRow>
-                      <StyledTableCell>Username</StyledTableCell>
-                      <StyledTableCell>Email</StyledTableCell>
-                      <StyledTableCell>Posts</StyledTableCell>
-                      <StyledTableCell>Comments</StyledTableCell>
-                      <StyledTableCell>Authorities</StyledTableCell>
-                      <StyledTableCell>Blocked</StyledTableCell>
-                      <StyledTableCell>Token Reset</StyledTableCell>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <TableContainer>
+          <Table aria-label="User List Table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Username</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell>Posts</StyledTableCell>
+                <StyledTableCell>Comments</StyledTableCell>
+                <StyledTableCell>Authorities</StyledTableCell>
+                <StyledTableCell>Blocked</StyledTableCell>
+                <StyledTableCell>Token Reset</StyledTableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {userList.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    No user exists with that keyword in the username or email.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                userList.map((user) => (
+                  <TableRow key={user.username}>
+                    <TableCell>
+                      <Link
+                        to={`/api/user/${user.username}`}
+                        style={{ color: colors.primary }}
+                      >
+                        {user.username}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.postCount}</TableCell>
+                    <TableCell>{user.commentCount}</TableCell>
+                    <TableCell>{user.authorities}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: user.blocked
+                            ? colors.button1
+                            : colors.button2,
+                          color: "white", // text color
+                          "&:hover": {
+                            backgroundColor: user.blocked
+                              ? colors.hover1
+                              : colors.hover2,
+                          },
+                        }}
+                        onClick={() => handleBlockUser(user.username)}
+                      >
+                        {user.blocked ? "Unblock" : "Block"}
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      {user.tokenExpiresAt === null ? (
+                        "None"
+                      ) : (
+                        <Button
+                          variant="contained"
+                          sx={{ backgroundColor: colors.button1 }}
+                          onClick={() => handleResetRefreshToken(user.username)}
+                        >
+                          Reset
+                        </Button>
+                      )}
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {userList.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        No user exists with that keyword in the username or email.
-                      </TableCell>
-                    </TableRow>                    
-                  ) : (                    
-                    userList.map((user) => (
-                      <TableRow key={user.username}>
-
-                        <TableCell>
-                            <Link
-                                to={`${baseUrl}/${user.username}`}
-                                style={{
-                                color: "#2c3e50",
-                                }}
-                            >
-                                {user.username}
-                            </Link>
-                        </TableCell>
-
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{user.postCount}</TableCell>
-                        <TableCell>{user.commentCount}</TableCell>
-                        <TableCell>{user.authorities}</TableCell>
-
-                        <TableCell>
-                            <Button 
-                              type="submit"
-                              variant="contained"                              
-                              color="primary"
-                              onClick={() => handleBlockUser(user.username)}
-                            >
-                                {user.blocked ? "Block" : "Unblock"}
-                            </Button>
-                        </TableCell>
-
-                        <TableCell>
-                            {
-                                user.tokenExpiresAt === null ?
-                                    "None"
-                                    : 
-                                    <Button 
-                                      type="submit"
-                                      variant="contained"                              
-                                      color="primary"
-                                      onClick={() => handleResetRefreshToken(user.username)}
-                                    >
-                                        Reset
-                                    </Button>
-                            }
-                        </TableCell>
-
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-
-            </Table>
-            
+                ))
+              )}
+            </TableBody>
+          </Table>
         </TableContainer>
       </Paper>
 
-      {hasNext && <button onClick={() => dispatch(fetchUserList({ pageNum: currentPageNum, keyword }))}>Load More</button>}
-    </div>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mt: 2,
+        }}
+      >
+        <Pagination
+          count={totalPageNum} // Total number of pages from Redux state
+          page={currentPageNum} // Current page
+          onChange={handlePageChange}
+          variant="outlined"
+          sx={{ margin: "auto" }}
+        />
+        {hasNext && (
+          <Button
+            variant="outlined"
+            onClick={() =>
+              dispatch(
+                fetchUserList({
+                  pageNum: currentPageNum + 1,
+                  keyword: searchKeyword,
+                })
+              )
+            }
+            sx={{ marginLeft: 2 }}
+          >
+            Load More
+          </Button>
+        )}
+      </Box>
+    </Box>
   );
 };
 

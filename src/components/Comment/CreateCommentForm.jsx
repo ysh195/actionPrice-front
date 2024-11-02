@@ -10,6 +10,8 @@ const CommentForm = ({ postId }) => {
   const { loading, error } = useSelector((state) => state.comment);
   const username = useSelector((state) => state.login.username);
   const [content, setContent] = useState("");
+    const role = useSelector((state) => state.login.role);
+
 
   const handleCreateComment = async () => {
     try {
@@ -24,8 +26,7 @@ const CommentForm = ({ postId }) => {
     }
   };
 
-
-  const handleAdminAnswer = () =>{}
+  const handleAdminAnswer = () => {};
 
   return (
     <Box
@@ -64,15 +65,18 @@ const CommentForm = ({ postId }) => {
         >
           {loading ? "Loading..." : "추가"}
         </Button>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={loading || !content.trim()} // Disable if loading or input is empty
-          color="primary"
-          onClick={handleAdminAnswer}
-        >
-          {loading ? "Loading..." : "Admin"}
-        </Button>
+        {/* //todo role === "ROLE_ADMIN"*/}
+        {role !== "ROLE_ADMIN" && (
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading || !content.trim()} // Disable if loading or input is empty
+            color="primary"
+            onClick={handleAdminAnswer}
+          >
+            Admin
+          </Button>
+        )}
       </Box>
       {error && (
         <Typography color="error" variant="body2" sx={{ marginTop: 1 }}>

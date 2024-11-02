@@ -10,12 +10,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
-import { styled, Typography } from "@mui/material";
+import { styled } from "@mui/material";
 import { useSelector } from "react-redux";
+import { colors } from "../../assets/assest";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#C5705D",
+    backgroundColor: colors.tableHead,
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -28,9 +29,6 @@ const PostListView = ({ postList }) => {
   const role = useSelector((state) => state.login.role);
 
   console.log("check postList in PostList component:", postList);
-  if (!postList || postList.length === 0) {
-    return <Typography>No posts available.</Typography>;
-  }
 
   return (
     <Paper sx={{ width: "100%" }}>
@@ -50,32 +48,40 @@ const PostListView = ({ postList }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {postList.map((post) => (
-              <TableRow key={post.postId}>
-                <TableCell>{post.postId}</TableCell>
-                <TableCell>
-                  {new Date(post.createdAt).toLocaleDateString()}
+            {postList && postList.length > 0 ? (
+              postList.map((post) => (
+                <TableRow key={post.postId}>
+                  <TableCell>{post.postId}</TableCell>
+                  <TableCell>
+                    {new Date(post.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {post.isSecret &&
+                    username !== post.username &&
+                    role !== "ROLE_ADMIN" ? (
+                      <span style={{ display: "flex", alignItems: "center" }}>
+                        <LockIcon style={{ marginRight: 4 }} />
+                        비밀 글입니다.
+                      </span>
+                    ) : (
+                      <Link
+                        to={`/api/post/${post.postId}/detail?page=1`}
+                        style={{ color: colors.primary }}
+                      >
+                        {post.title}
+                      </Link>
+                    )}
+                  </TableCell>
+                  <TableCell>{post.username}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  No posts available
                 </TableCell>
-                <TableCell>
-                  {post.isSecret &&
-                  username !== post.username &&
-                  role !== "ROLE_ADMIN" ? (
-                    <span style={{ display: "flex", alignItems: "center" }}>
-                      <LockIcon style={{ marginRight: 4 }} />
-                      비밀 글입니다.
-                    </span>
-                  ) : (
-                    <Link
-                      to={`/api/post/${post.postId}/detail`}
-                      style={{ color: "#2c3e50" }}
-                    >
-                      {post.title}
-                    </Link>
-                  )}
-                </TableCell>
-                <TableCell>{post.username}</TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

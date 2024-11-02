@@ -15,18 +15,7 @@ const initialState = {
 };
 
 const BASE_URL = "http://localhost:8080/api";
-//desc: fetchMiddleCategories url style //
-// export const fetchMiddleCategories = createAsyncThunk(
-//   "categories/fetchMiddleCategories",
-//   async (large) => {
-//     const encodedLarge = encodeURIComponent(large);
-//     const response = await axios.get(`${BASE_URL}/category`, {
-//       params: { large: encodedLarge }, // Use params to create query parameters
-//     });
-//     console.log("fetchMiddleCategories:", response.data);
-//     return response.data;
-//   }
-// );
+
 
 //function: Get Middle Category List //
 export const fetchMiddleCategories = createAsyncThunk(
@@ -38,23 +27,6 @@ export const fetchMiddleCategories = createAsyncThunk(
   }
 );
 
-//desc: Get Small Category url style //
-// export const fetchSmallCategories = createAsyncThunk(
-//   "categories/fetchSmallCategories",
-//   async ({ large, middle }) => {
-//     const params = {
-//       large: encodeURIComponent(large),
-//       middle: encodeURIComponent(middle),
-//     };
-
-//     const response = await axios.get(`${BASE_URL}/category`, {
-//       params, // Use the params object to create query parameters
-//     });
-
-//     console.log("fetchSmallCategories:", response.data);
-//     return response.data;
-//   }
-// );
 //function: Get Small Category List //
 export const fetchSmallCategories = createAsyncThunk(
   "categories/fetchMiddleCategories",
@@ -66,24 +38,6 @@ export const fetchSmallCategories = createAsyncThunk(
   }
 );
 
-//desc: fetchRankCategories url style //
-// export const fetchRankCategories = createAsyncThunk(
-//   "categories/fetchProductRankCategories",
-//   async ({ large, middle, small }) => {
-//     const params = {
-//       large: encodeURIComponent(large),
-//       middle: encodeURIComponent(middle),
-//       small: encodeURIComponent(small),
-//     };
-
-//     const response = await axios.get(`${BASE_URL}/category`, {
-//       params, // Use the params object to create query parameters
-//     });
-
-//     console.log("fetchRankCategories:", response.data);
-//     return response.data;
-//   }
-// );
 
 //function: Get Rank Categories//
 export const fetchRankCategories = createAsyncThunk(
@@ -97,31 +51,6 @@ export const fetchRankCategories = createAsyncThunk(
   }
 );
 
-//desc: fetchRankCategories url style //
-// export const fetchData = createAsyncThunk(
-//   "categories/fetchCategoryResults",
-//   async ({
-//     large,
-//     middle,
-//     small,
-//     rank,
-//     startDate = "",
-//     endDate = "",
-//     pageNum = 1,
-//   }) => {
-//     const response = await axios.get(`${BASE_URL}/category`, {
-//       large,
-//       middle,
-//       small,
-//       rank,
-//       startDate,
-//       endDate,
-//       pageNum,
-//     });
-//     console.log("fetchData:", response.data);
-//     return response.data;
-//   }
-// );
 
 //function: fetchData //
 export const fetchData = createAsyncThunk(

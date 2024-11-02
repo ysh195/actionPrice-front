@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { colors } from "../assets/assest";
 // import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
@@ -72,7 +73,7 @@ const Login = () => {
   return (
     <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
       <Card sx={{ p: 3, borderRadius: "16px", boxShadow: 3 }}>
-        <Typography variant="h5" align="center" color="#49557e">
+        <Typography variant="h5" align="center" sx={{ color: colors.hover1 }}>
           Login
         </Typography>
         <form onSubmit={handleLogin}>
@@ -132,7 +133,7 @@ const Login = () => {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, backgroundColor: "#C5705D", height: "3rem" }}
+            sx={{ mt: 2, backgroundColor: colors.tableHead, height: "3rem" }}
             disabled={isLoading}
           >
             {isLoading ? <CircularProgress size={24} /> : "Login"}
@@ -140,7 +141,7 @@ const Login = () => {
         </form>
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           계정이 없으신가요?
-          <Link to="/api/user/register" style={{ color: "#CB6040" }}>
+          <Link to="/api/user/register" style={{ color: colors.button2 }}>
             해원가입 하세요
           </Link>
         </div>

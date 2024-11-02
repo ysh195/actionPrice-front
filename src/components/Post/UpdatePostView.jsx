@@ -6,6 +6,7 @@ import { fetchPostById, fetchPostForUpdate, updatePost } from "../../redux/slice
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import PostHeader from "./PostHeader";
 import Swal from "sweetalert2";
+import { colors } from "../../assets/assest";
 
 const UpdatePostView = () => {
  const { postId, username } = useParams();
@@ -95,10 +96,10 @@ const UpdatePostView = () => {
                 borderColor: "lightgray",
               },
               "&:hover fieldset": {
-                borderColor: "#C5705D",
+                borderColor: colors.tableHead,
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#CB6040",
+                borderColor: colors.button2,
               },
             },
           }}
@@ -118,10 +119,10 @@ const UpdatePostView = () => {
                 borderColor: "lightgray",
               },
               "&:hover fieldset": {
-                borderColor: "#C5705D",
+                borderColor: colors.tableHead,
               },
               "&.Mui-focused fieldset": {
-                borderColor: "#CB6040",
+                borderColor: colors.button2,
               },
             },
           }}

@@ -15,6 +15,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { colors } from "../assets/assest";
 
 function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = useState(false);
@@ -45,7 +46,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: "#2C3E50" }}>
+    <AppBar position="sticky" sx={{ backgroundColor: colors.primary }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Mobile Menu Button */}
@@ -174,7 +175,7 @@ function Navbar() {
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
-                  <Typography sx={{ color: "#d32f2f" }}>Logout</Typography>
+                  <Typography sx={{ color:colors.warning }}>Logout</Typography>
                 </MenuItem>
               </Menu>
             </Box>

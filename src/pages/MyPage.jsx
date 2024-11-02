@@ -13,6 +13,7 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
+import { colors } from "../assets/assest";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice";
 import { Link, useNavigate } from "react-router-dom";
@@ -119,7 +120,7 @@ const MyPage = () => {
                           <Link
                             to={`/api/post/${post.postId}/detail`}
                             style={{
-                              color: "#2c3e50",
+                              color: colors.primary,
 
                               textDecoration: "",
                             }}
@@ -178,7 +179,7 @@ const MyPage = () => {
         display: "flex",
         height: "100vh",
         flexDirection: { xs: "column", md: "row" },
-        backgroundColor: "#F9F9F9",
+        backgroundColor: colors.paperb,
       }}
     >
       <Box
@@ -201,14 +202,14 @@ const MyPage = () => {
             borderRadius: 1,
             width: "100%",
             marginBottom: 5,
-            backgroundColor: "#ffffff",
+            backgroundColor: colors.wjite,
           }}
         >
           <Avatar
             sx={{
               width: 170,
               height: 170,
-              backgroundColor: "#CB6040",
+              backgroundColor: colors.button2,
               marginBottom: 3,
             }}
           />
@@ -233,11 +234,13 @@ const MyPage = () => {
               justifyContent: "flex-start",
               marginBottom: 1,
               textTransform: "none",
-              borderColor: "#CB6040",
+              borderColor: colors.button2,
               color: activeTab === index ? "white" : "black",
-              backgroundColor: activeTab === index ? "#CB6040" : "transparent",
+              backgroundColor:
+                activeTab === index ? colors.button2 : "transparent",
               "&:hover": {
-                backgroundColor: activeTab === index ? "#D76B4C" : "#D76B4C",
+                backgroundColor:
+                  activeTab === index ? colors.hover2 : colors.hover2,
                 transition: "background-color 0.3s",
               },
             }}
@@ -248,7 +251,7 @@ const MyPage = () => {
       </Box>
 
       <Box
-        sx={{ flexGrow: 1, margin: 2, padding: 5, backgroundColor: "#ffffff" }}
+        sx={{ flexGrow: 1, margin: 2, padding: 5, backgroundColor: "white" }}
       >
         {renderContent()}
       </Box>

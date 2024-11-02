@@ -1,16 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { Box, Typography, Grid, Link } from "@mui/material";
+import { colors } from "../assets/assest";
 
 const Footer = () => {
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#2c3e50",
-        color: "#ecf0f1",
+        backgroundColor: colors.primary,
+        color: colors.white2,
         padding: "2rem 1rem",
-        marginTop: "auto"
+        marginTop: "auto",
       }}
     >
       <Grid container spacing={3}>
@@ -34,7 +35,7 @@ const Footer = () => {
               <Link
                 href="#"
                 sx={{
-                  color: "#ecf0f1",
+                  color: colors.white2,
                   "&:hover": { textDecoration: "underline", color: "#3498db" },
                 }}
               >
@@ -45,7 +46,7 @@ const Footer = () => {
               <Link
                 href="#"
                 sx={{
-                  color: "#ecf0f1",
+                  color: colors.white2,
                   "&:hover": { textDecoration: "underline", color: "#3498db" },
                 }}
               >
@@ -56,7 +57,7 @@ const Footer = () => {
               <Link
                 href="#"
                 sx={{
-                  color: "#ecf0f1",
+                  color: colors.white2,
                   "&:hover": { textDecoration: "underline", color: "#3498db" },
                 }}
               >
@@ -73,7 +74,7 @@ const Footer = () => {
           </ul>
         </Grid>
       </Grid>
-      <hr style={{ borderColor: "#ecf0f1" }} />
+      <hr style={{ borderColor: colors.white2 }} />
       <Typography variant="body2" align="center" sx={{ marginTop: "1rem" }}>
         © {new Date().getFullYear()} AuctionPrice. All rights reserved.
       </Typography>

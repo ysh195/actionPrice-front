@@ -71,9 +71,11 @@ export const fetchPostForUpdate = createAsyncThunk(
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async (postId, { rejectWithValue }) => {
+  async ({postId, page=1}, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${postId}/detail`);
+      const response = await axios.get(`${API_URL}/${postId}/detail`, {
+        params: {page},
+      });
       console.log("fetchPostById response:", response);
       return response.data;
     } catch (error) {

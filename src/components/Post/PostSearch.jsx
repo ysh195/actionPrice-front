@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import { colors } from "../../assets/assest";
 
 const PostSearch = ({ onSearch, onReset, keyword }) => {
   const [searchKeyword, setSearchKeyword] = useState(keyword);
@@ -19,14 +20,14 @@ const PostSearch = ({ onSearch, onReset, keyword }) => {
   const handleSearch = () => {
     onSearch(searchKeyword);
     setIsSearching(true);
-    console.log(isSearching);
+
   };
 
   const handleReset = () => {
     setSearchKeyword(""); // Reset the search input
     onReset(); // Call the reset function
     setIsSearching(false); // Reset searching state
-    console.log(isSearching);
+
   };
 
   return (
@@ -39,7 +40,7 @@ const PostSearch = ({ onSearch, onReset, keyword }) => {
         style={{
           marginRight: "8px",
           border: "none",
-          borderBottom: "1px solid #2c3e50",
+          borderBottom: `1px solid ${colors.primary}`,
           outline: "none",
           padding: "4px",
         }}
@@ -47,7 +48,7 @@ const PostSearch = ({ onSearch, onReset, keyword }) => {
       <Button
         variant="contained"
         onClick={handleSearch}
-        sx={{ backgroundColor: "#2c3e50" }}
+        sx={{ backgroundColor: colors.primary }}
       >
         검색
       </Button>

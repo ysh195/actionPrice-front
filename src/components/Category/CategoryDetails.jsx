@@ -79,7 +79,7 @@ const CategoryDetail = () => {
         dispatch(setRankCategory(""));
         dispatch(fetchMiddleCategories(value)); // Pass the value directly
         navigate(`/api/category/${value}`);
-        // navigate(`/api/category?large=${value}`);
+
 
         break;
 
@@ -89,7 +89,7 @@ const CategoryDetail = () => {
         dispatch(setRankCategory(""));
         dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
         navigate(`/api/category/${selectedLarge}/${value}`);
-        // navigate(`/api/category?large=${selectedLarge}&middle=${value}`);
+
 
         break;
       case "small":
@@ -103,9 +103,7 @@ const CategoryDetail = () => {
           })
         );
         navigate(`/api/category/${selectedLarge}/${selectedMiddle}/${value}`);
-        // navigate(
-        //   `/api/category?large=${selectedLarge}&middle=${selectedMiddle}&small=${value}`
-        // );
+     
 
         break;
       case "rank":

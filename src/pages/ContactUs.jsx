@@ -11,59 +11,38 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../redux/slices/postSlice";
 import PostListView from "../components/Post/PostListView";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import PostSearch from "../components/Post/PostSearch";
-import { createSelector } from "@reduxjs/toolkit";
+import { colors } from "../assets/assest";
 
 const ContactUs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword") || ""; // Get keyword from searchParams
+  const pageNum = parseInt(searchParams.get("pageNum")) || 1; // Get current page number from searchParams
+  const { postList, loading, error, totalPageNum } =
+    useSelector((state) => state.post);
 
-  const [keyword, setKeyword] = useState("");
-
-  const selectPostState = (state) => state.post;
-
-  const selectPostData = createSelector([selectPostState], (post) => ({
-    postList: post.postList,
-    loading: post.loading,
-    error: post.error,
-    totalPageNum: parseInt(post.totalPageNum, 10) || 1,
-    currentPageNum: parseInt(post.currentPageNum) || 1,
-  }));
-
-  const { postList, loading, error, totalPageNum, currentPageNum } =
-    useSelector(selectPostData);
-
-  // Fetch posts when currentPageNum or keyword changes
+  // Fetch posts when pageNum or keyword changes
   useEffect(() => {
-    dispatch(fetchPosts({ pageNum: currentPageNum - 1, keyword })); // Adjust for API
-  }, [dispatch, currentPageNum, keyword]);
+    dispatch(fetchPosts({ pageNum: pageNum - 1, keyword })); // Adjust for API (0-based index)
+  }, [dispatch, pageNum, keyword]);
 
-  // Update URL when keyword changes
-  useEffect(() => {
-    const currentPath = keyword
-      ? `/api/contact-us/${currentPageNum}/${keyword}`
-      : `/api/contact-us/${currentPageNum}`;
-
-    navigate(currentPath, { replace: true });
-  }, [currentPageNum, keyword, navigate]);
-
+  // Handle search submission
   const handleSearch = (searchKeyword) => {
-    setKeyword(searchKeyword);
-    navigate(`/api/contact-us/1/${searchKeyword}`); // Reset to the first page with keyword
+    setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword
+    dispatch(fetchPosts({ pageNum: 0, keyword: searchKeyword }));
   };
 
   const handleResetSearch = () => {
-    setKeyword(""); // Reset keyword
-    navigate(`/api/contact-us/1`); // Reset to the first page
+    setSearchParams({ pageNum: 1 }); // Reset to the first page
   };
 
   const handlePageChange = (event, value) => {
     if (value < 1) return; // Prevent navigating to less than page 1
-    navigate(`/api/contact-us/${value}/${keyword}`); // Update URL on page change
-
-    dispatch(fetchPosts({ pageNum: value - 1, keyword })); // Adjust for API (0-based)
+    setSearchParams({ pageNum: value, keyword }); // Update pageNum while retaining keyword
   };
 
   // Render loading spinner
@@ -106,7 +85,7 @@ const ContactUs = () => {
         <Button
           variant="contained"
           onClick={() => navigate("/api/post/create")}
-          sx={{ backgroundColor: "#2c3e50" }}
+          sx={{ backgroundColor: colors.primary}}
         >
           문의하기
         </Button>
@@ -119,7 +98,7 @@ const ContactUs = () => {
       <PostListView postList={postList} />
       <Pagination
         count={totalPageNum} // Total number of pages from Redux state
-        page={currentPageNum} // Current page
+        page={pageNum} // Current page
         onChange={handlePageChange}
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
