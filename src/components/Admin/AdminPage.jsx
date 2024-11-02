@@ -55,7 +55,7 @@ const AdminPage = () => {
         type="text"
         value={searchKeyword}
         onChange={(e) => setSearchKeyword(e.target.value)}
-        placeholder="Search by username"
+        placeholder="Search by username or email"
       />
 
       <Button 
@@ -83,14 +83,21 @@ const AdminPage = () => {
                       <StyledTableCell>Posts</StyledTableCell>
                       <StyledTableCell>Comments</StyledTableCell>
                       <StyledTableCell>Authorities</StyledTableCell>
-                      <StyledTableCell>Token Expires At</StyledTableCell>
                       <StyledTableCell>Blocked</StyledTableCell>
+                      <StyledTableCell>Token Reset</StyledTableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
-                    {userList.map((user) => (
-                        <TableRow key={user.username}>
+                  {userList.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center">
+                        No user exists with that keyword in the username or email.
+                      </TableCell>
+                    </TableRow>                    
+                  ) : (                    
+                    userList.map((user) => (
+                      <TableRow key={user.username}>
 
                         <TableCell>
                             <Link
@@ -109,22 +116,6 @@ const AdminPage = () => {
                         <TableCell>{user.authorities}</TableCell>
 
                         <TableCell>
-                            {
-                                user.tokenExpiresAt === null ?
-                                    "None"
-                                    : 
-                                    <Button 
-                                      type="submit"
-                                      variant="contained"                              
-                                      color="primary"
-                                      onClick={() => handleResetRefreshToken(user.username)}
-                                    >
-                                        {new Date(user.tokenExpiresAt).toLocaleDateString()}
-                                    </Button>
-                            }
-                        </TableCell>
-                        
-                        <TableCell>
                             <Button 
                               type="submit"
                               variant="contained"                              
@@ -135,8 +126,25 @@ const AdminPage = () => {
                             </Button>
                         </TableCell>
 
-                        </TableRow>
-                    ))}
+                        <TableCell>
+                            {
+                                user.tokenExpiresAt === null ?
+                                    "None"
+                                    : 
+                                    <Button 
+                                      type="submit"
+                                      variant="contained"                              
+                                      color="primary"
+                                      onClick={() => handleResetRefreshToken(user.username)}
+                                    >
+                                        Reset
+                                    </Button>
+                            }
+                        </TableCell>
+
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
 
             </Table>
