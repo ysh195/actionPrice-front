@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { largeCategoryList } from "../../assets/assest.js";
 
 import {
@@ -14,46 +14,44 @@ import {
   Box,
   TextField,
   Button,
+  Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchMiddleCategories,
   fetchSmallCategories,
   fetchRankCategories,
-  fetchData,
+  fetchProductList,
   setMiddleCategory,
   setSmallCategory,
   setRankCategory,
 } from "../../redux/slices/categorySlice";
-
-const useQuery = () => {
-  return new URLSearchParams(useLocation().search);
-};
+import ProductListView from "./ProductListView.jsx";
 
 const CategoryDetail = () => {
   const { large } = useParams();
-  const query = useQuery();
+  const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
 
-  // Extract query parameters
-  const startDate = query.get("startDate") || "";
-  const endDate = query.get("endDate") || "";
-  const pageNum = query.get("pageNum") || 1; // Default to page 1
-  const [selectedLarge, setSelectedLarge] = useState(large || "");
+  // Extracting query parameters using searchParams
+  const startDate = searchParams.get("startDate") || "";
+  const endDate = searchParams.get("endDate") || "";
+  const pageNum = searchParams.get("pageNum") || 1; // Default to page 1
 
+  const [selectedLarge, setSelectedLarge] = useState(large || "");
+  const [selectedMiddle, setSelectedMiddle] = useState("");
+  const [selectedSmall, setSelectedSmall] = useState("");
+  const [selectedRank, setSelectedRank] = useState("");
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
   const [selectedPageNum, setSelectedPageNum] = useState(pageNum);
 
   const {
-    selectedMiddle,
-    selectedSmall,
-    selectedRank,
     middleCategoryList,
     smallCategoryList,
     rankCategoryList,
-    dataList,
+    productList,
     loading,
     error,
   } = useSelector((state) => state.category);
@@ -63,38 +61,35 @@ const CategoryDetail = () => {
   useEffect(() => {
     // Reset other categories when large category changes
     if (selectedLarge) {
-      console.log("selectedLarge", selectedLarge);
       dispatch(setMiddleCategory(""));
       dispatch(setSmallCategory(""));
       dispatch(setRankCategory(""));
       dispatch(fetchMiddleCategories(selectedLarge));
     }
   }, [dispatch, selectedLarge]);
+
   const handleCategoryChange = (type, value) => {
     switch (type) {
       case "large":
         setSelectedLarge(value);
-        dispatch(setMiddleCategory(""));
-        dispatch(setSmallCategory(""));
-        dispatch(setRankCategory(""));
-        dispatch(fetchMiddleCategories(value)); // Pass the value directly
+        setSelectedMiddle("");
+        setSelectedSmall("");
+        setSelectedRank("");
+        dispatch(fetchMiddleCategories(value));
         navigate(`/api/category/${value}`);
-
-
         break;
 
       case "middle":
-        dispatch(setMiddleCategory(value));
-        dispatch(setSmallCategory(""));
-        dispatch(setRankCategory(""));
+        setSelectedMiddle(value);
+        setSelectedSmall("");
+        setSelectedRank("");
         dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
         navigate(`/api/category/${selectedLarge}/${value}`);
-
-
         break;
+
       case "small":
-        dispatch(setSmallCategory(value));
-        dispatch(setRankCategory(""));
+        setSelectedSmall(value);
+        setSelectedRank("");
         dispatch(
           fetchRankCategories({
             large: selectedLarge,
@@ -103,35 +98,55 @@ const CategoryDetail = () => {
           })
         );
         navigate(`/api/category/${selectedLarge}/${selectedMiddle}/${value}`);
-     
-
         break;
+
       case "rank":
-        dispatch(setRankCategory(value));
+        setSelectedRank(value);
         navigate(
           `/api/category/${selectedLarge}/${selectedMiddle}/${selectedSmall}/${value}`
         );
         break;
+
       default:
         break;
     }
   };
 
   const handleSearch = () => {
-    const url = `/api/category/${selectedLarge}/${selectedMiddle}/${selectedSmall}/${selectedRank}?startDate=${selectedStartDate}&endDate=${selectedEndDate}&pageNum=${selectedPageNum}`;
-    navigate(url);
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
+      return;
+    }
+    // Updating search parameters using setSearchParams
+    setSearchParams({
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+      pageNum: selectedPageNum,
+    });
 
     dispatch(
-      fetchData({
+      fetchProductList({
         large: selectedLarge,
         middle: selectedMiddle,
         small: selectedSmall,
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum,
+        pageNum: selectedPageNum,
       })
     );
+  };
+
+  const handleReset = () => {
+    // Reset local state
+    setSelectedLarge("");
+    setSelectedMiddle("");
+    setSelectedSmall("");
+    setSelectedRank("");
+    setSelectedStartDate("");
+    setSelectedEndDate("");
+    setSelectedPageNum(1);
+    setSearchParams({});
+    // navigate("/api/category/:large?");
   };
 
   if (loading) {
@@ -151,10 +166,32 @@ const CategoryDetail = () => {
   }
 
   return (
-    <Container>
-      <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
-        <FormControl fullWidth margin="normal">
-          <InputLabel>Large Category</InputLabel>
+    <Box
+      sx={{
+        m: 5,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 2,
+        }}
+      >
+        {/* Category Selects */}
+        <FormControl sx={{ width: "200px" }} margin="normal">
+          <InputLabel
+            style={{
+              transform: selectedLarge
+                ? "translate(0, -1.5em) scale(0.75)"
+                : undefined,
+            }}
+          >
+            대분류를 선택하세요
+          </InputLabel>
           <Select
             value={selectedLarge}
             onChange={(e) => handleCategoryChange("large", e.target.value)}
@@ -167,11 +204,22 @@ const CategoryDetail = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal" disabled={!selectedLarge}>
-          <InputLabel>Middle Category</InputLabel>
+        <FormControl
+          sx={{ width: "200px" }}
+          margin="normal"
+          disabled={!selectedLarge}
+        >
+          <InputLabel
+            style={{
+              transform: selectedMiddle
+                ? "translate(0, -1.5em) scale(0.75)"
+                : undefined,
+            }}
+          >
+            중분류를 선택하세요
+          </InputLabel>
           <Select
             value={selectedMiddle}
-            disabled={!selectedLarge}
             onChange={(e) => handleCategoryChange("middle", e.target.value)}
           >
             {middleCategoryList.map((category) => (
@@ -182,11 +230,22 @@ const CategoryDetail = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal" disabled={!selectedMiddle}>
-          <InputLabel>Small Category</InputLabel>
+        <FormControl
+          sx={{ width: "200px" }}
+          margin="normal"
+          disabled={!selectedMiddle}
+        >
+          <InputLabel
+            style={{
+              transform: selectedSmall
+                ? "translate(0, -1.5em) scale(0.75)"
+                : undefined,
+            }}
+          >
+            소분류를 선택하세요
+          </InputLabel>
           <Select
             value={selectedSmall}
-            disabled={!selectedMiddle}
             onChange={(e) => handleCategoryChange("small", e.target.value)}
           >
             {smallCategoryList.map((category) => (
@@ -197,11 +256,22 @@ const CategoryDetail = () => {
           </Select>
         </FormControl>
 
-        <FormControl fullWidth margin="normal" disabled={!selectedSmall}>
-          <InputLabel>Rank Category</InputLabel>
+        <FormControl
+          sx={{ width: "200px" }}
+          margin="normal"
+          disabled={!selectedSmall}
+        >
+          <InputLabel
+            style={{
+              transform: selectedRank
+                ? "translate(0, -1.5em) scale(0.75)"
+                : undefined,
+            }}
+          >
+            등급을 선택하세요
+          </InputLabel>
           <Select
             value={selectedRank}
-            disabled={!selectedSmall}
             onChange={(e) => handleCategoryChange("rank", e.target.value)}
           >
             {rankCategoryList.map((category) => (
@@ -211,39 +281,78 @@ const CategoryDetail = () => {
             ))}
           </Select>
         </FormControl>
-      </Box>
-      <Box>
-        <TextField
-          type="date"
-          label="Start Date"
-          value={selectedStartDate}
-          onChange={(e) => setSelectedStartDate(e.target.value)}
-        />
-        <TextField
-          type="date"
-          label="End Date"
-          value={selectedEndDate}
-          onChange={(e) => setSelectedEndDate(e.target.value)}
-        />
 
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={
-            !selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank
-          }
-          onClick={handleSearch}
+        {/* Date Selects */}
+        <FormControl sx={{ width: "200px" }} margin="normal">
+          <Typography
+            variant="body2"
+            sx={{
+              position: "absolute",
+              top: -20,
+              fontSize: "0.75rem",
+              color: "text.secondary",
+              transition: "all 0.2s ease",
+            }}
+          >
+            시작일
+          </Typography>
+          <TextField
+            type="date"
+            value={selectedStartDate}
+            onChange={(e) => setSelectedStartDate(e.target.value)}
+          />
+        </FormControl>
+
+        <FormControl sx={{ width: "200px" }} margin="normal">
+          <Typography
+            variant="body2"
+            sx={{
+              position: "absolute",
+              top: -20,
+              fontSize: "0.75rem",
+              color: "text.secondary",
+              transition: "all 0.2s ease",
+            }}
+          >
+            종료일
+          </Typography>
+          <TextField
+            type="date"
+            value={selectedEndDate}
+            onChange={(e) => setSelectedEndDate(e.target.value)}
+          />
+        </FormControl>
+        {/* Action Buttons */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            m: 1,
+
+            height: "56px",
+          }}
         >
-          Search
-        </Button>
-        {/* <ul>
-          {dataList.map((product) => (
-            <li key={product.id}>{product.name}</li> // Adjust based on your product structure
-          ))}
-        </ul> */}
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={
+              !selectedLarge ||
+              !selectedMiddle ||
+              !selectedSmall ||
+              !selectedRank
+            }
+            onClick={handleSearch}
+          >
+            조회
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleReset}>
+            초기화
+          </Button>
+        </Box>
       </Box>
-    </Container>
+
+      <ProductListView productList={productList} />
+    </Box>
   );
 };
-
 export default CategoryDetail;

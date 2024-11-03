@@ -6,7 +6,7 @@ const initialState = {
   middleCategoryList: [],
   smallCategoryList: [],
   rankCategoryList: [],
-  dataList: [],
+  productList: [],
   selectedMiddle: "",
   selectedSmall: "",
   selectedRank: "",
@@ -52,8 +52,8 @@ export const fetchRankCategories = createAsyncThunk(
 );
 
 
-//function: fetchData //
-export const fetchData = createAsyncThunk(
+//function: fetchProductList //
+export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
   async ({ large, middle, small, rank, startDate, endDate, pageNum }) => {
     const response = await axios.get(
@@ -62,7 +62,7 @@ export const fetchData = createAsyncThunk(
         params: { startDate, endDate, pageNum },
       }
     );
-    console.log("fetchData:", response.data);
+    console.log("fetchProductList:", response.data);
     return response.data;
   }
 );
@@ -131,15 +131,15 @@ export const categorySlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(fetchData.pending, (state) => {
+      .addCase(fetchProductList.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchData.fulfilled, (state, action) => {
+      .addCase(fetchProductList.fulfilled, (state, action) => {
         state.loading = false;
-        state.dataList = action.payload.list;
+        state.productList = action.payload.list;
       })
-      .addCase(fetchData.rejected, (state, action) => {
+      .addCase(fetchProductList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
