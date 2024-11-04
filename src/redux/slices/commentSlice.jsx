@@ -129,7 +129,6 @@ export const commentSlice = createSlice({
       })
       //update Comment
       .addCase(updateComment.fulfilled, (state, action) => {
-        console.log("updatedComment", action.payload);
         state.loading = false;
         const updatedComment = action.payload;
         const index = state.commentList.findIndex(

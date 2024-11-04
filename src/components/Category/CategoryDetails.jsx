@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { largeCategoryList } from "../../assets/assest.js";
-
+import { colors, largeCategoryList } from "../../assets/assest.js";
 import {
   Container,
   FormControl,
@@ -15,6 +14,7 @@ import {
   TextField,
   Button,
   Typography,
+  Pagination,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -22,51 +22,47 @@ import {
   fetchSmallCategories,
   fetchRankCategories,
   fetchProductList,
-  setMiddleCategory,
-  setSmallCategory,
-  setRankCategory,
+  clearProductList,
+  downloadExcel,
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
 
 const CategoryDetail = () => {
   const { large } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
 
   // Extracting query parameters using searchParams
+  const [searchParams, setSearchParams] = useSearchParams();
   const startDate = searchParams.get("startDate") || "";
   const endDate = searchParams.get("endDate") || "";
-  const pageNum = searchParams.get("pageNum") || 1; // Default to page 1
-
+  const pageNum = parseInt(searchParams.get("pageNum")) || 1;
   const [selectedLarge, setSelectedLarge] = useState(large || "");
   const [selectedMiddle, setSelectedMiddle] = useState("");
   const [selectedSmall, setSelectedSmall] = useState("");
   const [selectedRank, setSelectedRank] = useState("");
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
-  const [selectedPageNum, setSelectedPageNum] = useState(pageNum);
 
   const {
     middleCategoryList,
     smallCategoryList,
-    rankCategoryList,
+    rankList,
     productList,
     loading,
     error,
+    totalPageNum,
   } = useSelector((state) => state.category);
 
-  console.log("largeCategoryList:", largeCategoryList);
-
   useEffect(() => {
-    // Reset other categories when large category changes
-    if (selectedLarge) {
-      dispatch(setMiddleCategory(""));
-      dispatch(setSmallCategory(""));
-      dispatch(setRankCategory(""));
-      dispatch(fetchMiddleCategories(selectedLarge));
+    if (large) {
+      setSelectedLarge(large);
+      console.log("fetching middle");
+      dispatch(fetchMiddleCategories(large));
+      console.log("fetched middle");
     }
-  }, [dispatch, selectedLarge]);
+  }, [large, dispatch]);
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -116,13 +112,11 @@ const CategoryDetail = () => {
     if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
-    // Updating search parameters using setSearchParams
     setSearchParams({
       startDate: selectedStartDate,
       endDate: selectedEndDate,
-      pageNum: selectedPageNum,
+      pageNum: 1, // Reset to page 1 on new search
     });
-
     dispatch(
       fetchProductList({
         large: selectedLarge,
@@ -131,22 +125,58 @@ const CategoryDetail = () => {
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum: selectedPageNum,
+        pageNum: pageNum, // Adjust for zero-based index
       })
     );
   };
 
   const handleReset = () => {
-    // Reset local state
     setSelectedLarge("");
     setSelectedMiddle("");
     setSelectedSmall("");
     setSelectedRank("");
     setSelectedStartDate("");
     setSelectedEndDate("");
-    setSelectedPageNum(1);
     setSearchParams({});
-    // navigate("/api/category/:large?");
+    dispatch(clearProductList());
+    navigate(`/api/category/:large`);
+  };
+
+  const handleDownloadExcel = () => {
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
+      return;
+    }
+    const large = selectedLarge;
+    const middle = selectedMiddle;
+    const small = selectedSmall;
+    const rank = selectedRank;
+    const startDate = selectedStartDate;
+    const endDate = selectedEndDate;
+    const pageNum = searchParams.get("pageNum") || 1;
+
+    dispatch(
+      downloadExcel({ large, middle, small, rank, startDate, endDate, pageNum })
+    );
+  };
+
+  const handlePageChange = (event, value) => {
+    if (value < 1) return; // Prevent navigating to less than page 1
+    setSearchParams({
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+      pageNum: value,
+    });
+    dispatch(
+      fetchProductList({
+        large: selectedLarge,
+        middle: selectedMiddle,
+        small: selectedSmall,
+        rank: selectedRank,
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+        pageNum: value, // Pass the new page number
+      })
+    );
   };
 
   if (loading) {
@@ -203,7 +233,6 @@ const CategoryDetail = () => {
             ))}
           </Select>
         </FormControl>
-
         <FormControl
           sx={{ width: "200px" }}
           margin="normal"
@@ -274,9 +303,9 @@ const CategoryDetail = () => {
             value={selectedRank}
             onChange={(e) => handleCategoryChange("rank", e.target.value)}
           >
-            {rankCategoryList.map((category) => (
-              <MenuItem key={category.id} value={category.name}>
-                {category.name}
+            {rankList.map((rank) => (
+              <MenuItem key={rank.id} value={rank.name}>
+                {rank.name}
               </MenuItem>
             ))}
           </Select>
@@ -328,13 +357,13 @@ const CategoryDetail = () => {
             display: "flex",
             gap: 2,
             m: 1,
-
             height: "56px",
           }}
         >
           <Button
             variant="contained"
             color="primary"
+            sx={{ width: "100px" }}
             disabled={
               !selectedLarge ||
               !selectedMiddle ||
@@ -345,13 +374,40 @@ const CategoryDetail = () => {
           >
             조회
           </Button>
-          <Button variant="outlined" color="secondary" onClick={handleReset}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            sx={{ width: "100px" }}
+            onClick={handleReset}
+          >
             초기화
+          </Button>
+          <Button
+            sx={{ width: "100px" }}
+            variant="outlined"
+            onClick={handleDownloadExcel}
+            disabled={
+              !selectedLarge ||
+              !selectedMiddle ||
+              !selectedSmall ||
+              !selectedRank ||
+              loading
+            }
+          >
+            {loading ? "Downloading..." : "Download"}
           </Button>
         </Box>
       </Box>
 
-      <ProductListView productList={productList} />
+      <ProductListView productList={productList} pageNum={pageNum} />
+      <Pagination
+      //todo backend total page num must be change
+        count={totalPageNum -1} // Total number of pages from Redux state
+        page={pageNum} // Current page
+        onChange={handlePageChange}
+        variant="outlined"
+        sx={{ margin: "auto" }}
+      />
     </Box>
   );
 };

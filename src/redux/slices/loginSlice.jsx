@@ -9,7 +9,7 @@ const initialState = {
   errorMessage: "",
   isLoggedIn: false,
   access_token: null,
-  role:""
+  role: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -66,6 +66,7 @@ export const logoutUser = createAsyncThunk(
         Cookies.remove("REMEMBERME");
         localStorage.removeItem("access_token");
         localStorage.removeItem("username");
+        localStorage.removeItem("role");
 
         return response.data;
       } else {
@@ -95,7 +96,6 @@ const loginSlice = createSlice({
       if (access_token) {
         state.isLoggedIn = true;
         state.access_token = access_token;
-
         state.username = username;
       }
     },
@@ -116,6 +116,7 @@ const loginSlice = createSlice({
         state.access_token = action.payload.access_token;
         localStorage.setItem("username", action.payload.username);
         localStorage.setItem("access_token", action.payload.access_token);
+        localStorage.setItem("role", action.payload.role);
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

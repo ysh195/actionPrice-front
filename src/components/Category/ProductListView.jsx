@@ -2,6 +2,8 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import {
+  Box,
+  Button,
   Paper,
   styled,
   Table,
@@ -12,8 +14,11 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { colors } from "../../assets/assest";
-
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../../redux/slices/userSlice";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: colors.tableHead,
@@ -23,7 +28,20 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 16,
   },
 }));
-const ProductListView = ({ productList }) => {
+const ProductListView = ({ productList, pageNum }) => {
+  const itemsPerPage = 10;
+  const dispatch = useDispatch();
+  const favoriteList = useSelector((state) => state.user.favoriteList || []);
+
+  // Function to toggle favorite status
+  const handleToggleFavorite = (product) => {
+    if (favoriteList.some((fav) => fav.delId === product.delId)) {
+      dispatch(removeFavorite(product.delId)); // Pass the product ID as payload
+    } else {
+      dispatch(addFavorite(product));
+    }
+  };
+
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer
@@ -37,32 +55,45 @@ const ProductListView = ({ productList }) => {
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
               <StyledTableCell>거래 ID</StyledTableCell>
-              <StyledTableCell>거래 날짜</StyledTableCell>
-              <StyledTableCell>거래 단위</StyledTableCell>
+              <StyledTableCell>날짜</StyledTableCell>
+              <StyledTableCell>거래시장</StyledTableCell>
               <StyledTableCell>대분류</StyledTableCell>
-              <StyledTableCell>거래 시장</StyledTableCell>
               <StyledTableCell>중분류</StyledTableCell>
+              <StyledTableCell>소분류</StyledTableCell>
+              <StyledTableCell>등급</StyledTableCell>
+              <StyledTableCell>단위</StyledTableCell>
               <StyledTableCell>가격</StyledTableCell>
-              <StyledTableCell>상품 명</StyledTableCell>
-              <StyledTableCell>상품 등급</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {productList && productList.length > 0 ? (
               productList.map((product, index) => (
-                <TableRow key={product.Id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{product.productId}</TableCell>
+                <TableRow key={product.delId}>
                   <TableCell>
-                    {new Date(product.date).toLocaleDateString()}
+                    {(pageNum - 1) * itemsPerPage + index + 1}
                   </TableCell>
-                  <TableCell>{product.del_unit}</TableCell>
-                  <TableCell>{product.large}</TableCell>
+                  <TableCell>{product.delId}</TableCell>
+                  <TableCell>
+                    {new Date(product.delDate).toLocaleDateString()}
+                  </TableCell>
                   <TableCell>{product.market_name}</TableCell>
+                  <TableCell>{product.large}</TableCell>
                   <TableCell>{product.middle}</TableCell>
+                  <TableCell>{product.productName}</TableCell>
+                  <TableCell>{product.productRank}</TableCell>
+                  <TableCell>{product.del_unit}</TableCell>
                   <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.rank}</TableCell>
+                  <TableCell>
+                    <Button onClick={() => handleToggleFavorite(product)}>
+                      {favoriteList.some(
+                        (fav) => fav.delId === product.delId
+                      ) ? (
+                        <FavoriteIcon />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -78,5 +109,4 @@ const ProductListView = ({ productList }) => {
     </Paper>
   );
 };
-
 export default ProductListView;

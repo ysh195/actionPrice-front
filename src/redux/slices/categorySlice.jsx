@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -5,24 +6,25 @@ import axios from "axios";
 const initialState = {
   middleCategoryList: [],
   smallCategoryList: [],
-  rankCategoryList: [],
+  rankList: [],
   productList: [],
   selectedMiddle: "",
   selectedSmall: "",
   selectedRank: "",
   loading: false,
   error: "",
+  totalPageNum: 0,
+  downloadMessage: null,
 };
 
 const BASE_URL = "http://localhost:8080/api";
-
 
 //function: Get Middle Category List //
 export const fetchMiddleCategories = createAsyncThunk(
   "categories/fetchCategories",
   async (large) => {
     const response = await axios.get(`${BASE_URL}/category/${large}`);
-    console.log("fetchMiddleCategories:", response.data);
+
     return response.data;
   }
 );
@@ -32,12 +34,10 @@ export const fetchSmallCategories = createAsyncThunk(
   "categories/fetchMiddleCategories",
   async ({ large, middle }) => {
     const response = await axios.get(`${BASE_URL}/category/${large}/${middle}`);
-    console.log("fetchSmallCategories:", response.data);
 
     return response.data;
   }
 );
-
 
 //function: Get Rank Categories//
 export const fetchRankCategories = createAsyncThunk(
@@ -50,7 +50,6 @@ export const fetchRankCategories = createAsyncThunk(
     return response.data;
   }
 );
-
 
 //function: fetchProductList //
 export const fetchProductList = createAsyncThunk(
@@ -67,30 +66,57 @@ export const fetchProductList = createAsyncThunk(
   }
 );
 
+//function: download excel //
+export const downloadExcel = createAsyncThunk(
+  "download/downloadExcel",
+  async (
+    { large, middle, small, rank, startDate, endDate, pageNum },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.get(
+        `/api/category/${large}/${middle}/${small}/${rank}/excel`,
+        {
+          params: { startDate, endDate, pageNum },
+          responseType: "blob", // Important for handling binary data
+        }
+      );
+
+      // Trigger download after the blob is received
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "transaction_history.xlsx"); // Set filename
+      document.body.appendChild(link);
+      link.click();
+      // Clean up the URL after download
+      link.remove();
+      // link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      return "Download successful";
+    } catch (error) {
+      console.error("Download failed:", error);
+
+      return rejectWithValue("Failed to download Excel file");
+    }
+  }
+);
+
 export const categorySlice = createSlice({
   name: "category",
   initialState,
   reducers: {
-    setMiddleCategory: (state, action) => {
-      state.selectedMiddle = action.payload;
-      state.selectedSmall = "";
-      state.selectedRank = "";
+    clearProductList: (state) => {
+      state.productList = [];
     },
-    setSmallCategory: (state, action) => {
-      state.selectedSmall = action.payload;
-      state.selectedRank = "";
-    },
-    setRankCategory: (state, action) => {
-      state.selectedRank = action.payload;
-    },
-
-    clearCategories: (state) => {
-      state.middleCategoryList = [];
-      state.smallCategoryList = [];
-      state.rankCategoryList = [];
-      state.selectedMiddle = "";
-      state.selectedSmall = "";
-      state.selectedRank = "";
+    resetDownloadState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.successMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -101,6 +127,7 @@ export const categorySlice = createSlice({
       })
       .addCase(fetchMiddleCategories.fulfilled, (state, action) => {
         state.loading = false;
+
         state.middleCategoryList = action.payload.list;
       })
       .addCase(fetchMiddleCategories.rejected, (state, action) => {
@@ -113,6 +140,7 @@ export const categorySlice = createSlice({
       })
       .addCase(fetchSmallCategories.fulfilled, (state, action) => {
         state.loading = false;
+        console.log("smallCategoryList:", action.payload.list);
         state.smallCategoryList = action.payload.list;
       })
       .addCase(fetchSmallCategories.rejected, (state, action) => {
@@ -125,7 +153,7 @@ export const categorySlice = createSlice({
       })
       .addCase(fetchRankCategories.fulfilled, (state, action) => {
         state.loading = false;
-        state.rankCategoryList = action.payload.list;
+        state.rankList = action.payload.list;
       })
       .addCase(fetchRankCategories.rejected, (state, action) => {
         state.loading = false;
@@ -137,16 +165,30 @@ export const categorySlice = createSlice({
       })
       .addCase(fetchProductList.fulfilled, (state, action) => {
         state.loading = false;
-        state.productList = action.payload.list;
+        state.productList = action.payload.transactionHistoryList;
+        console.log("totalPageNum:", action.payload.totalPageNum);
+        state.totalPageNum = action.payload.totalPageNum;
       })
       .addCase(fetchProductList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(downloadExcel.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.downloadMessage = null;
+      })
+      .addCase(downloadExcel.fulfilled, (state, action) => {
+        state.loading = false;
+        state.downloadMessage = action.payload;
+      })
+      .addCase(downloadExcel.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { setMiddleCategory, setSmallCategory, setRankCategory } =
-  categorySlice.actions;
+export const { clearProductList } = categorySlice.actions;
 
 export default categorySlice.reducer;

@@ -19,6 +19,7 @@ const API_URL = "http://localhost:8080/api/post";
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
+    console.log("slice post data:", postData);
     try {
       const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
@@ -59,7 +60,6 @@ export const fetchPosts = createAsyncThunk(
 );
 
 //function: fetchPostForUpdate //
-// Async thunk for fetching post for update
 export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
@@ -192,6 +192,7 @@ const postSlice = createSlice({
       .addCase(updatePost.fulfilled, (state, action) => {
         // The updated post returned from the server
         const updatedPost = action.payload;
+        console.log("updatedPost:",updatedPost);
         const index = state.postList.findIndex(
           (post) => post.postId === updatedPost.postId
         );

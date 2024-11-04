@@ -16,6 +16,7 @@ import logo from "../assets/images/logo.png";
 import PostSearch from "../components/Post/PostSearch";
 import { colors } from "../assets/assest";
 
+
 const ContactUs = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ const ContactUs = () => {
         <Button
           variant="contained"
           onClick={() => navigate("/api/post/create")}
-          sx={{ backgroundColor: colors.primary}}
+          sx={{ backgroundColor: colors.primary }}
         >
           문의하기
         </Button>

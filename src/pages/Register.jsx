@@ -10,6 +10,8 @@ import {
   verifyCode,
 } from "../redux/slices/verificationSlice";
 import Swal from "sweetalert2";
+
+
 import {
   Container,
   Card,
@@ -258,9 +260,23 @@ const Register = () => {
                 ml: 1,
                 bgcolor: isCodeSent ? colors.disable : colors.tableHead,
                 color: isCodeSent ? "#666" : "white",
+                position: "relative", // Set position to relative for spinner positioning
               }}
             >
-              코드 발성
+              {isLoading ? (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    marginLeft: "-12px",
+                    marginTop: "-12px",
+                  }}
+                />
+              ) : (
+                "코드 발성"
+              )}
             </Button>
           </Box>
 
@@ -278,6 +294,7 @@ const Register = () => {
                 error={!!errors.verificationCode}
                 helperText={errors.verificationCode}
                 onKeyDown={handleKeyDown}
+                disabled={isCodeVerified} // Disable input if the code is verified
               />
               <Button
                 variant="contained"

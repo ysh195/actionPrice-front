@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import {icons} from "../assets/assest.js";
+
 
 
 const Sidebar = () => {

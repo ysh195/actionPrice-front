@@ -35,16 +35,18 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const AdminPage = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams(); //show the current page number in the URL
-  const currentPageNum = useSelector((state) => state.adminPage.currentPageNum);
-  const keyword = searchParams.get("keyword") || "";
-  const { userList, totalPageNum, hasNext } = useSelector(selectUserList);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const pageNum = parseInt(searchParams.get("pageNum")) || 1; // Get pageNum from URL or default to 1
+  const keyword = searchParams.get("keyword") || "";
+  const { userList, totalPageNum, hasNext } = useSelector(
+    (state) => state.adminPage
+  );
 
   // Fetch user list based on page number and keyword
   useEffect(() => {
-    dispatch(fetchUserList({ pageNum: currentPageNum - 1, keyword }));
-    setSearchParams({ pageNum: currentPageNum, keyword }); // Update URL with current page number
-  }, [dispatch, currentPageNum, keyword, setSearchParams]);
+    dispatch(fetchUserList({ pageNum: pageNum - 1, keyword }));
+    setSearchParams({ pageNum, keyword }); // Update URL with current page number
+  }, [dispatch, pageNum, keyword, setSearchParams]);
 
   const handleSearch = () => {
     // Update the searchParams in the URL
@@ -97,7 +99,6 @@ const AdminPage = () => {
         <Button
           type="submit"
           variant="contained"
-          backgroundColor="colors.primary"
           onClick={handleSearch}
           sx={{ backgroundColor: colors.button1 }}
         >
@@ -143,23 +144,27 @@ const AdminPage = () => {
                     <TableCell>{user.commentCount}</TableCell>
                     <TableCell>{user.authorities}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          backgroundColor: user.blocked
-                            ? colors.button1
-                            : colors.button2,
-                          color: "white", // text color
-                          "&:hover": {
+                      {user.tokenExpiresAt === null ? (
+                        "None"
+                      ) : (
+                        <Button
+                          variant="contained"
+                          sx={{
                             backgroundColor: user.blocked
-                              ? colors.hover1
-                              : colors.hover2,
-                          },
-                        }}
-                        onClick={() => handleBlockUser(user.username)}
-                      >
-                        {user.blocked ? "Unblock" : "Block"}
-                      </Button>
+                              ? colors.button1
+                              : colors.button2,
+                            color: "white", // text color
+                            "&:hover": {
+                              backgroundColor: user.blocked
+                                ? colors.hover1
+                                : colors.hover2,
+                            },
+                          }}
+                          onClick={() => handleBlockUser(user.username)}
+                        >
+                          {user.blocked ? "Unblock" : "Block"}
+                        </Button>
+                      )}
                     </TableCell>
                     <TableCell>
                       {user.tokenExpiresAt === null ? (
@@ -192,27 +197,11 @@ const AdminPage = () => {
       >
         <Pagination
           count={totalPageNum} // Total number of pages from Redux state
-          page={currentPageNum} // Current page
+          page={pageNum} // Current page
           onChange={handlePageChange}
           variant="outlined"
           sx={{ margin: "auto" }}
         />
-        {hasNext && (
-          <Button
-            variant="outlined"
-            onClick={() =>
-              dispatch(
-                fetchUserList({
-                  pageNum: currentPageNum + 1,
-                  keyword: searchKeyword,
-                })
-              )
-            }
-            sx={{ marginLeft: 2 }}
-          >
-            Load More
-          </Button>
-        )}
       </Box>
     </Box>
   );

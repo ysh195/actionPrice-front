@@ -48,7 +48,7 @@ const Login = () => {
     const formData = { username, password };
     try {
       const result = await dispatch(login(formData)).unwrap();
-      console.log(result);
+      console.log("login result", result);
       localStorage.setItem("access_token", result.access_token);
        localStorage.setItem("username", result.username);
 

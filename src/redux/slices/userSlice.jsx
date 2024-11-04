@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const initialState = {
   loading: false,
@@ -7,10 +8,14 @@ const initialState = {
   email: "",
   username: "",
   myPosts: [],
+  totalPageNum: 0,
+  currentPageNum: 1,
+  favoriteList: [],
 };
 
 const BASE_URL = "http://localhost:8080/api";
 
+//functions for deleteAccount //
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
   async (username, { rejectWithValue }) => {
@@ -29,8 +34,20 @@ export const deleteAccount = createAsyncThunk(
           },
         }
       );
+
       console.log("delete user response:", response);
-      return response.data;
+      if (response.status === 200) {
+        console.log("delete account successful");
+
+        Cookies.remove("REMEMBERME");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("username");
+
+        return response.data;
+      } else {
+        // Handle unexpected status
+        return rejectWithValue("계정 삭제에 실패했습니다. 다시 시도해 주세요.");
+      }
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Error deleting account"
@@ -38,7 +55,7 @@ export const deleteAccount = createAsyncThunk(
     }
   }
 );
-
+//functions for getPersonalInfo //
 export const getPersonalInfo = createAsyncThunk(
   "user/personalInfo",
   async (username, { rejectWithValue }) => {
@@ -63,37 +80,60 @@ export const getPersonalInfo = createAsyncThunk(
     }
   }
 );
-
+//functions for getMyPosts //
 export const getMyPosts = createAsyncThunk(
   "posts/getMyPosts",
-  async ({ username, keyword, pageNum }, { rejectWithValue }) => {
+  async ({ username, keyword = "", pageNum = 0 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(
         `${BASE_URL}/mypage/${username}/myposts`,
         {
           params: {
-            keyword: keyword || undefined,
-            pageNum: pageNum || 0,
+            keyword,
+            pageNum,
           },
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       );
-
       console.log("getMyPosts response:", response.data);
-      return response.data.postList;
+      return response.data;
     } catch (error) {
       console.log("getMyPosts error:", error);
       return rejectWithValue(error.response?.data || "Error fetching posts");
     }
   }
 );
-
+//functions for fetchWishlist //
+export const fetchWishlist = createAsyncThunk(
+  "user/fetchWishlist",
+  async ( username ) => {
+    const response = await axios.get(`${BASE_URL}/mypage/${username}/wishlist`);
+    console.log("fetchWishlist:", response.data);
+    return response.data; // Assuming the response contains the wishlist
+  }
+);
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    // Action to add a favorite product
+    addFavorite: (state, action) => {
+      const product = action.payload; // The product is passed as payload
+      // Prevent duplicates by checking if the product already exists
+      if (!state.favoriteList.find((fav) => fav.delId === product.id)) {
+        state.favoriteList.push(product);
+      }
+    },
+    // Action to remove a favorite product
+    removeFavorite: (state, action) => {
+      // Remove the product from favorites by filtering
+      state.favoriteList = state.favoriteList.filter(
+        (fav) => fav.delId !== action.payload
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(deleteAccount.fulfilled, (state) => {
@@ -111,7 +151,6 @@ const userSlice = createSlice({
       .addCase(getPersonalInfo.fulfilled, (state, action) => {
         state.loading = false;
         state.email = action.payload.email;
-        state.username = action.payload.username;
       })
       .addCase(getPersonalInfo.rejected, (state, action) => {
         state.loading = false;
@@ -123,13 +162,29 @@ const userSlice = createSlice({
       })
       .addCase(getMyPosts.fulfilled, (state, action) => {
         state.loading = false;
-        state.myPosts = action.payload;
+        state.myPosts = action.payload.postList;
+        state.currentPageNum = action.payload.currentPageNum;
+        state.totalPageNum = action.payload.totalPageNum;
       })
       .addCase(getMyPosts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchWishlist.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchWishlist.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("fetchWishlist slice:", action.payload);
+        state.favoriteList = action.payload; // Set the wishlist items
+      })
+      .addCase(fetchWishlist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
   },
 });
+export const { addFavorite, removeFavorite } = userSlice.actions;
 
 export default userSlice.reducer;

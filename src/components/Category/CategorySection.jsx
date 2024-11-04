@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
+import { largeCategoryList } from "../../assets/assest.js";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { largeCategoryList } from "../../assets/assest.js";
 import {
   Container,
   Grid,
@@ -37,9 +37,6 @@ const CategorySection = () => {
   const handleCategoryClick = (category) => {
     navigate(`api/category/${category.name}`);
   };
-  // const handleCategoryClick = (category) => {
-  //   navigate(`/api/category?large=${encodeURIComponent(category.name)}`);
-  // };
 
   if (loading) {
     return (
@@ -74,9 +71,9 @@ const CategorySection = () => {
                 image={`data:image/jpeg;base64,${category.image}`}
                 alt={category.name}
                 sx={{
-                  height: 200, // Set a fixed height
-                  width: "100%", // Full width
-                  objectFit: "cover", // Keep the aspect ratio
+                  height: 200,
+                  width: "100%",
+                  objectFit: "cover",
                 }}
               />
               <CardContent>

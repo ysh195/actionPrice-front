@@ -1,22 +1,20 @@
-import { Route, Routes } from "react-router-dom";
-
-import Home from "./pages/Home";
-import ContactUs from "./pages/ContactUs";
-import MyPage from "./pages/MyPage";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
 import CategoryDetails from "./components/Category/CategoryDetails";
-import "./App.css";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { autoLogin } from "./redux/slices/loginSlice";
-
-import AppLayout from "./layouts/AppLayout";
 import CreatePostView from "./components/Post/CreatePostView";
 import PostDetailPage from "./components/Post/PostDetailPage";
 import UpdatePostView from "./components/Post/UpdatePostView";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminPage from "./components/Admin/AdminPage"
+import { autoLogin } from "./redux/slices/loginSlice";
+import AdminPage from "./components/Admin/AdminPage";
+import { Route, Routes } from "react-router-dom";
+import AppLayout from "./layouts/AppLayout";
+import { useDispatch } from "react-redux";
+import ContactUs from "./pages/ContactUs";
+import Register from "./pages/Register";
+import MyPage from "./pages/MyPage";
+import Login from "./pages/Login";
+import { useEffect } from "react";
+import Home from "./pages/Home";
+import "./App.css";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,14 +29,12 @@ function App() {
           <Route path="api/user/login" exact element={<Login />} />
           <Route path="api/user/register" exact element={<Register />} />
           <Route
-            path="api/category/:large?/:middle/:small?/:rank?"
+            path="api/category/:large/:middle?/:small?/:rank?"
             element={<CategoryDetails />}
           />
-
           <Route path="api/contact-us" element={<ContactUs />} />
-
           <Route
-            path="api/mypage/:username"
+            path="api/mypage/:username/*"
             element={<ProtectedRoute element={<MyPage />} />}
           />
           <Route
@@ -46,16 +42,15 @@ function App() {
             element={<ProtectedRoute element={<CreatePostView />} />}
           />
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
-
           <Route
             path="api/post/:postId/update/:username"
             element={<ProtectedRoute element={<UpdatePostView />} />}
           />
-
           <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
-
-          <Route path="api/admin/userlist" element={<AdminPage />} />
-
+          <Route
+            path="api/admin/userlist"
+            element={<ProtectedRoute element={<AdminPage />} />}
+          />
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>

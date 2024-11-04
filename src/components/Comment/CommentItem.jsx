@@ -21,6 +21,15 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleUpdateComment = async () => {
+    if (logined_username !== comment.username) {
+      Swal.fire({
+        title: "Error",
+        icon: "error",
+        text: "댓글을 수정할 권한이 없습니다.",
+        showConfirmButton: true,
+      });
+      return;
+    }
     try {
       await dispatch(
         updateComment({
@@ -32,7 +41,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
       ).unwrap(); // To handle resolved/rejected states
       setIsEditing(false);
     } catch (error) {
-      setErrorMessage("Failed to update comment.");
+      setErrorMessage("댓글 수정에 문제 생겼습니다. 다시 시도해주세요.");
     }
   };
 
@@ -41,15 +50,14 @@ const CommentItem = ({ comment, postId, onDelete }) => {
       Swal.fire({
         title: "Error",
         icon: "error",
-        text: "You are not allowed to delete this comment.",
+        text: "댓글을 삭제할 권한이 없습니다",
         showConfirmButton: true,
       });
 
       return;
     }
     const { isConfirmed } = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to recover this comment!",
+      text: "댓글을 삭제한 후에는 복구할 수 없습니다. 진행하시겠습니까?",
       icon: "warning",
       showCancelButton: true,
     });
@@ -64,7 +72,6 @@ const CommentItem = ({ comment, postId, onDelete }) => {
       ).unwrap();
       onDelete(comment.commentId);
       Swal.fire({
-        title: "Deleted",
         icon: "success",
         text: "게시글이 삭제 되었습니다.",
         timer: 2000,
@@ -113,14 +120,16 @@ const CommentItem = ({ comment, postId, onDelete }) => {
               {comment.content}
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Button variant="outlined" onClick={handleEditClick}>
-              Edit
-            </Button>
-            <Button variant="outlined" color="error" onClick={handleDelete}>
-              Delete
-            </Button>
-          </Box>
+          {logined_username === comment.username && (
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Button variant="outlined" onClick={handleEditClick}>
+                Edit
+              </Button>
+              <Button variant="outlined" color="error" onClick={handleDelete}>
+                Delete
+              </Button>
+            </Box>
+          )}
         </>
       )}
       <Snackbar
