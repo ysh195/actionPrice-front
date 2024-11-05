@@ -13,8 +13,12 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   const [content, setContent] = useState(comment.content);
   const [errorMessage, setErrorMessage] = useState(null);
   const logined_username = useSelector((state) => state.login.username);
-
   const dispatch = useDispatch();
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -113,7 +117,8 @@ const CommentItem = ({ comment, postId, onDelete }) => {
                 {comment.username}
               </Typography>
               <Typography variant="caption" color="textSecondary">
-                {new Date(comment.createdAt).toLocaleDateString()}
+                {/* {new Date(comment.createdAt).toLocaleDateString()} */}
+                {formatDate(comment.createdAt)}
               </Typography>
             </Box>
             <Typography variant="body1" sx={{ mb: 2 }}>
