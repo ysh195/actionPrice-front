@@ -59,8 +59,16 @@ const CategoryDetail = () => {
     totalPageNum,
   } = useSelector((state) => state.category);
 
-
-  console.log("large:", large, "middle:", middle,  "small:",small, "rank:",rank)
+  console.log(
+    "large:",
+    large,
+    "middle:",
+    middle,
+    "small:",
+    small,
+    "rank:",
+    rank
+  );
 
   // useEffect(() => {
   //   if (large || middle || small || rank) {
@@ -77,34 +85,35 @@ const CategoryDetail = () => {
   // }, [large, middle, small, rank, dispatch]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategories = () => {
       if (large) {
         setSelectedLarge(large);
         console.log("fetching middle categories");
-        await dispatch(fetchMiddleCategories(large)); // Waits for middle categories
+        dispatch(fetchMiddleCategories(large)); // Waits for middle categories
       }
 
       if (middle) {
         setSelectedMiddle(middle);
         console.log("fetching small categories");
-        await dispatch(fetchSmallCategories(large, middle)); // Waits for small categories
+        dispatch(fetchSmallCategories(large, middle)); // Waits for small categories
       }
 
       if (small) {
         setSelectedSmall(small);
         console.log("fetching rank categories");
-        await dispatch(fetchRankCategories(large, middle, small)); // Waits for rank categories
+        dispatch(fetchRankCategories(large, middle, small)); // Waits for rank categories
       }
 
       if (rank) {
         setSelectedRank(rank);
+        console.log("fetching all categories");
+        dispatch(fetchProductList(large, middle, small, rank)); // Waits for rank categories
       }
       console.log("Fetched all categories");
     };
 
     fetchCategories();
   }, [large, middle, small, rank, dispatch]);
-
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
