@@ -18,8 +18,8 @@ import { colors } from '../assets/assest.js';
 
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [navMenuOpen, setNavMenuOpen] = React.useState(null);
+  const [userMenuOpen, setUserMenuOpen] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const { username, role } = useSelector((state) => state.login);
 
@@ -28,19 +28,19 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
+    setNavMenuOpen(event.currentTarget);
   };
 
   const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
+    setUserMenuOpen(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+    setNavMenuOpen(null);
   };
 
   const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+    setUserMenuOpen(null);
   };
 
   const handleLogout = () => {
@@ -71,11 +71,11 @@ function Navbar() {
             </IconButton>
             <Menu
               id="menu-appbar"
-              anchorEl={anchorElNav}
+              anchorEl={navMenuOpen}
               anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
               keepMounted
               transformOrigin={{ vertical: "top", horizontal: "left" }}
-              open={Boolean(anchorElNav)}
+              open={Boolean(navMenuOpen)}
               onClose={handleCloseNavMenu}
             >
               <MenuItem onClick={handleCloseNavMenu}>
@@ -188,11 +188,11 @@ function Navbar() {
                 <Menu
                   sx={{ mt: "45px" }}
                   id="menu-appbar"
-                  anchorEl={anchorElUser}
+                  anchorEl={userMenuOpen}
                   anchorOrigin={{ vertical: "top", horizontal: "right" }}
                   keepMounted
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  open={Boolean(anchorElUser)}
+                  open={Boolean(userMenuOpen)}
                   onClose={handleCloseUserMenu}
                 >
                   <MenuItem onClick={handleCloseUserMenu}>
@@ -215,7 +215,9 @@ function Navbar() {
                     </Typography>
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>
-                    <Typography sx={{ color: colors.warning }}>Logout</Typography>
+                    <Typography sx={{ color: colors.warning }}>
+                      Logout
+                    </Typography>
                   </MenuItem>
                 </Menu>
               </Box>

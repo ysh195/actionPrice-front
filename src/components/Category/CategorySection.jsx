@@ -35,7 +35,7 @@ const CategorySection = () => {
   }, []);
 
   const handleCategoryClick = (category) => {
-    navigate(`api/category/${category.name}`);
+    navigate(`api/category/${category.name}/:middle/:small/:rank`);
   };
 
   if (loading) {

@@ -26,9 +26,10 @@ import {
   downloadExcel,
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
+import { createFavorite } from "../../redux/slices/favoriteSlice.jsx";
 
 const CategoryDetail = () => {
-  const { large } = useParams();
+  const { large, middle, small, rank } = useParams();
 
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
@@ -38,12 +39,15 @@ const CategoryDetail = () => {
   const startDate = searchParams.get("startDate") || "";
   const endDate = searchParams.get("endDate") || "";
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
+
   const [selectedLarge, setSelectedLarge] = useState(large || "");
-  const [selectedMiddle, setSelectedMiddle] = useState("");
-  const [selectedSmall, setSelectedSmall] = useState("");
-  const [selectedRank, setSelectedRank] = useState("");
+  const [selectedMiddle, setSelectedMiddle] = useState(middle || "");
+  const [selectedSmall, setSelectedSmall] = useState(small || "");
+  const [selectedRank, setSelectedRank] = useState(rank || "");
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [favorite_name, setFavorite_name] = useState("");
+  const logined_username = useSelector((state) => state.login.username);
 
   const {
     middleCategoryList,
@@ -55,14 +59,52 @@ const CategoryDetail = () => {
     totalPageNum,
   } = useSelector((state) => state.category);
 
+
+  console.log("large:", large, "middle:", middle,  "small:",small, "rank:",rank)
+
+  // useEffect(() => {
+  //   if (large || middle || small || rank) {
+  //     setSelectedLarge(large);
+  //     setSelectedMiddle(middle);
+  //     setSelectedSmall(small);
+  //     setSelectedRank(rank);
+  //     console.log("fetching middle");
+  //     dispatch(fetchMiddleCategories(large)),
+  //       dispatch(fetchSmallCategories(middle)),
+  //       dispatch(fetchRankCategories(small)),
+  //       console.log("fetched middle");
+  //   }
+  // }, [large, middle, small, rank, dispatch]);
+
   useEffect(() => {
-    if (large) {
-      setSelectedLarge(large);
-      console.log("fetching middle");
-      dispatch(fetchMiddleCategories(large));
-      console.log("fetched middle");
-    }
-  }, [large, dispatch]);
+    const fetchCategories = async () => {
+      if (large) {
+        setSelectedLarge(large);
+        console.log("fetching middle categories");
+        await dispatch(fetchMiddleCategories(large)); // Waits for middle categories
+      }
+
+      if (middle) {
+        setSelectedMiddle(middle);
+        console.log("fetching small categories");
+        await dispatch(fetchSmallCategories(large, middle)); // Waits for small categories
+      }
+
+      if (small) {
+        setSelectedSmall(small);
+        console.log("fetching rank categories");
+        await dispatch(fetchRankCategories(large, middle, small)); // Waits for rank categories
+      }
+
+      if (rank) {
+        setSelectedRank(rank);
+      }
+      console.log("Fetched all categories");
+    };
+
+    fetchCategories();
+  }, [large, middle, small, rank, dispatch]);
+
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -177,6 +219,29 @@ const CategoryDetail = () => {
         pageNum: value, // Pass the new page number
       })
     );
+  };
+
+  const handleFavoriteNameChange = (event) => {
+    setFavorite_name(event.target.value);
+  };
+
+  const handleAddFavorite = () => {
+    if (favorite_name.trim() === "") {
+      alert("Please enter a name for your favorite item.");
+      return;
+    }
+
+    dispatch(
+      createFavorite({
+        large: selectedLarge,
+        middle: selectedMiddle,
+        small: selectedSmall,
+        rank: selectedRank,
+        logined_username,
+        favorite_name,
+      })
+    );
+    setFavorite_name("");
   };
 
   if (loading) {
@@ -398,11 +463,22 @@ const CategoryDetail = () => {
           </Button>
         </Box>
       </Box>
-
+      <Box display="flex" alignItems="center" gap={1}>
+        <TextField
+          label="Favorite Name"
+          value={favorite_name}
+          onChange={handleFavoriteNameChange}
+          size="small"
+          variant="outlined"
+        />
+        <Button variant="contained" color="primary" onClick={handleAddFavorite}>
+          Add to Favorites
+        </Button>
+      </Box>
       <ProductListView productList={productList} pageNum={pageNum} />
       <Pagination
-      //todo backend total page num must be change
-        count={totalPageNum -1} // Total number of pages from Redux state
+        //todo backend total page num must be change
+        count={totalPageNum} // Total number of pages from Redux state
         page={pageNum} // Current page
         onChange={handlePageChange}
         variant="outlined"
