@@ -29,7 +29,7 @@ import ProductListView from "./ProductListView.jsx";
 import { createFavorite } from "../../redux/slices/favoriteSlice.jsx";
 
 const CategoryDetail = () => {
-  const { large, middle, small, rank} = useParams();
+  const { large, middle, small, rank } = useParams();
 
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
@@ -46,7 +46,7 @@ const CategoryDetail = () => {
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
   const [favorite_name, setFavorite_name] = useState("");
-  const logined_username= useSelector((state)=>state.login.username)
+  const logined_username = useSelector((state) => state.login.username);
 
   const {
     middleCategoryList,
@@ -58,17 +58,49 @@ const CategoryDetail = () => {
     totalPageNum,
   } = useSelector((state) => state.category);
 
+  // useEffect(() => {
+  //   if (large || middle || small || rank) {
+  //     setSelectedLarge(large);
+  //     setSelectedMiddle(middle);
+  //     setSelectedSmall(small);
+  //     setSelectedRank(rank);
+  //     console.log("fetching middle");
+  //     dispatch(fetchMiddleCategories(large)),
+  //       dispatch(fetchSmallCategories(middle)),
+  //       dispatch(fetchRankCategories(small)),
+  //       console.log("fetched middle");
+  //   }
+  // }, [large, middle, small, rank, dispatch]);
+
   useEffect(() => {
-    if (large || middle || small || rank) {
-      setSelectedLarge(large);
-      setSelectedMiddle(middle);
-      setSelectedSmall(small);
-      setSelectedRank(rank);
-      console.log("fetching middle");
-      dispatch(fetchMiddleCategories(large));
-      console.log("fetched middle");
-    }
+    const fetchCategories = async () => {
+      if (large) {
+        setSelectedLarge(large);
+        console.log("fetching middle categories");
+        await dispatch(fetchMiddleCategories(large)); // Waits for middle categories
+      }
+
+      if (middle) {
+        setSelectedMiddle(middle);
+        console.log("fetching small categories");
+        await dispatch(fetchSmallCategories(large, middle)); // Waits for small categories
+      }
+
+      if (small) {
+        setSelectedSmall(small);
+        console.log("fetching rank categories");
+        await dispatch(fetchRankCategories(large, middle, small)); // Waits for rank categories
+      }
+
+      if (rank) {
+        setSelectedRank(rank);
+      }
+      console.log("Fetched all categories");
+    };
+
+    fetchCategories();
   }, [large, middle, small, rank, dispatch]);
+
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -185,31 +217,28 @@ const CategoryDetail = () => {
     );
   };
 
-    const handleFavoriteNameChange = (event) => {
-      setFavorite_name(event.target.value);
-    };
+  const handleFavoriteNameChange = (event) => {
+    setFavorite_name(event.target.value);
+  };
 
-    const handleAddFavorite = () => {
+  const handleAddFavorite = () => {
+    if (favorite_name.trim() === "") {
+      alert("Please enter a name for your favorite item.");
+      return;
+    }
 
-        if (favorite_name.trim() === "") {
-          alert("Please enter a name for your favorite item.");
-          return;
-        }
-
-
-
-      dispatch(
-        createFavorite({
-          large:selectedLarge,
-          middle:selectedMiddle,
-          small:selectedSmall,
-          rank: selectedRank,
-          logined_username,
-          favorite_name,
-        })
-      );
-       setFavorite_name("");
-    };
+    dispatch(
+      createFavorite({
+        large: selectedLarge,
+        middle: selectedMiddle,
+        small: selectedSmall,
+        rank: selectedRank,
+        logined_username,
+        favorite_name,
+      })
+    );
+    setFavorite_name("");
+  };
 
   if (loading) {
     return (
