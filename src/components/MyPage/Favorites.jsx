@@ -43,6 +43,7 @@ const Favorites = ({username} ) => {
     if (deleteFavorite.fulfilled.match(resultAction)) {
       // Optionally show a success message
       console.log("Favorite deleted successfully");
+      dispatch(fetchFavoriteList(username)); // Re-fetch the updated list
     } else {
       // Optionally show an error message
       console.error("Failed to delete favorite:", resultAction.error);
@@ -65,7 +66,7 @@ const Favorites = ({username} ) => {
                 <StyledTableCell>No</StyledTableCell>
                 <StyledTableCell>상품명</StyledTableCell>
                 <StyledTableCell>링크</StyledTableCell>
-                <StyledTableCell>작업</StyledTableCell>
+                <StyledTableCell>삭제</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>

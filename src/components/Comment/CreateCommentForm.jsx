@@ -2,16 +2,24 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { createComment, fetchAdminAnswers } from "../../redux/slices/commentSlice";
+import {
+  createComment,
+  fetchAdminAnswers,
+} from "../../redux/slices/commentSlice";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import AnswerModal from "./AnswerModal";
+import { adminAnswers } from "../../assets/assest";
+
 
 const CommentForm = ({ postId }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.comment);
   const username = useSelector((state) => state.login.username);
   const [content, setContent] = useState("");
-    const role = useSelector((state) => state.login.role);
+  const role = useSelector((state) => state.login.role);
+  const [modalOpen, setModalOpen] = useState(false);
 
+  console.log("adminAnswers:", adminAnswers);
 
   const handleCreateComment = async () => {
     try {
@@ -26,10 +34,20 @@ const CommentForm = ({ postId }) => {
     }
   };
 
-  const handleAdminAnswer = () => {
-    dispatch(fetchAdminAnswers({ postId, answertype }));
-  }
+  const handleAdminClick = () => {
+    setModalOpen(true);
+  };
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleSubmitAnswer = (answertype) => {
+    console.log("Selected Answer:", answertype);
+    setContent(answertype);
+     dispatch(fetchAdminAnswers({postId, answertype})); //
+ 
+  };
 
   return (
     <Box
@@ -70,15 +88,21 @@ const CommentForm = ({ postId }) => {
         </Button>
         {/* //todo role === "ROLE_ADMIN"*/}
         {role !== "ROLE_ADMIN" && (
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading || !content.trim()} // Disable if loading or input is empty
-            color="primary"
-            onClick={handleAdminAnswer}
-          >
-            Admin
-          </Button>
+          <>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAdminClick}
+            >
+              Admin
+            </Button>
+            <AnswerModal
+              open={modalOpen}
+              onClose={handleModalClose}
+              adminAnswers={adminAnswers}
+              onSubmit={handleSubmitAnswer}
+            />
+          </>
         )}
       </Box>
       {error && (

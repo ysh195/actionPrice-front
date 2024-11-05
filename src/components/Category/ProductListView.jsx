@@ -14,10 +14,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { colors } from "../../assets/assest";
-import { useDispatch, useSelector } from "react-redux";
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: colors.tableHead,
@@ -29,15 +27,23 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 const ProductListView = ({ productList, pageNum }) => {
   const itemsPerPage = 10;
-  const dispatch = useDispatch();
+
+ const formatToKoreanWon = (price) => {
+   return new Intl.NumberFormat("ko-KR", {
+     style: "currency",
+     currency: "KRW",
+     minimumFractionDigits: 0, // No decimal places for KRW
+   }).format(price);
+ };
+ const formatDate = (date) => {
+   const d = new Date(date);
+   return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+ };
 
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer
-        sx={{
-          marginTop: 2,
-          marginBottom: 2,
-        }}
+       
       >
         <Table aria-label="sticky table">
           <TableHead>
@@ -61,16 +67,18 @@ const ProductListView = ({ productList, pageNum }) => {
                     {(pageNum - 1) * itemsPerPage + index + 1}
                   </TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     {new Date(product.delDate).toLocaleDateString()}
-                  </TableCell>
+                  </TableCell> */}
+                  <TableCell>{formatDate(product.delDate)}</TableCell>
+
                   <TableCell>{product.market_name}</TableCell>
                   <TableCell>{product.large}</TableCell>
                   <TableCell>{product.middle}</TableCell>
                   <TableCell>{product.productName}</TableCell>
                   <TableCell>{product.productRank}</TableCell>
                   <TableCell>{product.del_unit}</TableCell>
-                  <TableCell>{product.price}</TableCell>
+                  <TableCell>{formatToKoreanWon(product.price)}</TableCell>
                 </TableRow>
               ))
             ) : (

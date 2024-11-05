@@ -30,6 +30,11 @@ const PostListView = ({ postList }) => {
 
   console.log("check postList in PostList component:", postList);
 
+   const formatDate = (date) => {
+     const d = new Date(date);
+     return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+   };
+
   return (
     <Paper sx={{ width: "100%" }}>
       <TableContainer
@@ -41,7 +46,7 @@ const PostListView = ({ postList }) => {
         <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>ID</StyledTableCell>
+      
               <StyledTableCell>등록일</StyledTableCell>
               <StyledTableCell>제목</StyledTableCell>
               <StyledTableCell>작성자</StyledTableCell>
@@ -51,10 +56,11 @@ const PostListView = ({ postList }) => {
             {postList && postList.length > 0 ? (
               postList.map((post) => (
                 <TableRow key={post.postId}>
-                  <TableCell>{post.postId}</TableCell>
-                  <TableCell>
+                
+                  {/* <TableCell>
                     {new Date(post.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  </TableCell> */}
+                  <TableCell>{formatDate(post.createdAt)}</TableCell>
                   <TableCell>
                     {post.isSecret &&
                     username !== post.username &&

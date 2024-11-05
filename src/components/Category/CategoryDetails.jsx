@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { colors, largeCategoryList } from "../../assets/assest.js";
+import GetAppIcon from "@mui/icons-material/GetApp"; // Importing download icon
+
 import {
   Container,
   FormControl,
@@ -15,6 +17,7 @@ import {
   Button,
   Typography,
   Pagination,
+  IconButton,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,6 +30,7 @@ import {
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
 import { createFavorite } from "../../redux/slices/favoriteSlice.jsx";
+import FavoriteButon from "./FavoriteButon.jsx";
 
 const CategoryDetail = () => {
   const { large, middle, small, rank } = useParams();
@@ -47,6 +51,8 @@ const CategoryDetail = () => {
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
   const [favorite_name, setFavorite_name] = useState("");
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
+
   const logined_username = useSelector((state) => state.login.username);
 
   const {
@@ -113,7 +119,7 @@ const CategoryDetail = () => {
           rank: selectedRank,
           startDate: selectedStartDate,
           endDate: selectedEndDate,
-          pageNum: pageNum - 1
+          pageNum: pageNum - 1,
         })
       );
     }
@@ -128,6 +134,14 @@ const CategoryDetail = () => {
     dispatch,
   ]);
 
+  useEffect(() => {
+    // Update visibility of download button if the productList has items
+    if (productList && productList.length > 0) {
+      setShowDownloadButton(true);
+    } else {
+      setShowDownloadButton(false);
+    }
+  }, [productList]);
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -217,11 +231,8 @@ const CategoryDetail = () => {
     const rank = selectedRank;
     const startDate = selectedStartDate;
     const endDate = selectedEndDate;
-    const pageNum = searchParams.get("pageNum") || 1;
 
-    dispatch(
-      downloadExcel({ large, middle, small, rank, startDate, endDate, pageNum })
-    );
+    dispatch(downloadExcel({ large, middle, small, rank, startDate, endDate }));
   };
 
   const handlePageChange = (event, value) => {
@@ -253,7 +264,6 @@ const CategoryDetail = () => {
       alert("Please enter a name for your favorite item.");
       return;
     }
-
 
     dispatch(
       createFavorite({
@@ -471,23 +481,17 @@ const CategoryDetail = () => {
           >
             초기화
           </Button>
-          <Button
-            sx={{ width: "100px" }}
-            variant="outlined"
-            onClick={handleDownloadExcel}
-            disabled={
-              !selectedLarge ||
-              !selectedMiddle ||
-              !selectedSmall ||
-              !selectedRank ||
-              loading
-            }
-          >
-            {loading ? "Downloading..." : "Download"}
-          </Button>
         </Box>
       </Box>
-      <Box display="flex" alignItems="center" gap={1}>
+       <Box display="flex" alignItems="center" gap={2}>
+      <FavoriteButon
+        selectedLarge={selectedLarge}
+        selectedMiddle={selectedMiddle}
+        selectedSmall={selectedSmall}
+        selectedRank={selectedRank}
+        logined_username={logined_username}
+      />
+      {/* <Box display="flex" alignItems="center" gap={2}>
         <TextField
           label="Favorite Name"
           value={favorite_name}
@@ -497,11 +501,22 @@ const CategoryDetail = () => {
         />
         <Button variant="contained" color="primary" onClick={handleAddFavorite}>
           Add to Favorites
-        </Button>
+        </Button> */}
+        {showDownloadButton && (
+          <IconButton
+            onClick={handleDownloadExcel}
+            disabled={loading}
+            color="primary"
+            aria-label="Download Excel"
+            sx={{ color: "green", display: "flex", alignItems: "center" }} // Adjust icon button styles
+          >
+            <GetAppIcon fontSize="large" sx={{ color: "green", mr: 1 }} />
+            <span style={{ color: "green" }}>Excel</span>
+          </IconButton>
+        )}
       </Box>
       <ProductListView productList={productList} pageNum={pageNum} />
       <Pagination
-        //todo backend total page num must be change
         count={totalPageNum} // Total number of pages from Redux state
         page={pageNum} // Current page
         onChange={handlePageChange}

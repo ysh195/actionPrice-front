@@ -54,11 +54,11 @@ export const fetchRankCategories = createAsyncThunk(
 //function: fetchProductList //
 export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
-  async ({ large, middle, small, rank, startDate, endDate, pageNum = 0 }) => {
+  async ({ large, middle, small, rank, startDate, endDate}) => {
     const response = await axios.get(
       `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
       {
-        params: { startDate, endDate, pageNum },
+        params: { startDate, endDate },
       }
     );
     console.log("fetchProductList:", response.data);
@@ -75,7 +75,7 @@ export const downloadExcel = createAsyncThunk(
   ) => {
     try {
       const response = await axios.get(
-        `/api/category/${large}/${middle}/${small}/${rank}/excel`,
+        `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/excel`,
         {
           params: { startDate, endDate, pageNum },
           responseType: "blob", // Important for handling binary data
