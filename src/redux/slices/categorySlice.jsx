@@ -54,7 +54,7 @@ export const fetchRankCategories = createAsyncThunk(
 //function: fetchProductList //
 export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
-  async ({ large, middle, small, rank, startDate, endDate, pageNum }) => {
+  async ({ large, middle, small, rank, startDate, endDate, pageNum = 0 }) => {
     const response = await axios.get(
       `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
       {
