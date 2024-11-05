@@ -39,6 +39,7 @@ const CategoryDetail = () => {
   const startDate = searchParams.get("startDate") || "";
   const endDate = searchParams.get("endDate") || "";
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
+
   const [selectedLarge, setSelectedLarge] = useState(large || "");
   const [selectedMiddle, setSelectedMiddle] = useState(middle || "");
   const [selectedSmall, setSelectedSmall] = useState(small || "");
@@ -57,6 +58,9 @@ const CategoryDetail = () => {
     error,
     totalPageNum,
   } = useSelector((state) => state.category);
+
+
+  console.log("large:", large, "middle:", middle,  "small:",small, "rank:",rank)
 
   // useEffect(() => {
   //   if (large || middle || small || rank) {

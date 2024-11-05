@@ -166,7 +166,6 @@ export const categorySlice = createSlice({
       .addCase(fetchProductList.fulfilled, (state, action) => {
         state.loading = false;
         state.productList = action.payload.transactionHistoryList;
-        console.log("totalPageNum:", action.payload.totalPageNum);
         state.totalPageNum = action.payload.totalPageNum;
       })
       .addCase(fetchProductList.rejected, (state, action) => {
