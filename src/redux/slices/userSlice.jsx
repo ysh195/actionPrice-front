@@ -10,7 +10,6 @@ const initialState = {
   myPosts: [],
   totalPageNum: 0,
   currentPageNum: 1,
-  favoriteList: [],
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -105,35 +104,11 @@ export const getMyPosts = createAsyncThunk(
     }
   }
 );
-//functions for fetchWishlist //
-export const fetchWishlist = createAsyncThunk(
-  "user/fetchWishlist",
-  async ( username ) => {
-    const response = await axios.get(`${BASE_URL}/mypage/${username}/wishlist`);
-    console.log("fetchWishlist:", response.data);
-    return response.data; // Assuming the response contains the wishlist
-  }
-);
+
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    // Action to add a favorite product
-    addFavorite: (state, action) => {
-      const product = action.payload; // The product is passed as payload
-      // Prevent duplicates by checking if the product already exists
-      if (!state.favoriteList.find((fav) => fav.delId === product.id)) {
-        state.favoriteList.push(product);
-      }
-    },
-    // Action to remove a favorite product
-    removeFavorite: (state, action) => {
-      // Remove the product from favorites by filtering
-      state.favoriteList = state.favoriteList.filter(
-        (fav) => fav.delId !== action.payload
-      );
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(deleteAccount.fulfilled, (state) => {
@@ -169,22 +144,8 @@ const userSlice = createSlice({
       .addCase(getMyPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      .addCase(fetchWishlist.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchWishlist.fulfilled, (state, action) => {
-        state.loading = false;
-        console.log("fetchWishlist slice:", action.payload);
-        state.favoriteList = action.payload; // Set the wishlist items
-      })
-      .addCase(fetchWishlist.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       });
   },
 });
-export const { addFavorite, removeFavorite } = userSlice.actions;
 
 export default userSlice.reducer;
