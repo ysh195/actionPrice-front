@@ -70,50 +70,64 @@ const CategoryDetail = () => {
     rank
   );
 
-  // useEffect(() => {
-  //   if (large || middle || small || rank) {
-  //     setSelectedLarge(large);
-  //     setSelectedMiddle(middle);
-  //     setSelectedSmall(small);
-  //     setSelectedRank(rank);
-  //     console.log("fetching middle");
-  //     dispatch(fetchMiddleCategories(large)),
-  //       dispatch(fetchSmallCategories(middle)),
-  //       dispatch(fetchRankCategories(small)),
-  //       console.log("fetched middle");
-  //   }
-  // }, [large, middle, small, rank, dispatch]);
+  useEffect(() => {
+    // Fetching the middle categories based on the large category
+    if (large) {
+      setSelectedLarge(large);
+      dispatch(fetchMiddleCategories(large));
+    }
+  }, [large, dispatch]);
 
   useEffect(() => {
-    const fetchCategories = () => {
-      if (large) {
-        setSelectedLarge(large);
-        console.log("fetching middle categories");
-        dispatch(fetchMiddleCategories(large)); // Waits for middle categories
-      }
+    // Fetching the small categories based on the middle category
+    if (selectedMiddle) {
+      setSelectedMiddle(middle);
+      dispatch(
+        fetchSmallCategories({ large: selectedLarge, middle: selectedMiddle })
+      );
+    }
+  }, [selectedLarge, middle, dispatch]);
 
-      if (middle) {
-        setSelectedMiddle(middle);
-        console.log("fetching small categories");
-        dispatch(fetchSmallCategories(large, middle)); // Waits for small categories
-      }
+  useEffect(() => {
+    // Fetching the rank categories based on the small category
+    if (selectedSmall) {
+      setSelectedSmall(small);
+      dispatch(
+        fetchRankCategories({
+          large: selectedLarge,
+          middle: selectedMiddle,
+          small: selectedSmall,
+        })
+      );
+    }
+  }, [selectedMiddle, small, dispatch]);
 
-      if (small) {
-        setSelectedSmall(small);
-        console.log("fetching rank categories");
-        dispatch(fetchRankCategories(large, middle, small)); // Waits for rank categories
-      }
+  useEffect(() => {
+    // Fetching the product list based on all selected categories and query parameters
+    if (selectedLarge && selectedMiddle && selectedSmall && selectedRank) {
+      dispatch(
+        fetchProductList({
+          large: selectedLarge,
+          middle: selectedMiddle,
+          small: selectedSmall,
+          rank: selectedRank,
+          startDate: selectedStartDate,
+          endDate: selectedEndDate,
+          pageNum,
+        })
+      );
+    }
+  }, [
+    selectedLarge,
+    selectedMiddle,
+    selectedSmall,
+    selectedRank,
+    selectedStartDate,
+    selectedEndDate,
+    pageNum,
+    dispatch,
+  ]);
 
-      if (rank) {
-        setSelectedRank(rank);
-        console.log("fetching all categories");
-        dispatch(fetchProductList(large, middle, small, rank)); // Waits for rank categories
-      }
-      console.log("Fetched all categories");
-    };
-
-    fetchCategories();
-  }, [large, middle, small, rank, dispatch]);
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -239,6 +253,7 @@ const CategoryDetail = () => {
       alert("Please enter a name for your favorite item.");
       return;
     }
+
 
     dispatch(
       createFavorite({
