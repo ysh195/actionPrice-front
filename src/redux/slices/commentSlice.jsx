@@ -96,6 +96,18 @@ export const fetchComments = createAsyncThunk(
   }
 );
 
+//function: Get admin Answers //
+export const fetchAdminAnswers = createAsyncThunk(
+  "comments/fetchAdminAnswers",
+  async ({ postId, answertype }) => {
+    const response = await axios.get(
+      `/api/comments/${postId}/comment/admin/${answertype}`
+    );
+    console.log("fetchAdminAnswers response:", response.data);
+    return response.data; // Assuming the response data is an array of comments
+  }
+);
+
 export const commentSlice = createSlice({
   name: "comment",
   initialState,
@@ -181,6 +193,18 @@ export const commentSlice = createSlice({
       .addCase(fetchComments.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(fetchAdminAnswers.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAdminAnswers.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.comments = action.payload; // Add the fetched comments to the state
+      })
+      .addCase(fetchAdminAnswers.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message; // Capture error message
       });
   },
 });

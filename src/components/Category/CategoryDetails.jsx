@@ -113,7 +113,7 @@ const CategoryDetail = () => {
           rank: selectedRank,
           startDate: selectedStartDate,
           endDate: selectedEndDate,
-          pageNum,
+          pageNum: pageNum - 1
         })
       );
     }
@@ -136,7 +136,7 @@ const CategoryDetail = () => {
         setSelectedMiddle("");
         setSelectedSmall("");
         setSelectedRank("");
-        dispatch(fetchMiddleCategories(value));
+        // dispatch(fetchMiddleCategories(value));
         navigate(`/api/category/${value}`);
         break;
 
@@ -144,7 +144,7 @@ const CategoryDetail = () => {
         setSelectedMiddle(value);
         setSelectedSmall("");
         setSelectedRank("");
-        dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
+        // dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
         navigate(`/api/category/${selectedLarge}/${value}`);
         break;
 
@@ -190,7 +190,7 @@ const CategoryDetail = () => {
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum: pageNum, // Adjust for zero-based index
+        pageNum: pageNum - 1, // Adjust for zero-based index
       })
     );
   };
@@ -239,7 +239,7 @@ const CategoryDetail = () => {
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum: value, // Pass the new page number
+        pageNum: value - 1, // Pass the new page number
       })
     );
   };

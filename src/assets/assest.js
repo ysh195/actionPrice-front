@@ -35,3 +35,8 @@ export const largeCategoryList = [
   { id: 5, name: "수산물", image: fetchedImages.veggie },
   { id: 6, name: "특용작물", image: fetchedImages.salted },
 ];
+
+
+const andminAnswers=[
+  {}
+]

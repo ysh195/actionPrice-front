@@ -45,6 +45,7 @@ export const deleteFavorite = createAsyncThunk(
       if (response.data.status === "success") {
         return favoriteId; // Return favoriteId for updating the state
       } else {
+             console.log("deleteFavorite:", response.data);
         return rejectWithValue(response.data); // Handle failure response
       }
     } catch (error) {
@@ -62,6 +63,7 @@ export const fetchFavoriteList = createAsyncThunk(
     try {
       const response = await axios.get(`${API_URL}/mypage/${username}/wishlist`);
       console.log("fetchFavoriteList:", response.data);
+  
       return response.data; // Return the fetched wishlist data
     } catch (error) {
       console.error("Failed to fetch wishlist:", error);

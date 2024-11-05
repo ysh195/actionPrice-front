@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { createComment } from "../../redux/slices/commentSlice";
+import { createComment, fetchAdminAnswers } from "../../redux/slices/commentSlice";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 const CommentForm = ({ postId }) => {
@@ -26,7 +26,10 @@ const CommentForm = ({ postId }) => {
     }
   };
 
-  const handleAdminAnswer = () => {};
+  const handleAdminAnswer = () => {
+    dispatch(fetchAdminAnswers({ postId, answertype }));
+  }
+
 
   return (
     <Box
