@@ -20,9 +20,21 @@ export const createFavorite = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      const access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to write a post.");
+        return rejectWithValue("User not logged in");
+      }
       const response = await axios.post(
         `${API_URL}/category/${large}/${middle}/${small}/${rank}/favorite`,
-        { logined_username, favorite_name }
+        { logined_username, favorite_name },
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       console.log("createFavorite response:", response.data);
       return response.data;
@@ -45,7 +57,7 @@ export const deleteFavorite = createAsyncThunk(
       if (response.data.status === "success") {
         return favoriteId; // Return favoriteId for updating the state
       } else {
-             console.log("deleteFavorite:", response.data);
+        console.log("deleteFavorite:", response.data);
         return rejectWithValue(response.data); // Handle failure response
       }
     } catch (error) {
@@ -55,15 +67,16 @@ export const deleteFavorite = createAsyncThunk(
   }
 );
 
-
 //functions for fetchWishlist //
 export const fetchFavoriteList = createAsyncThunk(
   "user/fetchFavoriteList",
   async (username, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/mypage/${username}/wishlist`);
+      const response = await axios.get(
+        `${API_URL}/mypage/${username}/wishlist`
+      );
       console.log("fetchFavoriteList:", response.data);
-  
+
       return response.data; // Return the fetched wishlist data
     } catch (error) {
       console.error("Failed to fetch wishlist:", error);
@@ -71,8 +84,6 @@ export const fetchFavoriteList = createAsyncThunk(
     }
   }
 );
-
-
 
 export const favoriteSlice = createSlice({
   name: "favorite",

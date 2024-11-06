@@ -26,11 +26,11 @@ import {
   fetchRankCategories,
   fetchProductList,
   clearProductList,
-  downloadExcel,
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
 
 import Favorite_DownloadButton from "./Favorite_DownloadButton.jsx";
+import DateChange from "./DateChange.jsx";
 
 const CategoryDetail = () => {
   const { large, middle, small, rank } = useParams();
@@ -47,8 +47,8 @@ const CategoryDetail = () => {
   const [selectedMiddle, setSelectedMiddle] = useState(middle || "");
   const [selectedSmall, setSelectedSmall] = useState(small || "");
   const [selectedRank, setSelectedRank] = useState(rank || "");
-  const [selectedStartDate, setSelectedStartDate] = useState(startDate);
-  const [selectedEndDate, setSelectedEndDate] = useState(endDate);
+  const [selectedStartDate, setSelectedStartDate] = useState(startDate || "");
+  const [selectedEndDate, setSelectedEndDate] = useState(endDate || "");
   const logined_username = useSelector((state) => state.login.username);
 
   const {
@@ -72,6 +72,10 @@ const CategoryDetail = () => {
     rank
   );
 
+
+
+
+
   useEffect(() => {
     // Fetching the middle categories based on the large category
     if (large) {
@@ -88,7 +92,7 @@ const CategoryDetail = () => {
         fetchSmallCategories({ large: selectedLarge, middle: selectedMiddle })
       );
     }
-  }, [selectedLarge, middle, dispatch]);
+  }, [selectedLarge, selectedMiddle, middle, dispatch]);
 
   useEffect(() => {
     // Fetching the rank categories based on the small category
@@ -102,33 +106,33 @@ const CategoryDetail = () => {
         })
       );
     }
-  }, [selectedMiddle, small, dispatch]);
+  }, [selectedLarge, selectedMiddle, small, selectedSmall, dispatch]);
 
-  useEffect(() => {
-    // Fetching the product list based on all selected categories and query parameters
-    if (selectedLarge && selectedMiddle && selectedSmall && selectedRank) {
-      dispatch(
-        fetchProductList({
-          large: selectedLarge,
-          middle: selectedMiddle,
-          small: selectedSmall,
-          rank: selectedRank,
-          startDate: selectedStartDate,
-          endDate: selectedEndDate,
-          pageNum: pageNum - 1,
-        })
-      );
-    }
-  }, [
-    selectedLarge,
-    selectedMiddle,
-    selectedSmall,
-    selectedRank,
-    selectedStartDate,
-    selectedEndDate,
-    pageNum,
-    dispatch,
-  ]);
+  // useEffect(() => {
+  //   // Fetching the product list based on all selected categories and query parameters
+  //   if (selectedLarge && selectedMiddle && selectedSmall && selectedRank) {
+  //     dispatch(
+  //       fetchProductList({
+  //         large: selectedLarge,
+  //         middle: selectedMiddle,
+  //         small: selectedSmall,
+  //         rank: selectedRank,
+  //         startDate: selectedStartDate,
+  //         endDate: selectedEndDate,
+  //         pageNum: pageNum - 1,
+  //       })
+  //     );
+  //   }
+  // }, [
+  //   selectedLarge,
+  //   selectedMiddle,
+  //   selectedSmall,
+  //   selectedRank,
+  //   selectedStartDate,
+  //   selectedEndDate,
+  //   pageNum,
+  //   dispatch,
+  // ]);
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -137,7 +141,7 @@ const CategoryDetail = () => {
         setSelectedMiddle("");
         setSelectedSmall("");
         setSelectedRank("");
-        // dispatch(fetchMiddleCategories(value));
+        dispatch(fetchMiddleCategories(value));
         navigate(`/api/category/${value}`);
         break;
 
@@ -145,7 +149,7 @@ const CategoryDetail = () => {
         setSelectedMiddle(value);
         setSelectedSmall("");
         setSelectedRank("");
-        // dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
+        dispatch(fetchSmallCategories({ large: selectedLarge, middle: value }));
         navigate(`/api/category/${selectedLarge}/${value}`);
         break;
 
@@ -175,7 +179,15 @@ const CategoryDetail = () => {
   };
 
   const handleSearch = () => {
-    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
+    // Check all conditions before running search
+   
+    if (
+      !selectedLarge ||
+      !selectedMiddle ||
+      !selectedSmall ||
+      !selectedRank 
+  
+    ) {
       return;
     }
     setSearchParams({
@@ -362,7 +374,13 @@ const CategoryDetail = () => {
         </FormControl>
 
         {/* Date Selects */}
-        <FormControl sx={{ width: "200px" }} margin="normal">
+        <DateChange
+          selectedStartDate={selectedStartDate}
+          setSelectedStartDate={setSelectedStartDate}
+          selectedEndDate={selectedEndDate}
+          setSelectedEndDate={setSelectedEndDate}
+        />
+        {/* <FormControl sx={{ width: "200px" }} margin="normal">
           <Typography
             variant="body2"
             sx={{
@@ -378,7 +396,10 @@ const CategoryDetail = () => {
           <TextField
             type="date"
             value={selectedStartDate}
-            onChange={(e) => setSelectedStartDate(e.target.value)}
+            // onChange={(e) => setSelectedStartDate(e.target.value)}
+            onChange={handleStartDateChange}
+            error={!!startDateError} // Show error if any
+            helperText={startDateError} // Display the error message
           />
         </FormControl>
 
@@ -398,9 +419,12 @@ const CategoryDetail = () => {
           <TextField
             type="date"
             value={selectedEndDate}
-            onChange={(e) => setSelectedEndDate(e.target.value)}
+            // onChange={(e) => setSelectedEndDate(e.target.value)}
+            onChange={handleEndDateChange}
+            error={!!endDateError} // Show error if any
+            helperText={endDateError} // Display the error message
           />
-        </FormControl>
+        </FormControl> */}
         {/* Action Buttons */}
         <Box
           sx={{

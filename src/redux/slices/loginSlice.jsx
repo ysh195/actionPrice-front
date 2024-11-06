@@ -165,7 +165,7 @@ const loginSlice = createSlice({
       })
       .addCase(goLogin.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.redirectStatus = action.payload; // todo: check if it returns "goLogin" message ?
+        state.redirectStatus = action.payload; 
       })
       .addCase(goLogin.rejected, (state, action) => {
         state.isLoading = false;

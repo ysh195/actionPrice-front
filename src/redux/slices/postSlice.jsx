@@ -13,7 +13,7 @@ const initialState = {
   listSize: 0,
 };
 
-const API_URL = "http://localhost:8080/api/post";
+const API_URL = "http://localhost:8080/api";
 
 //function: createPost //
 export const createPost = createAsyncThunk(
@@ -26,7 +26,7 @@ export const createPost = createAsyncThunk(
         alert("You need to log in to write a post.");
         return rejectWithValue("User not logged in");
       }
-      const response = await axios.post(`${API_URL}/create`, postData, {
+      const response = await axios.post(`${API_URL}/post/create`, postData, {
         headers: {
           Authorization: `Bearer ${access_Token}`,
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ export const fetchPosts = createAsyncThunk(
   async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
     // Default to 0 if no page is passed
     try {
-      const response = await axios.get(`${API_URL}/list`, {
+      const response = await axios.get(`${API_URL}/post/list`, {
         params: { pageNum, keyword },
       });
       console.log("Fetched posts:", response.data);
@@ -63,7 +63,9 @@ export const fetchPosts = createAsyncThunk(
 export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
-    const response = await axios.get(`${API_URL}/${postId}/update/${username}`);
+    const response = await axios.get(
+      `${API_URL}/post/${postId}/update/${username}`
+    );
     return response.data;
   }
 );
@@ -71,13 +73,23 @@ export const fetchPostForUpdate = createAsyncThunk(
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
-  async ({postId, page=1}, { rejectWithValue }) => {
+  async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/${postId}/detail`, {
-        params: {page},
+      const response = await axios.get(`${API_URL}/post/${postId}/detail`, {
+        params: { page },
       });
       console.log("fetchPostById response:", response);
       return response.data;
+      //     .catch(error => {
+      //   if (error.response && error.response.status === 403) {
+      //     Swal.fire({
+      //       icon: 'error',
+      //       title: '접근 금지',
+      //       text: '비밀 글입니다. 접근 권한이 없습니다.',
+      //     });
+      //     navigate('/some-safe-page'); // Redirect to a safe page if needed
+      //   }
+      // });
     } catch (error) {
       console.error("Error fetching post by ID:", error); // Log the error
       return rejectWithValue(error.response.data);
@@ -96,7 +108,7 @@ export const deletePost = createAsyncThunk(
         return;
       }
       const response = await axios.post(
-        `${API_URL}/${postId}/delete`,
+        `${API_URL}/post/${postId}/delete`,
         { logined_username },
         {
           headers: {
@@ -126,7 +138,7 @@ export const updatePost = createAsyncThunk(
         return;
       }
       const response = await axios.post(
-        `${API_URL}/${postId}/update`,
+        `${API_URL}/post/${postId}/update`,
         postData,
         {
           headers: {
@@ -192,7 +204,7 @@ const postSlice = createSlice({
       .addCase(updatePost.fulfilled, (state, action) => {
         // The updated post returned from the server
         const updatedPost = action.payload;
-        console.log("updatedPost:",updatedPost);
+        console.log("updatedPost:", updatedPost);
         const index = state.postList.findIndex(
           (post) => post.postId === updatedPost.postId
         );
