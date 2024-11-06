@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { colors } from "../assets/assest";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/slices/loginSlice";
+import { goLogin, logoutUser } from "../redux/slices/loginSlice";
 import {
   useNavigate,
   useParams,
@@ -61,7 +61,9 @@ const MyPage = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate("/api/user/login");
+    // navigate("/api/user/login");
+       dispatch(goLogin(navigate));
+
   };
 
   return (

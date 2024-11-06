@@ -10,6 +10,7 @@ const initialState = {
 
 const baseUrl = "http://localhost:8080/api/admin";
 
+//function for fetchUserList //
 export const fetchUserList = createAsyncThunk(
   "admin/fetchUserList",
   async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
@@ -27,7 +28,7 @@ export const fetchUserList = createAsyncThunk(
   }
 );
 
-// 사용자를 차단하는 비동기 함수
+//function for blockUser (사용자를 차단하는 비동기 함수) //
 export const blockUser = createAsyncThunk(
   "admin/blockUser",
   async (username) => {
@@ -56,7 +57,7 @@ export const blockUser = createAsyncThunk(
   }
 );
 
-// 사용자 리셋 비동기 함수
+//function for blockUser (사용자 리셋 비동기 함수) //
 export const resetRefreshToken = createAsyncThunk(
   "admin/resetUser",
   async (username) => {
@@ -81,7 +82,6 @@ export const resetRefreshToken = createAsyncThunk(
   }
 );
 
-// adminPageSlice 정의
 const adminPageSlice = createSlice({
   name: "adminPage",
   initialState,

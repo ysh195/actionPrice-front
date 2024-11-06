@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -52,7 +53,7 @@ export const sendVerificationCodeForChangingPW = createAsyncThunk(
       if (error.response && error.response.status === 409) {
         // Handle known conflict status
         return rejectWithValue(
-          "이메일 또는 사용자 이름을 확인하고 다시 시도해주세요."
+          "이메일 또는 사용자명을 확인하고 다시 시도해주세요."
         );
       }
       // Handle other errors

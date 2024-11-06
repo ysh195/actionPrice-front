@@ -3,12 +3,15 @@ import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { deleteAccount, getPersonalInfo } from "../../redux/slices/userSlice";
-import { useNavigate } from "react-router-dom";
+
 import Swal from "sweetalert2";
+import { goLogin } from "../../redux/slices/loginSlice";
+import { useNavigate } from "react-router-dom";
 
 const Account = ({ username, email }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
 
   console.log("checking username in account:", username)
 
@@ -39,7 +42,8 @@ const Account = ({ username, email }) => {
           icon: "success",
           timer: 3000,
         });
-        navigate("/api/user/login");
+        // navigate("/api/user/login");
+              dispatch(goLogin(navigate));
       } else {
         Swal.fire({
           icon: "error",
@@ -56,7 +60,7 @@ const Account = ({ username, email }) => {
       <Typography variant="h6" gutterBottom>
         개인정보
       </Typography>
-      <Typography>사용자 이름: {username || "Not provided"}</Typography>
+      <Typography>사용자명: {username || "Not provided"}</Typography>
       <Typography>이메일: {email || "Not provided"}</Typography>
       <Button
         onClick={handleDeleteAccount}

@@ -11,23 +11,19 @@ import {
   Card,
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   CircularProgress,
   IconButton,
   Typography,
+  Box,
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { colors } from "../assets/assest";
-import PwChange from "../components/Password/PwChange";
-// import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({ username: "", password: "" });
 
   const dispatch = useDispatch();
@@ -51,7 +47,7 @@ const Login = () => {
       const result = await dispatch(login(formData)).unwrap();
       console.log("login result", result);
       localStorage.setItem("access_token", result.access_token);
-       localStorage.setItem("username", result.username);
+      localStorage.setItem("username", result.username);
 
       Swal.fire({
         text: "성공적으로 로그인되었습니다!",
@@ -72,10 +68,23 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
-      <Card sx={{ p: 3, borderRadius: "16px", boxShadow: 3 }}>
-        <Typography variant="h5" align="center" sx={{ color: colors.hover1 }}>
-          Login
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <Card sx={{ p: 5, borderRadius: 4, boxShadow: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ color: colors.hover1, mb: 1 }}
+        >
+          로그인
         </Typography>
         <form onSubmit={handleLogin}>
           {/* Username Input */}
@@ -83,7 +92,7 @@ const Login = () => {
             variant="outlined"
             margin="normal"
             fullWidth
-            label="사용자 이름"
+            label="사용자명"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             error={!!errors.username}
@@ -116,40 +125,63 @@ const Login = () => {
               ),
             }}
           />
-
-          {/* Remember Me Checkbox */}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                color="primary"
-              />
-            }
-            label="Remember me"
-          />
+          <Link
+            to="/api/user/changePassword"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              color: colors.button2,
+              fontSize: "0.875rem",
+              textDecoration: "none",
+              marginTop: 2,
+            }}
+          >
+            비밀번호 찾기
+          </Link>
 
           {/* Submit Button */}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, backgroundColor: colors.tableHead, height: "3rem" }}
+            sx={{ mt: 3, backgroundColor: colors.tableHead, height: "3rem" }}
             disabled={isLoading}
           >
             {isLoading ? <CircularProgress size={24} /> : "Login"}
           </Button>
         </form>
-        <div style={{ textAlign: "center", marginTop: "16px" }}>
-          계정이 없으신가요?
-          <Link to="/api/user/register" style={{ color: colors.button2 }}>
-            해원가입 하세요
-          </Link>
-          비밀번호를 잊으셨나요?
-          <Link to="/api/user/changePassword" style={{ color: colors.button2 }}>
-            비밀번호 찾기
-          </Link>
-        </div>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            textAlign: "center",
+            mt: 3,
+            ml: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+            }}
+          >
+            <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
+              계정이 없으신가요?
+            </Typography>
+            <Link
+              to="/api/user/register"
+              style={{
+                color: colors.button2,
+                fontSize: "0.8rem",
+                textDecoration: "none",
+                marginTop: "3px",
+              }}
+            >
+              해원가입 하세요
+            </Link>
+          </Box>
+        </Box>
       </Card>
     </Container>
   );

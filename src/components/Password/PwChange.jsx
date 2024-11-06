@@ -1,36 +1,39 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { verifyCode } from "../../redux/slices/verificationSlice";
 import Swal from "sweetalert2";
-
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import {
   Container,
   Card,
   TextField,
   Button,
+  IconButton,
   CircularProgress,
   Typography,
   Box,
 } from "@mui/material";
 import { colors } from "../../assets/assest.js";
+import { verifyCode } from "../../redux/slices/verificationSlice";
+import { goLogin } from "../../redux/slices/loginSlice.jsx";
 import {
   checkUserExists,
-  resetUserExistsStatus,
   sendVerificationCodeForChangingPW,
   changePassword,
 } from "../../redux/slices/PwChangeSlice";
 
 const PwChange = () => {
-
   const [errors, setErrors] = useState({});
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const {
     userExists,
     loading,
@@ -39,13 +42,14 @@ const PwChange = () => {
     passwordChangeStatus,
     passwordChangeMessage,
   } = useSelector((state) => state.pwChange);
+  const redirectStatus = useSelector((state) => state.login.redirectStatus);
 
-    const [formData, setFormData] = useState({
-      username: "",
-      password: "",
-      email: "",
-      verificationCode: "",
-    });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    email: "",
+    verificationCode: "",
+  });
 
   const handleKeyDown = (e) => {
     if (e.key === " ") {
@@ -70,7 +74,7 @@ const PwChange = () => {
 
     switch (name) {
       case "username":
-        error = !value ? "사용자 이름은 필수입니다." : "";
+        error = !value ? "사용자명은 필수입니다." : "";
         break;
       case "password":
         error = !passwordRegex.test(value)
@@ -93,7 +97,7 @@ const PwChange = () => {
     try {
       await dispatch(checkUserExists({ username })).unwrap();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -115,7 +119,7 @@ const PwChange = () => {
       Swal.fire({ text: result, icon: "success", timer: 2000 });
     } catch (error) {
       Swal.fire({
-        title:"없는 사용자 입니다.",
+        title: "없는 사용자 입니다.",
         icon: "error",
         text: error,
       });
@@ -155,13 +159,18 @@ const PwChange = () => {
         text: "비밀번호가 성공적으로 변경되었습니다.",
         timer: 2000,
       });
-      navigate("/api/user/login");
+      // navigate("/api/user/login");
+      dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
         text: "비밀번호 변경에 실패했습니다. 다시 시도해 주세요.",
       });
     }
+  };
+
+  const handleGoLogin = () => {
+    dispatch(goLogin(navigate));
   };
 
   return (
@@ -175,8 +184,12 @@ const PwChange = () => {
         minHeight: "100vh",
       }}
     >
-      <Card sx={{ p: 5, borderRadius: 2, boxShadow: 3 }}>
-        <Typography variant="h4" align="center" sx={{ color: colors.hover1 }}>
+      <Card sx={{ p: 5, borderRadius: 4, boxShadow: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ color: colors.hover1, mb: 1 }}
+        >
           비밀번호 변경
         </Typography>
         <form onSubmit={handleChangePw}>
@@ -185,7 +198,7 @@ const PwChange = () => {
             fullWidth
             margin="normal"
             variant="outlined"
-            label="사용자 이름"
+            label="사용자명"
             name="username"
             value={formData.username}
             onChange={handleInputChange}
@@ -285,11 +298,36 @@ const PwChange = () => {
               onKeyDown={handleKeyDown}
               onBlur={() => validateInput("password", formData.password)}
               InputProps={{
-                endAdornment: formData.password && !errors.password && (
-                  <Box>
-                    <span style={{ color: "green" }}>✓</span>
+                endAdornment: (
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? (
+                        <VisibilityOutlinedIcon />
+                      ) : (
+                        <VisibilityOffOutlinedIcon />
+                      )}
+                    </IconButton>
                   </Box>
                 ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor:
+                      formData.password && !errors.password ? "green" : "", // Green border when valid
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor:
+                      formData.password && !errors.password ? "green" : "",
+                  },
+                  "&:hover fieldset": {
+                    borderColor:
+                      formData.password && !errors.password ? "green" : "",
+                  },
+                },
               }}
             />
           )}
@@ -310,8 +348,36 @@ const PwChange = () => {
             </Button>
           )}
         </form>
-        <Box textAlign="center" mt={3}>
-          계정이 있으신가요? <Link to="/api/user/login">로그인</Link>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            mt: 3,
+          }}
+        >
+          <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
+            계장이 있으신가요?
+          </Typography>
+          <Button
+            onClick={handleGoLogin}
+            sx={{
+              color: colors.button2,
+              fontSize: "0.8rem",
+              padding: 0,
+              "&:hover": {
+                backgroundColor: "transparent", // Removes hover background color
+              },
+            }}
+          >
+            로그인 하세요
+          </Button>
+
+          {/* <Link
+            to="/api/user/login"
+            style={{ color: colors.button2, fontSize: "0.8rem" }}
+          >
+            로그인 하세요
+          </Link> */}
         </Box>
       </Card>
     </Container>

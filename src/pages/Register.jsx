@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/slices/registerSlice";
@@ -12,6 +14,7 @@ import {
 import Swal from "sweetalert2";
 
 
+
 import {
   Container,
   Card,
@@ -20,9 +23,11 @@ import {
   CircularProgress,
   Typography,
   Box,
+  IconButton,
 } from "@mui/material";
 import { colors } from "../assets/assest";
-import PwChange from "../components/Password/PwChange";
+
+import { goLogin } from "../redux/slices/loginSlice";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -35,6 +40,7 @@ const Register = () => {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -65,7 +71,7 @@ const Register = () => {
     switch (name) {
       case "username":
         error = !usernameRegex.test(value)
-          ? "사용자 이름은 6~20자의 영어와 숫자로 구성됩니다."
+          ? "사용자명은 6~20자의 영어와 숫자로 구성됩니다."
           : "";
         break;
       case "password":
@@ -98,7 +104,7 @@ const Register = () => {
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        username: "사용자 이름이 이미 존재합니다. 다른 이름을 선택해 주세요.",
+        username: "사용자명이 이미 존재합니다. 다른 이름을 선택해 주세요.",
       }));
     }
   };
@@ -113,6 +119,24 @@ const Register = () => {
       });
       return;
     }
+
+     Swal.fire({
+       title: "Please wait...",
+       html: `
+      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <CircularProgress size={24} color="success" />
+        </div>
+        Code is being sent. It may take up to 30 seconds. Please wait...
+      </div>
+    `,
+       icon: "info",
+       allowOutsideClick: false, // Disable closing by clicking outside
+       showConfirmButton: false, // Hide the confirm button
+       willOpen: () => {
+         // Optional: You can add a loading spinner or other effects here
+       },
+     });
 
     try {
       const sendCodeResult = await dispatch(
@@ -163,7 +187,8 @@ const Register = () => {
         text: "회원가입이 성공적으로 완료되었습니다",
         timer: 2000,
       });
-      navigate("/api/user/login");
+      // navigate("/api/user/login");
+       dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -173,6 +198,10 @@ const Register = () => {
     }
   };
 
+  const handleGoLogin = () => {
+    dispatch(goLogin(navigate));
+  };
+   
   return (
     <Container
       component="main"
@@ -184,17 +213,22 @@ const Register = () => {
         minHeight: "100vh",
       }}
     >
-      <Card sx={{ p: 5, borderRadius: 2, boxShadow: 3 }}>
-        <Typography variant="h4" align="center" sx={{ color: colors.hover1 }}>
+      <Card sx={{ p: 5, borderRadius: 4, boxShadow: 3 }}>
+        <Typography
+          variant="h5"
+          align="center"
+          sx={{ color: colors.hover1, mb: 1 }}
+        >
           회원가입
         </Typography>
         <form onSubmit={handleRegister}>
           {/* Username Input */}
+
           <TextField
             fullWidth
             margin="normal"
             variant="outlined"
-            label="사용자 이름"
+            label="사용자명"
             name="username"
             value={formData.username}
             onChange={handleInputChange}
@@ -202,13 +236,21 @@ const Register = () => {
             error={!!errors.username}
             helperText={errors.username}
             onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment:
-                isUsernameAvailable && !errors.username ? (
-                  <Box>
-                    <span style={{ color: "green" }}>✓</span>
-                  </Box>
-                ) : null,
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor:
+                    isUsernameAvailable && !errors.username ? "green" : "", // Green border when valid
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor:
+                    isUsernameAvailable && !errors.username ? "green" : "", // Green border on focus
+                },
+                "&:hover fieldset": {
+                  borderColor:
+                    isUsernameAvailable && !errors.username ? "green" : "", // Green border on hover when valid
+                },
+              },
             }}
           />
 
@@ -219,7 +261,7 @@ const Register = () => {
             variant="outlined"
             label="비밀번호"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handleInputChange}
             error={!!errors.password}
@@ -227,11 +269,36 @@ const Register = () => {
             onBlur={() => validateInput("password", formData.password)}
             onKeyDown={handleKeyDown}
             InputProps={{
-              endAdornment: formData.password && !errors.password && (
-                <Box>
-                  <span style={{ color: "green" }}>✓</span>
+              endAdornment: (
+                <Box display="flex" alignItems="center">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? (
+                      <VisibilityOutlinedIcon />
+                    ) : (
+                      <VisibilityOffOutlinedIcon />
+                    )}
+                  </IconButton>
                 </Box>
               ),
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor:
+                    formData.password && !errors.password ? "green" : "", // Green border when valid
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor:
+                    formData.password && !errors.password ? "green" : "",
+                },
+                "&:hover fieldset": {
+                  borderColor:
+                    formData.password && !errors.password ? "green" : "",
+                },
+              },
             }}
           />
 
@@ -295,7 +362,7 @@ const Register = () => {
                 error={!!errors.verificationCode}
                 helperText={errors.verificationCode}
                 onKeyDown={handleKeyDown}
-                disabled={isCodeVerified} // Disable input if the code is verified
+                disabled={isCodeVerified} 
               />
               <Button
                 variant="contained"
@@ -330,12 +397,35 @@ const Register = () => {
             </Button>
           )}
         </form>
-        <Box textAlign="center" mt={3}>
-          계장이 있으신가요?
-          <Link to="/api/user/login" style={{ color: colors.button2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            mt: 3,
+          }}
+        >
+          <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
+            계장이 있으신가요?
+          </Typography>
+          <Button
+            onClick={handleGoLogin}
+            sx={{
+              color: colors.button2,
+              fontSize: "0.8rem",
+              padding: 0,
+              "&:hover": {
+                backgroundColor: "transparent", // Removes hover background color
+              },
+            }}
+          >
             로그인 하세요
-          </Link>
-       
+          </Button>
+          {/* <Link
+            to="/api/user/login"
+            style={{ color: colors.button2, fontSize: "0.8rem" }}
+          >
+            로그인 하세요
+          </Link> */}
         </Box>
       </Card>
     </Container>
