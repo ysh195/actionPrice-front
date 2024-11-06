@@ -54,11 +54,11 @@ export const fetchRankCategories = createAsyncThunk(
 //function: fetchProductList //
 export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
-  async ({ large, middle, small, rank, startDate, endDate}) => {
+  async ({ large, middle, small, rank, startDate, endDate, pageNum=0}) => {
     const response = await axios.get(
       `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
       {
-        params: { startDate, endDate },
+        params: { startDate, endDate, pageNum },
       }
     );
     console.log("fetchProductList:", response.data);
@@ -70,7 +70,7 @@ export const fetchProductList = createAsyncThunk(
 export const downloadExcel = createAsyncThunk(
   "download/downloadExcel",
   async (
-    { large, middle, small, rank, startDate, endDate, pageNum },
+    { large, middle, small, rank, startDate, endDate },
     { rejectWithValue }
   ) => {
     try {

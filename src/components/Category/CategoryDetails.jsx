@@ -29,12 +29,11 @@ import {
   downloadExcel,
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
-import { createFavorite } from "../../redux/slices/favoriteSlice.jsx";
-import FavoriteButon from "./FavoriteButon.jsx";
+
+import Favorite_DownloadButton from "./Favorite_DownloadButton.jsx";
 
 const CategoryDetail = () => {
   const { large, middle, small, rank } = useParams();
-
   const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -50,9 +49,6 @@ const CategoryDetail = () => {
   const [selectedRank, setSelectedRank] = useState(rank || "");
   const [selectedStartDate, setSelectedStartDate] = useState(startDate);
   const [selectedEndDate, setSelectedEndDate] = useState(endDate);
-  const [favorite_name, setFavorite_name] = useState("");
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
-
   const logined_username = useSelector((state) => state.login.username);
 
   const {
@@ -134,15 +130,6 @@ const CategoryDetail = () => {
     dispatch,
   ]);
 
-  useEffect(() => {
-    // Update visibility of download button if the productList has items
-    if (productList && productList.length > 0) {
-      setShowDownloadButton(true);
-    } else {
-      setShowDownloadButton(false);
-    }
-  }, [productList]);
-
   const handleCategoryChange = (type, value) => {
     switch (type) {
       case "large":
@@ -197,6 +184,7 @@ const CategoryDetail = () => {
       pageNum: 1, // Reset to page 1 on new search
     });
     dispatch(
+      //todo: cancel fetch after date selection
       fetchProductList({
         large: selectedLarge,
         middle: selectedMiddle,
@@ -221,20 +209,6 @@ const CategoryDetail = () => {
     navigate(`/api/category/:large`);
   };
 
-  const handleDownloadExcel = () => {
-    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
-      return;
-    }
-    const large = selectedLarge;
-    const middle = selectedMiddle;
-    const small = selectedSmall;
-    const rank = selectedRank;
-    const startDate = selectedStartDate;
-    const endDate = selectedEndDate;
-
-    dispatch(downloadExcel({ large, middle, small, rank, startDate, endDate }));
-  };
-
   const handlePageChange = (event, value) => {
     if (value < 1) return; // Prevent navigating to less than page 1
     setSearchParams({
@@ -253,29 +227,6 @@ const CategoryDetail = () => {
         pageNum: value - 1, // Pass the new page number
       })
     );
-  };
-
-  const handleFavoriteNameChange = (event) => {
-    setFavorite_name(event.target.value);
-  };
-
-  const handleAddFavorite = () => {
-    if (favorite_name.trim() === "") {
-      alert("Please enter a name for your favorite item.");
-      return;
-    }
-
-    dispatch(
-      createFavorite({
-        large: selectedLarge,
-        middle: selectedMiddle,
-        small: selectedSmall,
-        rank: selectedRank,
-        logined_username,
-        favorite_name,
-      })
-    );
-    setFavorite_name("");
   };
 
   if (loading) {
@@ -483,37 +434,16 @@ const CategoryDetail = () => {
           </Button>
         </Box>
       </Box>
-       <Box display="flex" alignItems="center" gap={2}>
-      <FavoriteButon
-        selectedLarge={selectedLarge}
-        selectedMiddle={selectedMiddle}
-        selectedSmall={selectedSmall}
-        selectedRank={selectedRank}
-        logined_username={logined_username}
-      />
-      {/* <Box display="flex" alignItems="center" gap={2}>
-        <TextField
-          label="Favorite Name"
-          value={favorite_name}
-          onChange={handleFavoriteNameChange}
-          size="small"
-          variant="outlined"
+      <Box display="flex" alignItems="center" gap={2}>
+        <Favorite_DownloadButton
+          selectedLarge={selectedLarge}
+          selectedMiddle={selectedMiddle}
+          selectedSmall={selectedSmall}
+          selectedRank={selectedRank}
+          logined_username={logined_username}
+          selectedStartDate={selectedStartDate}
+          selectedEndDate={selectedEndDate}
         />
-        <Button variant="contained" color="primary" onClick={handleAddFavorite}>
-          Add to Favorites
-        </Button> */}
-        {showDownloadButton && (
-          <IconButton
-            onClick={handleDownloadExcel}
-            disabled={loading}
-            color="primary"
-            aria-label="Download Excel"
-            sx={{ color: "green", display: "flex", alignItems: "center" }} // Adjust icon button styles
-          >
-            <GetAppIcon fontSize="large" sx={{ color: "green", mr: 1 }} />
-            <span style={{ color: "green" }}>Excel</span>
-          </IconButton>
-        )}
       </Box>
       <ProductListView productList={productList} pageNum={pageNum} />
       <Pagination
