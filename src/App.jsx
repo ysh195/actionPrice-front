@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import { useEffect } from "react";
 import Home from "./pages/Home";
 import "./App.css";
+import PwChange from "./components/Password/PwChange";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,7 +28,9 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="api/user/login" exact element={<Login />} />
+
           <Route path="api/user/register" exact element={<Register />} />
+          <Route path="api/user/changePassword" exact element={<PwChange />} />
           <Route
             path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryDetails />}

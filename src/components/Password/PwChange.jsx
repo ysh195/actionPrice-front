@@ -3,14 +3,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../redux/slices/registerSlice";
-import {
-  checkUsername,
-  sendVerificationCode,
-  verifyCode,
-} from "../redux/slices/verificationSlice";
+import { verifyCode } from "../../redux/slices/verificationSlice";
 import Swal from "sweetalert2";
-
 
 import {
   Container,
@@ -21,28 +15,41 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { colors } from "../assets/assest";
-import PwChange from "../components/Password/PwChange";
+import { colors } from "../../assets/assest.js";
+import {
+  checkUserExists,
+  resetUserExistsStatus,
+  sendVerificationCodeForChangingPW,
+  changePassword,
+} from "../../redux/slices/PwChangeSlice";
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    verificationCode: "",
-  });
+const PwChange = () => {
+
   const [errors, setErrors] = useState({});
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading } = useSelector((state) => state.verification);
+  const {
+    userExists,
+    loading,
+    userVerificationStatus,
+    userVerificationMessage,
+    passwordChangeStatus,
+    passwordChangeMessage,
+  } = useSelector((state) => state.pwChange);
+
+    const [formData, setFormData] = useState({
+      username: "",
+      password: "",
+      email: "",
+      verificationCode: "",
+    });
 
   const handleKeyDown = (e) => {
     if (e.key === " ") {
-      e.preventDefault(); // Prevent space from being entered
+      e.preventDefault();
     }
   };
 
@@ -59,23 +66,15 @@ const Register = () => {
 
   const validateInput = (name, value) => {
     let error = "";
-    const usernameRegex = /^[a-zA-Z0-9]{6,20}$/;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*\W).{8,16}$/;
-    const emailRegex = /\S+@\S+\.\S+/;
+
     switch (name) {
       case "username":
-        error = !usernameRegex.test(value)
-          ? "사용자 이름은 6~20자의 영어와 숫자로 구성됩니다."
-          : "";
+        error = !value ? "사용자 이름은 필수입니다." : "";
         break;
       case "password":
         error = !passwordRegex.test(value)
           ? "비밀번호는 8~16자로 구성되며, 영어, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다."
-          : "";
-        break;
-      case "email":
-        error = !emailRegex.test(value)
-          ? "유효한 이메일 주소를 입력하세요."
           : "";
         break;
       case "verificationCode":
@@ -84,47 +83,43 @@ const Register = () => {
       default:
         break;
     }
-    setErrors((prev) => ({ ...prev, [name]: error }));
     return error;
   };
 
-  const handleCheckUsername = async () => {
+  const handleCheckUserExist = async () => {
     const { username } = formData;
     if (validateInput("username", username)) return;
 
     try {
-      await dispatch(checkUsername({ username })).unwrap();
-      setIsUsernameAvailable(true);
+      await dispatch(checkUserExists({ username })).unwrap();
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        username: "사용자 이름이 이미 존재합니다. 다른 이름을 선택해 주세요.",
+        username: "없는 사용자입니다. 회원가입하세요",
       }));
     }
   };
 
-  const handleSendCode = async (e) => {
+  const handleSendCodeforPw = async (e) => {
     e.preventDefault();
+    const { username, email } = formData;
     if (Object.values(errors).some((error) => error)) {
       Swal.fire({
         icon: "error",
         text: "인증 코드를 전송하기 전에 오류를 수정해 주세요.",
-        showConfirmButton: true,
       });
       return;
     }
-
     try {
-      const sendCodeResult = await dispatch(
-        sendVerificationCode(formData)
+      const result = await dispatch(
+        sendVerificationCodeForChangingPW(formData)
       ).unwrap();
       setIsCodeSent(true);
-      Swal.fire({ text: sendCodeResult, icon: "success", timer: 2000 });
+      Swal.fire({ text: result, icon: "success", timer: 2000 });
     } catch (error) {
       Swal.fire({
         icon: "error",
         text: error,
-        showConfirmButton: true,
       });
     }
   };
@@ -147,28 +142,26 @@ const Register = () => {
       Swal.fire({
         icon: "error",
         text: "유효하지 않은 인증 코드입니다. 다시 시도해 주세요.",
-        showConfirmButton: true,
       });
     }
   };
 
-  const handleRegister = async (e) => {
+  const handleChangePw = async (e) => {
     e.preventDefault();
     if (Object.values(errors).some((error) => error)) return;
 
     try {
-      await dispatch(registerUser(formData)).unwrap();
+      await dispatch(changePassword(formData)).unwrap();
       Swal.fire({
         icon: "success",
-        text: "회원가입이 성공적으로 완료되었습니다",
+        text: "비밀번호가 성공적으로 변경되었습니다.",
         timer: 2000,
       });
       navigate("/api/user/login");
     } catch (error) {
       Swal.fire({
         icon: "error",
-        text: "회원가입에 실패했습니다. 다시 시도해 주세요.",
-        showConfirmButton: true,
+        text: "비밀번호 변경에 실패했습니다. 다시 시도해 주세요.",
       });
     }
   };
@@ -186,9 +179,9 @@ const Register = () => {
     >
       <Card sx={{ p: 5, borderRadius: 2, boxShadow: 3 }}>
         <Typography variant="h4" align="center" sx={{ color: colors.hover1 }}>
-          회원가입
+          비밀번호 변경
         </Typography>
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleChangePw}>
           {/* Username Input */}
           <TextField
             fullWidth
@@ -198,13 +191,13 @@ const Register = () => {
             name="username"
             value={formData.username}
             onChange={handleInputChange}
-            onBlur={handleCheckUsername}
+            onBlur={handleCheckUserExist}
             error={!!errors.username}
             helperText={errors.username}
             onKeyDown={handleKeyDown}
             InputProps={{
               endAdornment:
-                isUsernameAvailable && !errors.username ? (
+                userExists && !errors.username ? (
                   <Box>
                     <span style={{ color: "green" }}>✓</span>
                   </Box>
@@ -212,30 +205,7 @@ const Register = () => {
             }}
           />
 
-          {/* Password Input */}
-          <TextField
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            label="비밀번호"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            error={!!errors.password}
-            helperText={errors.password}
-            onBlur={() => validateInput("password", formData.password)}
-            onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment: formData.password && !errors.password && (
-                <Box>
-                  <span style={{ color: "green" }}>✓</span>
-                </Box>
-              ),
-            }}
-          />
-
-          {/* Email Input with Verification Button */}
+          {/* Email Input */}
           <Box display="flex" alignItems="center" mb={2}>
             <TextField
               fullWidth
@@ -247,24 +217,22 @@ const Register = () => {
               onChange={handleInputChange}
               error={!!errors.email}
               helperText={errors.email}
-              onBlur={() => validateInput("email", formData.email)}
               onKeyDown={handleKeyDown}
             />
             <Button
               variant="contained"
-              onClick={handleSendCode}
+              onClick={handleSendCodeforPw}
               disabled={
-                isLoading || isCodeSent || !formData.email || !formData.username
+                loading || isCodeSent || !formData.email || !formData.username
               }
               sx={{
                 height: "3rem",
                 ml: 1,
                 bgcolor: isCodeSent ? colors.disable : colors.tableHead,
                 color: isCodeSent ? "#666" : "white",
-                position: "relative", // Set position to relative for spinner positioning
               }}
             >
-              {isLoading ? (
+              {loading ? (
                 <CircularProgress
                   size={24}
                   sx={{
@@ -276,11 +244,10 @@ const Register = () => {
                   }}
                 />
               ) : (
-                "코드 발성"
+                "코드 발송"
               )}
             </Button>
           </Box>
-
           {/* Verification Code Input */}
           {isCodeSent && (
             <Box display="flex" alignItems="center" mb={2}>
@@ -295,12 +262,12 @@ const Register = () => {
                 error={!!errors.verificationCode}
                 helperText={errors.verificationCode}
                 onKeyDown={handleKeyDown}
-                disabled={isCodeVerified} // Disable input if the code is verified
+                disabled={isCodeVerified}
               />
               <Button
                 variant="contained"
                 onClick={handleVerifyCode}
-                disabled={isLoading || isCodeVerified}
+                disabled={loading || isCodeVerified}
                 sx={{
                   height: "3rem",
                   ml: 1,
@@ -308,12 +275,35 @@ const Register = () => {
                   color: "white",
                 }}
               >
-                {isLoading ? <CircularProgress size={24} /> : "코드 인증"}
+                {loading ? <CircularProgress size={24} /> : "코드 인증"}
               </Button>
             </Box>
           )}
-
-          {/* Register Button */}
+          {/* Password Input */}
+          {isCodeVerified && (
+            <TextField
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              label="새 비밀번호"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              error={!!errors.password}
+              helperText={errors.password}
+              onKeyDown={handleKeyDown}
+              onBlur={() => validateInput("password", formData.password)}
+              InputProps={{
+                endAdornment: formData.password && !errors.password && (
+                  <Box>
+                    <span style={{ color: "green" }}>✓</span>
+                  </Box>
+                ),
+              }}
+            />
+          )}
+          {/* Submit Button */}
           {isCodeVerified && (
             <Button
               type="submit"
@@ -326,20 +316,16 @@ const Register = () => {
                 mt: 2,
               }}
             >
-              {isLoading ? <CircularProgress size={24} /> : "Register"}
+              {loading ? <CircularProgress size={24} /> : "비밀번호 변경"}
             </Button>
           )}
         </form>
         <Box textAlign="center" mt={3}>
-          계장이 있으신가요?
-          <Link to="/api/user/login" style={{ color: colors.button2 }}>
-            로그인 하세요
-          </Link>
-       
+          계정이 있으신가요? <Link to="/api/user/login">로그인</Link>
         </Box>
       </Card>
     </Container>
   );
 };
 
-export default Register;
+export default PwChange;

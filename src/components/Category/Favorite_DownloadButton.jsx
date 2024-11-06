@@ -1,21 +1,36 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createFavorite } from '../../redux/slices/favoriteSlice';
 import { useDispatch } from 'react-redux';
 import { IconButton, Modal, Box, TextField, Button } from "@mui/material";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import { downloadExcel } from '../../redux/slices/categorySlice';
+import GetAppIcon from "@mui/icons-material/GetApp";
 
 
-const FavoriteButon = ({
+const Favorite_DownloadButton = ({
   selectedLarge,
   selectedMiddle,
   selectedSmall,
   selectedRank,
   logined_username,
+  selectedStartDate,
+  selectedEndDate,
+  productList,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [favorite_name, setFavorite_name] = useState("");
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
   const dispatch = useDispatch();
+
+    useEffect(() => {
+      // Update visibility of download button if the productList has items
+      if (productList && productList.length > 0) {
+        setShowDownloadButton(true);
+      } else {
+        setShowDownloadButton(false);
+      }
+    }, [productList]);
 
   const handleFavoriteNameChange = (event) => {
     setFavorite_name(event.target.value);
@@ -38,8 +53,22 @@ const FavoriteButon = ({
       })
     );
 
-    setFavorite_name(""); // Clear the input field
-    setModalOpen(false); // Close the modal
+    setFavorite_name(""); 
+    setModalOpen(false);
+  };
+
+  const handleDownloadExcel = () => {
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
+      return;
+    }
+    const large = selectedLarge;
+    const middle = selectedMiddle;
+    const small = selectedSmall;
+    const rank = selectedRank;
+    const startDate = selectedStartDate;
+    const endDate = selectedEndDate;
+
+    dispatch(downloadExcel({ large, middle, small, rank, startDate, endDate }));
   };
 
   return (
@@ -58,7 +87,8 @@ const FavoriteButon = ({
           },
         }}
       >
-        <BookmarksIcon fontSize="large" />
+        <BookmarksIcon fontSize="large" sx={{ color: "green", mr: 2 }} />
+        <span style={{ color: "green" }}>찜하기</span>
       </IconButton>
 
       {/* Modal for Adding Favorite */}
@@ -101,8 +131,20 @@ const FavoriteButon = ({
           </Button>
         </Box>
       </Modal>
+      {/* Download button */}
+      {showDownloadButton && (
+        <IconButton
+          onClick={handleDownloadExcel}
+          color="primary"
+          aria-label="Download Excel"
+          sx={{ color: "green", display: "flex", alignItems: "center" }} 
+        >
+          <GetAppIcon fontSize="large" sx={{ color: "green", mr: 1 }} />
+          <span style={{ color: "green" }}>Excel</span>
+        </IconButton>
+      )}
     </Box>
   );
 };
 
-export default FavoriteButon
+export default Favorite_DownloadButton;

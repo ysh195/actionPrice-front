@@ -14,6 +14,8 @@ const initialState = {
   isError: false,
   emailSuccessMessage: null,
   emailFailMessage: null,
+  userExists: false,
+  userExistsMessage: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -165,7 +167,6 @@ const verificationSlice = createSlice({
         state.emailSuccessMessage = null; // Clear success message
       })
       //desc:---------------------------------------------
-
       //desc: ------------sendVerificationCode---------------
       .addCase(sendVerificationCode.pending, (state) => {
         state.isLoading = true;
@@ -200,6 +201,7 @@ const verificationSlice = createSlice({
         state.verifySuccess = false; // Set error message  //
         state.verifyErrorMessage = action.payload;
       });
+    //desc:--------------------------------------------------------
   },
 });
 

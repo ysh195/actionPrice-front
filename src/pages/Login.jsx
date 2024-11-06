@@ -20,6 +20,7 @@ import {
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { colors } from "../assets/assest";
+import PwChange from "../components/Password/PwChange";
 // import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
@@ -143,6 +144,10 @@ const Login = () => {
           계정이 없으신가요?
           <Link to="/api/user/register" style={{ color: colors.button2 }}>
             해원가입 하세요
+          </Link>
+          비밀번호를 잊으셨나요?
+          <Link to="/api/user/changePassword" style={{ color: colors.button2 }}>
+            비밀번호 찾기
           </Link>
         </div>
       </Card>

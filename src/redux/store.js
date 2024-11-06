@@ -8,6 +8,7 @@ import postReducer from "./slices/postSlice";
 import commentReducer from "./slices/commentSlice";
 import adminPageReducer from "./slices/adminPageSlice";
 import favoriteReducer from "./slices/favoriteSlice";
+import pwChangeReducer from "./slices/pwChangeSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     comment: commentReducer,
     adminPage: adminPageReducer,
     favorite: favoriteReducer,
+    pwChange: pwChangeReducer,
   },
 });
