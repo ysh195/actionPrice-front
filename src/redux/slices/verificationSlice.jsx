@@ -109,14 +109,11 @@ export const sendVerificationCode = createAsyncThunk(
 //function: verify code //
 export const verifyCode = createAsyncThunk(
   "auth/verifyCode",
-  async (
-    { username, email, password, verificationCode },
-    { rejectWithValue }
-  ) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/user/checkVerificationCode`,
-        { username, email, password, verificationCode },
+        formData,
         {
           headers: {
             "Content-Type": "application/json", // Specify the content type
