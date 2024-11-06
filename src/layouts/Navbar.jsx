@@ -12,7 +12,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-import { login, logoutUser } from "../redux/slices/loginSlice";
+import { goLogin, login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from '../assets/assest.js'; 
 
@@ -45,7 +45,8 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate("/api/user/login");
+    // navigate("/api/user/login");
+      dispatch(goLogin(navigate));
   };
 
   const handleLogin = () => {
@@ -223,13 +224,14 @@ function Navbar() {
               </Box>
             </Box>
           ) : (
+            
             <Button
               component={Link}
               to="/api/user/login"
-              onClick={handleLogin}
+              // onClick={handleLogin}
               sx={{ my: 2, color: "white", display: "block" }}
             >
-              Login
+              로그인
             </Button>
           )}
         </Toolbar>

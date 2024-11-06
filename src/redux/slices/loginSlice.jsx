@@ -10,21 +10,24 @@ const initialState = {
   isLoggedIn: false,
   access_token: null,
   role: "",
+  redirectStatus: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
 
+//function for login (POST request) //
 export const login = createAsyncThunk(
   "auth/login",
 
-  async (formData, thunkAPI) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/user/login`,
-        {
-          username: formData.username,
-          password: formData.password,
-        },
+        formData,
+        // {
+        //   username: formData.username,
+        //   password: formData.password,
+        // },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -36,7 +39,7 @@ export const login = createAsyncThunk(
       ] = `Bearer ${response.data.access_token}`;
 
       if (!response.data.access_token) {
-        return thunkAPI.rejectWithValue(
+        return rejectWithValue(
           "로그인에 실패했습니다. 정보를 확인하세요."
         );
       }
@@ -48,15 +51,40 @@ export const login = createAsyncThunk(
         error.response?.data?.message ||
         "로그인에 실패했습니다. 정보를 확인하세요.";
 
-      return thunkAPI.rejectWithValue(errorMsg);
+      return rejectWithValue(errorMsg);
     }
   }
 );
 
+export const goLogin = createAsyncThunk(
+  "user/goLogin",
+  async (navigate, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/user/goLogin`);
+
+         if (response.data.access_token) {
+           return rejectWithValue(
+             " 이미 로그인된 상태입니다."
+           );
+         }
+      if (response.data === "goLogin") {
+        navigate("/api/user/login");
+      }
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : "An error occurred"
+      );
+    }
+  }
+);
+
+//function for logoutUser (POST request) //
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
+      //todo check axios.get for the logout
       const response = await axios.post(`${BASE_URL}/user/logout`);
       console.log("logoutUser response status:", response.status);
 
@@ -130,6 +158,18 @@ const loginSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.errorMessage = action.payload; // Set the error message
+      })
+      .addCase(goLogin.pending, (state) => {
+        state.isLoading = true;
+        state.isError = null;
+      })
+      .addCase(goLogin.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.redirectStatus = action.payload; // todo: check if it returns "goLogin" message ?
+      })
+      .addCase(goLogin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = action.payload || "An error occurred";
       });
   },
 });

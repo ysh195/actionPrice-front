@@ -77,7 +77,7 @@ export const downloadExcel = createAsyncThunk(
       const response = await axios.get(
         `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/excel`,
         {
-          params: { startDate, endDate, pageNum },
+          params: { startDate, endDate },
           responseType: "blob", // Important for handling binary data
         }
       );
