@@ -45,8 +45,8 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    // navigate("/api/user/login");
-      dispatch(goLogin(navigate));
+    navigate("/api/user/login");
+      // dispatch(goLogin(navigate));
   };
 
   const handleLogin = () => {
@@ -165,8 +165,7 @@ function Navbar() {
           {/* User Menu */}
           {isLoggedIn ? (
             <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
-              {/* //todo: change role !== 'ROLE_ADMIN' after the auth is done  */}
-              {role !== "ROLE_ADMIN" && (
+              {role === "ROLE_ADMIN" && (
                 <MenuItem onClick={handleCloseUserMenu}>
                   <Button
                     component={Link}

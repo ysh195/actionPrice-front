@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +17,8 @@ const ProtectedRoute = ({ element }) => {
     if (!authToken) {
       // navigate("/api/user/login");
       dispatch(goLogin());
-      
     }
-  }, [authToken, navigate]);
+  }, [dispatch, authToken, navigate]);
 
   return authToken ? element : null;
 };

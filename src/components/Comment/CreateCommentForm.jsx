@@ -86,8 +86,8 @@ const CommentForm = ({ postId }) => {
         >
           {loading ? "Loading..." : "추가"}
         </Button>
-        {/* //todo role === "ROLE_ADMIN"*/}
-        {role !== "ROLE_ADMIN" && (
+
+        {role === "ROLE_ADMIN" && (
           <>
             <Button
               variant="contained"

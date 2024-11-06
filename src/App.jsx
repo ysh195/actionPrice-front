@@ -28,7 +28,6 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="api/user/login" exact element={<Login />} />
-
           <Route path="api/user/register" exact element={<Register />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
           <Route
@@ -36,19 +35,21 @@ function App() {
             element={<CategoryDetails />}
           />
 
-          <Route path="api/contact-us" element={<ContactUs />} />
           <Route
             path="api/mypage/:username/*"
             element={<ProtectedRoute element={<MyPage />} />}
           />
-          <Route
-            path="api/post/create"
-            element={<ProtectedRoute element={<CreatePostView />} />}
-          />
+
+          <Route path="api/contact-us" element={<ContactUs />} />
+
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
           <Route
             path="api/post/:postId/update/:username"
             element={<ProtectedRoute element={<UpdatePostView />} />}
+          />
+          <Route
+            path="api/post/create"
+            element={<ProtectedRoute element={<CreatePostView />} />}
           />
           <Route path="api/post/:postId/delete" element={<ProtectedRoute />} />
           <Route

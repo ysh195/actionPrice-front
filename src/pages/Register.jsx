@@ -13,8 +13,6 @@ import {
 } from "../redux/slices/verificationSlice";
 import Swal from "sweetalert2";
 
-
-
 import {
   Container,
   Card,
@@ -120,30 +118,25 @@ const Register = () => {
       return;
     }
 
-     Swal.fire({
-       title: "Please wait...",
-       html: `
-      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <div style="display: flex; justify-content: center; align-items: center;">
-          <CircularProgress size={24} color="success" />
-        </div>
-        Code is being sent. It may take up to 30 seconds. Please wait...
-      </div>
-    `,
-       icon: "info",
-       allowOutsideClick: false, // Disable closing by clicking outside
-       showConfirmButton: false, // Hide the confirm button
-       willOpen: () => {
-         // Optional: You can add a loading spinner or other effects here
-       },
-     });
+    Swal.fire({
+      title: "잠시 기다려 주세요...",
+      text: "인증 코드가 전송 중이며 최대 30초가 걸릴 수 있습니다.",
+      icon: "info",
+      allowOutsideClick: false, 
+      showConfirmButton: false,
+    });
 
     try {
       const sendCodeResult = await dispatch(
         sendVerificationCode(formData)
       ).unwrap();
       setIsCodeSent(true);
-      Swal.fire({ text: sendCodeResult, icon: "success", timer: 2000 });
+      Swal.fire({
+        icon: "success",
+        text: sendCodeResult,
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -165,7 +158,12 @@ const Register = () => {
     try {
       const verifyCodeResult = await dispatch(verifyCode(formData)).unwrap();
       setIsCodeVerified(verifyCodeResult === "인증이 성공했습니다.");
-      Swal.fire({ text: verifyCodeResult });
+      Swal.fire({
+        text: verifyCodeResult,
+        icon: "success",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     } catch (error) {
       setIsCodeVerified(false);
       Swal.fire({
@@ -186,9 +184,10 @@ const Register = () => {
         icon: "success",
         text: "회원가입이 성공적으로 완료되었습니다",
         timer: 2000,
+        showConfirmButton: false,
       });
       // navigate("/api/user/login");
-       dispatch(goLogin(navigate));
+      dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -201,7 +200,7 @@ const Register = () => {
   const handleGoLogin = () => {
     dispatch(goLogin(navigate));
   };
-   
+
   return (
     <Container
       component="main"
@@ -326,25 +325,12 @@ const Register = () => {
               sx={{
                 height: "3rem",
                 ml: 1,
+                mt: 1,
                 bgcolor: isCodeSent ? colors.disable : colors.tableHead,
                 color: isCodeSent ? "#666" : "white",
-                position: "relative", // Set position to relative for spinner positioning
               }}
             >
-              {isLoading ? (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    marginLeft: "-12px",
-                    marginTop: "-12px",
-                  }}
-                />
-              ) : (
-                "코드 발성"
-              )}
+              코드 발성
             </Button>
           </Box>
 
@@ -362,7 +348,7 @@ const Register = () => {
                 error={!!errors.verificationCode}
                 helperText={errors.verificationCode}
                 onKeyDown={handleKeyDown}
-                disabled={isCodeVerified} 
+                disabled={isCodeVerified}
               />
               <Button
                 variant="contained"
