@@ -41,27 +41,22 @@ export const checkUserExists = createAsyncThunk(
 
 export const sendVerificationCodeForChangingPW = createAsyncThunk(
   "user/sendVerificationCodeForChangingPW",
-  async ({ username, email }, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/user/sendVerificationCodeForChangingPW`,
-        {
-          username,
-          email,
-        }
+        formData
       );
       return response.data; // Success message from the server
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // Handle known conflict status
         return rejectWithValue(
-          "No one is using both the provided username and email."
+          "이메일 또는 사용자 이름을 확인하고 다시 시도해주세요."
         );
       }
       // Handle other errors
-      return rejectWithValue(
-        "Failed to send verification code. Please try again."
-      );
+      return rejectWithValue("인증 코드를 전송하는 중 오류가 발생했습니다.");
     }
   }
 );
@@ -72,7 +67,7 @@ export const changePassword = createAsyncThunk(
   "user/changePassword",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/userchangePassword`, {
+      const response = await axios.post(`${BASE_URL}/user/changePassword`, {
         username,
         password,
       });
@@ -82,8 +77,6 @@ export const changePassword = createAsyncThunk(
     }
   }
 );
-
-
 
 const pwChangeSlice = createSlice({
   name: "PwChange",

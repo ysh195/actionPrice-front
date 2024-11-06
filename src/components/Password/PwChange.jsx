@@ -93,16 +93,13 @@ const PwChange = () => {
     try {
       await dispatch(checkUserExists({ username })).unwrap();
     } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        username: "없는 사용자입니다. 회원가입하세요",
-      }));
+      console.log(error)
     }
   };
 
   const handleSendCodeforPw = async (e) => {
     e.preventDefault();
-    const { username, email } = formData;
+
     if (Object.values(errors).some((error) => error)) {
       Swal.fire({
         icon: "error",
@@ -118,6 +115,7 @@ const PwChange = () => {
       Swal.fire({ text: result, icon: "success", timer: 2000 });
     } catch (error) {
       Swal.fire({
+        title:"없는 사용자 입니다.",
         icon: "error",
         text: error,
       });
@@ -195,14 +193,6 @@ const PwChange = () => {
             error={!!errors.username}
             helperText={errors.username}
             onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment:
-                userExists && !errors.username ? (
-                  <Box>
-                    <span style={{ color: "green" }}>✓</span>
-                  </Box>
-                ) : null,
-            }}
           />
 
           {/* Email Input */}
