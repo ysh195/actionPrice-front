@@ -9,7 +9,7 @@ const ProtectedRoute = ({ element, redirectIfLoggedIn = false }) => {
   const navigate = useNavigate();
 
   const access_token =
-    // useSelector((state) => state.login.access_token) ||
+
     localStorage.getItem("access_token");
    
 

@@ -90,15 +90,21 @@ export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/post/${postId}/detail`, {
-        params: { page },
-        headers: {
-          //todo: check header
-          // Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      var response
+      if(access_Token === null){
+        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
+          params: { page }});
+      } else {
+        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
+          params: { page },
+          headers: {
+            //todo: check header
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+      }
       console.log("fetchPostById response:", response);
       return response.data;
     } catch (error) {

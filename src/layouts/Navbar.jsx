@@ -12,9 +12,10 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-import { login, logoutUser } from "../redux/slices/loginSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "../assets/assest.js";
+import { logout } from "../redux/slices/loginSlice.jsx";
 
 function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
@@ -44,7 +45,7 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+     dispatch(logout());
     navigate("/api/user/login");
   };
 
@@ -218,7 +219,7 @@ function Navbar() {
             </Box>
           ) : (
             <Link
-              to={"/api/user/login"}
+              to="/api/user/login"
               sx={{ my: 2, color: "white", display: "block" }}
             >
               로그인

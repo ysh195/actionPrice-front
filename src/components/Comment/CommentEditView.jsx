@@ -3,7 +3,6 @@
 
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
-import { useDispatch } from "react-redux";
 
 const CommentEditView = ({ content, setContent, onUpdate, onCancel }) => {
   return (

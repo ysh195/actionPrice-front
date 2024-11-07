@@ -57,11 +57,6 @@ const CreatePostView = () => {
   const handleSnackbarClose = () => {
     setOpenSnackbar(false);
   };
-  const handleCancel = () => {
-    setTitle("");
-    setContent("");
-    setIsSecret(false); // Reset secret mode on cancel
-  };
 
   if (error) {
     return <Typography color="error">{`Error: ${error}`}</Typography>;
@@ -122,7 +117,7 @@ const CreatePostView = () => {
         <Button
           variant="outlined"
           color="secondary"
-          onClick={handleCancel}
+          onClick={() => window.history.back()}
           style={{ marginLeft: "10px" }}
         >
           취소

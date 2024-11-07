@@ -11,7 +11,6 @@ import {
 
 import { colors } from "../assets/assest";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/slices/loginSlice";
 import {
   useNavigate,
   useParams,
@@ -23,6 +22,7 @@ import {
 import Account from "../components/MyPage/Account";
 import Favorites from "../components/MyPage/Favorites";
 import MyPosts from "../components/MyPage/MyPosts";
+import { logout } from "../redux/slices/loginSlice";
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -59,9 +59,9 @@ const MyPage = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutUser());
+    // dispatch(logoutUser());
+    dispatch(logout());
     navigate("/api/user/login");
-
   };
 
   return (

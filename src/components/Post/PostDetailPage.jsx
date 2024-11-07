@@ -15,21 +15,16 @@ const PostDetailPage = () => {
   const { postId } = useParams();
   console.log("Post ID:", postId);
   const [searchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page")) || 1; // Default to 1 if no page param
+  const page = parseInt(searchParams.get("page")) || 1;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showCommentForm, setShowCommentForm] = useState(false);
   const { post, loading, error } = useSelector((state) => state.post);
 
   useEffect(() => {
     if (!postId) return; // Early return if no postId
     dispatch(fetchPostById({ postId, page: page - 1 }));
   }, [dispatch, postId, page]);
-
-  const handleShowCommentForm = () => {
-    setShowCommentForm((prev) => !prev);
-  };
 
   const handleEdit = () => {
     console.log("Navigating to edit page...");
@@ -50,25 +45,29 @@ const PostDetailPage = () => {
           textAlign: "center",
           boxShadow: 2,
           backgroundColor: "white",
+          border: "1px solid blue",
         }}
       >
-        <Paper sx={{ padding: 2 }}>
-          <PostHeader
-            title={post.title}
-            post_owner={post.username}
-            createdAt={post.createdAt}
-            updatedAt={post.updatedAt}
-          />
-          <PostContent content={post.content} />
-          <PostActions
-            postId={post.postId}
-            post_owner={post.username}
-            onCommentClick={handleShowCommentForm}
-            onEdit={handleEdit}
-          />
+        <Box sx={{ marginBottom: 3 }}>
+          {/* <Paper sx={{ padding: 2,}}> */}
+            <PostHeader
+              title={post.title}
+              post_owner={post.username}
+              createdAt={post.createdAt}
+              updatedAt={post.updatedAt}
+            />
+            <PostContent content={post.content} />
+            <PostActions
+              postId={post.postId}
+              post_owner={post.username}
+              onEdit={handleEdit}
+            />
+          {/* </Paper> */}
+        </Box>
+        <Paper sx={{ padding: 2, border: "1px solid pink" }}>
           <section>
             <div className="mt-4">
-              {showCommentForm && <CreateCommentForm postId={postId} />}
+              <CreateCommentForm postId={postId} />
               <CommentList postId={postId} />
             </div>
           </section>

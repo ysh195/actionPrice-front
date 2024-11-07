@@ -61,37 +61,46 @@ export const login = createAsyncThunk(
 
 //function for logoutUser (POST request) //
 
-export const logoutUser = createAsyncThunk(
-  "auth/logout",
-  async (_, { rejectWithValue }) => {
-    try {
-      //todo check axios.get for the logout
-      const response = await axios.post(`${BASE_URL}/user/logout`);
-      console.log("logoutUser response status:", response.status);
+// export const logoutUser = createAsyncThunk(
+//   "auth/logout",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       //todo check axios.get for the logout
+//       const response = await axios.post(`${BASE_URL}/user/logout`);
+//       console.log("logoutUser response status:", response.status);
 
-      if (response.status === 200) {
-        localStorage.clear();
-        axios.defaults.headers.common["Authorization"] = null;
-        console.log("Logout successful");
-        return response.data;
-      } else {
-        // Handle unexpected status
-        return rejectWithValue("로그아웃에 실패했습니다. 다시 시도해 주세요.");
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Handle logout error
-      return rejectWithValue(
-        error.response?.data || "로그아웃에 실패했습니다."
-      );
-    }
-  }
-);
+//       if (response.status === 200) {
+//         localStorage.clear();
+//         axios.defaults.headers.common["Authorization"] = null;
+//         console.log("Logout successful");
+//         return response.data;
+//       } else {
+//         // Handle unexpected status
+//         return rejectWithValue("로그아웃에 실패했습니다. 다시 시도해 주세요.");
+//       }
+//     } catch (error) {
+//       console.error("Logout failed:", error);
+//       // Handle logout error
+//       return rejectWithValue(
+//         error.response?.data || "로그아웃에 실패했습니다."
+//       );
+//     }
+//   }
+// );
 
 const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
+    logout: (state) => {
+      state.isLoggedIn = false;
+      state.access_token = null;
+      state.username = null;
+      localStorage.clear();
+      axios.defaults.headers.common["Authorization"] = null;
+      console.log("Logged out");
+    },
+
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
       console.log("checking if there's token:", access_token);
@@ -104,6 +113,7 @@ const loginSlice = createSlice({
       }
     },
   },
+
   extraReducers: (builder) => {
     builder
 
@@ -124,16 +134,16 @@ const loginSlice = createSlice({
         state.isError = true;
         state.errorMessage = action.payload;
         state.isLoggedIn = false;
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.isLoggedIn = false; // Update login status
-        state.isError = null; // Clear any errors
-      })
-      .addCase(logoutUser.rejected, (state, action) => {
-        state.errorMessage = action.payload; // Set the error message
       });
+    // .addCase(logoutUser.fulfilled, (state) => {
+    //   state.isLoggedIn = false; // Update login status
+    //   state.isError = null; // Clear any errors
+    // })
+    // .addCase(logoutUser.rejected, (state, action) => {
+    //   state.errorMessage = action.payload; // Set the error message
+    // });
   },
 });
 
-export const { autoLogin } = loginSlice.actions;
+export const { autoLogin, logout } = loginSlice.actions;
 export default loginSlice.reducer;

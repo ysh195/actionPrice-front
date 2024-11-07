@@ -3,62 +3,50 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import TextField from "@mui/material/TextField";
+
 import { colors } from "../../assets/assest";
 
 const PostSearch = ({ onSearch, onReset, keyword }) => {
   const [searchKeyword, setSearchKeyword] = useState(keyword);
   const [isSearching, setIsSearching] = useState(true);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   // Effect to sync the keyword from props
-  useEffect(() => {
-    setSearchKeyword(keyword);
-    if (!keyword) {
-      setIsSearching(false);
-    }
-  }, [keyword]);
+  // useEffect(() => {
+  //   setSearchKeyword(keyword);
+  // }, [keyword]);
 
   const handleSearch = () => {
-    onSearch(searchKeyword);
-    setIsSearching(true);
-
+    onSearch(searchKeyword); // Trigger search with current keyword
   };
 
-  const handleReset = () => {
-    setSearchKeyword(""); // Reset the search input
-    onReset(); // Call the reset function
-    setIsSearching(false); // Reset searching state
+  const handleChange = (e) => {
+    const newKeyword = e.target.value;
+    setSearchKeyword(newKeyword);
 
+    // Clear the previous debounce timeout
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    // Set a new debounce timeout to trigger the search after 500ms
+    setDebounceTimeout(
+      setTimeout(() => {
+        onSearch(newKeyword); // Call search after the user stops typing
+      }, 500) // Debounce delay (500ms)
+    );
   };
 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
-      <input
-        type="text"
-        value={searchKeyword} // Controlled component
-        onChange={(e) => setSearchKeyword(e.target.value)} // Update state on change
-        placeholder="게시글 검색"
-        style={{
-          marginRight: "8px",
-          border: "none",
-          borderBottom: `1px solid ${colors.primary}`,
-          outline: "none",
-          padding: "4px",
-        }}
+      <TextField
+        id="outlined-search"
+        label="게시글 검색"
+        type="search"
+        value={searchKeyword}
+        onChange={handleChange}
       />
-      <Button
-        variant="contained"
-        onClick={handleSearch}
-        sx={{ backgroundColor: colors.primary }}
-      >
-        검색
-      </Button>
-      {isSearching &&
-        searchKeyword && ( // Show icon only when searching and keyword exists
-          <ClearIcon
-            onClick={handleReset}
-            sx={{ marginLeft: 1, cursor: "pointer" }}
-          />
-        )}
     </div>
   );
 };

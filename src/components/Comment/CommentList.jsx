@@ -11,9 +11,9 @@ import { useSearchParams } from "react-router-dom";
 
 export function CommentList({ postId }) {
   const dispatch = useDispatch();
+    const [searchParams, setSearchParams] = useSearchParams();
   const { commentList, loading, error, totalPageNum } =
     useSelector((state) => state.comment);
-  const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
@@ -54,6 +54,7 @@ export function CommentList({ postId }) {
               comment={comment}
               postId={postId}
               onDelete={handleDeleteComment}
+ 
             />
           </Box>
         ))

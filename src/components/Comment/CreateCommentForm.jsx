@@ -10,16 +10,13 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import AnswerModal from "./AnswerModal";
 import { adminAnswers } from "../../assets/assest";
 
-const CommentForm = ({ postId }) => {
+const CreateCommentForm = ({ postId }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.comment);
-  // const username = useSelector((state) => state.login.username);
   const username = localStorage.getItem("username");
-
   const [content, setContent] = useState("");
-  // const role = useSelector((state) => state.login.role);
-  const role = localStorage.getItem("role");
   const [modalOpen, setModalOpen] = useState(false);
+  const role = localStorage.getItem("role");
 
   console.log("adminAnswers:", adminAnswers);
 
@@ -30,6 +27,7 @@ const CommentForm = ({ postId }) => {
       ).unwrap();
 
       console.log("newComment", newComment);
+
       setContent("");
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -48,6 +46,10 @@ const CommentForm = ({ postId }) => {
     console.log("Selected Answer:", answertype);
     setContent(answertype);
     dispatch(fetchAdminAnswers({ postId, answertype })); //
+  };
+
+  const handleCancelComment = () => {
+    setContent("");
   };
 
   return (
@@ -105,6 +107,14 @@ const CommentForm = ({ postId }) => {
             />
           </>
         )}
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleCancelComment}
+          style={{ marginLeft: "10px" }}
+        >
+          취소
+        </Button>
       </Box>
       {error && (
         <Typography color="error" variant="body2" sx={{ marginTop: 1 }}>
@@ -115,4 +125,4 @@ const CommentForm = ({ postId }) => {
   );
 };
 
-export default CommentForm;
+export default CreateCommentForm;
