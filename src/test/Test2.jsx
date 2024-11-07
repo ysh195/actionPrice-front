@@ -37,11 +37,9 @@ function Navbar() {
     dispatch(logoutUser());
     setUserMenuOpen(false);
     navigate("/api/user/login");
-      //  dispatch(goLogin(navigate));
   };
 
   const handleLogin = () => {
-    dispatch(login());
     setUserMenuOpen(false);
     navigate("/");
   };
@@ -176,7 +174,7 @@ function Navbar() {
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
-                  <Typography sx={{ color:colors.warning }}>Logout</Typography>
+                  <Typography sx={{ color: colors.warning }}>Logout</Typography>
                 </MenuItem>
               </Menu>
             </Box>
