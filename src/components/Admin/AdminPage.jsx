@@ -135,7 +135,7 @@ const AdminPage = () => {
                   <TableRow key={user.username}>
                     <TableCell>
                       <Link
-                        to={`/api/user/${user.username}`}
+                        to={`/api/mypage/${user.username}`}
                         style={{ color: colors.primary }}
                       >
                         {user.username}
