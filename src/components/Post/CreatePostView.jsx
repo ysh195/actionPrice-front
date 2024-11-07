@@ -33,7 +33,8 @@ const CreatePostView = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate(); // For navigation
 
-  const username = useSelector((state) => state.login.username);
+  // const username = useSelector((state) => state.login.username);
+  const username = localStorage.getItem("username");
 
   const handleCreatePost = async () => {
     if (title && content && username) {

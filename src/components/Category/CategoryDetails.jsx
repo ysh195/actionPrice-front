@@ -53,7 +53,9 @@ const CategoryDetail = () => {
   const [selectedEndDate, setSelectedEndDate] = useState(endDate || "");
   const [showDownloadButton, setShowDownloadButton] = useState(false);
 
-  const logined_username = useSelector((state) => state.login.username);
+  // const logined_username = useSelector((state) => state.login.username);
+    const logined_username = localStorage.getItem("username");
+
 
   const {
     middleCategoryList,

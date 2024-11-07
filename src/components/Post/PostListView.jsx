@@ -24,9 +24,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 //any potential issues if postList is undefined by initializing it to an empty array.
-const PostListView = ({ postList=[] }) => {
-  const logined_username = useSelector((state) => state.login.username);
-  const role = useSelector((state) => state.login.role);
+const PostListView = ({ postList = [] }) => {
+  // const logined_username = useSelector((state) => state.login.username);
+  const logined_username = localStorage.getItem("username");
+  // const role = useSelector((state) => state.login.role);
+  const role = localStorage.getItem("role");
 
   console.log("check postList in PostList component:", postList);
 
@@ -61,8 +63,7 @@ const PostListView = ({ postList=[] }) => {
                     logined_username !== post.username &&
                     role !== "ROLE_ADMIN" ? (
                       <span style={{ display: "flex", alignItems: "center" }}>
-                        <LockIcon style={{ marginRight: 5 }} /> 비밀
-                        글입니다.
+                        <LockIcon style={{ marginRight: 5 }} /> 비밀 글입니다.
                       </span>
                     ) : (
                       <Link

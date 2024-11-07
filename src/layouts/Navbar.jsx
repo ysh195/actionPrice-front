@@ -20,7 +20,9 @@ function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const { username, role } = useSelector((state) => state.login);
+  // const { username, role } = useSelector((state) => state.login);
+  const username = localStorage.getItem("username");
+  const role = localStorage.getItem("role");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -43,11 +45,6 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate("/api/user/login");
-
-  };
-
-  const handleLogin = () => {
     navigate("/api/user/login");
   };
 
@@ -221,8 +218,7 @@ function Navbar() {
             </Box>
           ) : (
             <Link
-            to={"/api/user/login"}
-              // onClick={handleLogin}
+              to={"/api/user/login"}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               로그인

@@ -12,7 +12,9 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [errorMessage, setErrorMessage] = useState(null);
-  const logined_username = useSelector((state) => state.login.username);
+  // const logined_username = useSelector((state) => state.login.username);
+  const logined_username = localStorage.getItem("username");
+
   const dispatch = useDispatch();
 
   const formatDate = (date) => {

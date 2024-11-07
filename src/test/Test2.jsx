@@ -21,7 +21,8 @@ function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  const username = useSelector((state) => state.login.username);
+  // const username = useSelector((state) => state.login.username);
+  const username = localStorage.getItem("username");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

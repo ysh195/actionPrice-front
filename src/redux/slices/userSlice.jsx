@@ -15,6 +15,8 @@ const initialState = {
 const BASE_URL = "http://localhost:8080/api";
 const access_Token = localStorage.getItem("access_token");
 
+console.log("access_Token:", access_Token);
+
 //functions for deleteAccount //
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
@@ -40,10 +42,9 @@ export const deleteAccount = createAsyncThunk(
       console.log("delete user response:", response);
       if (response.status === 200) {
         console.log("delete account successful");
-
-        Cookies.remove("REMEMBERME");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("username");
+        localStorage.clear();
+        // localStorage.removeItem("access_token");
+        // localStorage.removeItem("username");
 
         return response.data;
       } else {

@@ -10,13 +10,15 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import AnswerModal from "./AnswerModal";
 import { adminAnswers } from "../../assets/assest";
 
-
 const CommentForm = ({ postId }) => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.comment);
-  const username = useSelector((state) => state.login.username);
+  // const username = useSelector((state) => state.login.username);
+  const username = localStorage.getItem("username");
+
   const [content, setContent] = useState("");
-  const role = useSelector((state) => state.login.role);
+  // const role = useSelector((state) => state.login.role);
+  const role = localStorage.getItem("role");
   const [modalOpen, setModalOpen] = useState(false);
 
   console.log("adminAnswers:", adminAnswers);
@@ -45,8 +47,7 @@ const CommentForm = ({ postId }) => {
   const handleSubmitAnswer = (answertype) => {
     console.log("Selected Answer:", answertype);
     setContent(answertype);
-     dispatch(fetchAdminAnswers({postId, answertype})); //
- 
+    dispatch(fetchAdminAnswers({ postId, answertype })); //
   };
 
   return (

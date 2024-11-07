@@ -12,7 +12,8 @@ const PostActions = React.memo(
   ({ postId, post_owner, onCommentClick, onEdit }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const logined_username = useSelector((state) => state.login.username);
+    // const logined_username = useSelector((state) => state.login.username);
+      const logined_username = localStorage.getItem("username");
 
     //function: handleDelete //
     const handleDelete = async () => {

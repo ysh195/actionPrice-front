@@ -11,7 +11,6 @@ const initialState = {
 
   access_token: localStorage.getItem("access_token") || null,
   role: localStorage.getItem("role") || null,
-  // redirectStatus: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -35,8 +34,11 @@ export const login = createAsyncThunk(
       if (access_token) {
         // Store token in localStorage and set Authorization header globally
         localStorage.setItem("access_token", access_token);
+        console.log("setting access_token: ", access_token);
         localStorage.setItem("username", username);
+        console.log("setting username: ", username);
         localStorage.setItem("role", role);
+        console.log("setting role: ", role);
 
         axios.defaults.headers.common[
           "Authorization"

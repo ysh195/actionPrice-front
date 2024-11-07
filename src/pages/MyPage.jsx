@@ -34,7 +34,6 @@ const MyPage = () => {
 
   const { username } = useParams();
   const { myPosts, email } = useSelector((state) => state.user);
-  const { favoriteList } = useSelector((state) => state.category);
 
   // const handleSearch = (searchKeyword) => {
   //   setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword

@@ -19,7 +19,7 @@ const UpdatePostView = () => {
   const { post } = useSelector((state) => state.post);
   const [title, setTitle] = useState(post.title || "");
   const [content, setContent] = useState(post.content || "");
-  // const username = useSelector((state) => state.login.username);
+
 
   console.log("check post in PostDetailPage component:", post);
  useEffect(() => {
