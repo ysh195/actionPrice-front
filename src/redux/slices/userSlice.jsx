@@ -13,13 +13,13 @@ const initialState = {
 };
 
 const BASE_URL = "http://localhost:8080/api";
+const access_Token = localStorage.getItem("access_token");
 
 //functions for deleteAccount //
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
   async (username, { rejectWithValue }) => {
     try {
-      const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to delete your account.");
         return rejectWithValue("User not logged in");
@@ -30,6 +30,9 @@ export const deleteAccount = createAsyncThunk(
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
+            //todo:if error delete content part
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
@@ -58,14 +61,15 @@ export const deleteAccount = createAsyncThunk(
 export const getPersonalInfo = createAsyncThunk(
   "user/personalInfo",
   async (username, { rejectWithValue }) => {
-    const access_Token = localStorage.getItem("access_token");
-
     try {
       const response = await axios.get(
         `${BASE_URL}/mypage/${username}/personalinfo`,
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
+            //todo:if error delete content part
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );
@@ -91,8 +95,12 @@ export const getMyPosts = createAsyncThunk(
             keyword,
             pageNum,
           },
+
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            Authorization: `Bearer ${access_Token}`,
+            //todo:if error delete content part
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
         }
       );

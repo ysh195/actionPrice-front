@@ -3,24 +3,30 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { goLogin } from "../redux/slices/loginSlice";
-// Assuming you're using Redux
 
-const ProtectedRoute = ({ element }) => {
+
+const ProtectedRoute = ({ element, redirectIfLoggedIn = false }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const authToken =
+
+  const access_token =
     useSelector((state) => state.login.access_token) ||
     localStorage.getItem("access_token");
 
   useEffect(() => {
-    if (!authToken) {
-      // navigate("/api/user/login");
-      dispatch(goLogin());
+    if (access_token && redirectIfLoggedIn) {
+      // If user is logged in and tries to access the login page, redirect to homepage
+      navigate("/");
+    } else if (!access_token && !redirectIfLoggedIn) {
+      // If user is not logged in and tries to access a protected page, redirect to login
+      navigate("/api/user/login");
     }
-  }, [dispatch, authToken, navigate]);
+  }, [access_token, navigate, redirectIfLoggedIn]);
 
-  return authToken ? element : null;
+  // Render the protected component only if conditions are met
+  return (!access_token && redirectIfLoggedIn) ||
+    (access_token && !redirectIfLoggedIn)
+    ? element
+    : null;
 };
 
 export default ProtectedRoute;

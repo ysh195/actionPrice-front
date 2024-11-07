@@ -18,6 +18,7 @@ import {
   Typography,
   Pagination,
   IconButton,
+  Backdrop,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -31,6 +32,7 @@ import ProductListView from "./ProductListView.jsx";
 
 import Favorite_DownloadButton from "./Favorite_DownloadButton.jsx";
 import DateChange from "./DateChange.jsx";
+import CategorySelect from "./CategorySelect.jsx";
 
 const CategoryDetail = () => {
   const { large, middle, small, rank } = useParams();
@@ -49,6 +51,8 @@ const CategoryDetail = () => {
   const [selectedRank, setSelectedRank] = useState(rank || "");
   const [selectedStartDate, setSelectedStartDate] = useState(startDate || "");
   const [selectedEndDate, setSelectedEndDate] = useState(endDate || "");
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
+
   const logined_username = useSelector((state) => state.login.username);
 
   const {
@@ -71,10 +75,6 @@ const CategoryDetail = () => {
     "rank:",
     rank
   );
-
-
-
-
 
   useEffect(() => {
     // Fetching the middle categories based on the large category
@@ -107,32 +107,6 @@ const CategoryDetail = () => {
       );
     }
   }, [selectedLarge, selectedMiddle, small, selectedSmall, dispatch]);
-
-  // useEffect(() => {
-  //   // Fetching the product list based on all selected categories and query parameters
-  //   if (selectedLarge && selectedMiddle && selectedSmall && selectedRank) {
-  //     dispatch(
-  //       fetchProductList({
-  //         large: selectedLarge,
-  //         middle: selectedMiddle,
-  //         small: selectedSmall,
-  //         rank: selectedRank,
-  //         startDate: selectedStartDate,
-  //         endDate: selectedEndDate,
-  //         pageNum: pageNum - 1,
-  //       })
-  //     );
-  //   }
-  // }, [
-  //   selectedLarge,
-  //   selectedMiddle,
-  //   selectedSmall,
-  //   selectedRank,
-  //   selectedStartDate,
-  //   selectedEndDate,
-  //   pageNum,
-  //   dispatch,
-  // ]);
 
   const handleCategoryChange = (type, value) => {
     switch (type) {
@@ -180,14 +154,8 @@ const CategoryDetail = () => {
 
   const handleSearch = () => {
     // Check all conditions before running search
-   
-    if (
-      !selectedLarge ||
-      !selectedMiddle ||
-      !selectedSmall ||
-      !selectedRank 
-  
-    ) {
+
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
     setSearchParams({
@@ -207,6 +175,7 @@ const CategoryDetail = () => {
         pageNum: pageNum - 1, // Adjust for zero-based index
       })
     );
+    setShowDownloadButton(true);
   };
 
   const handleReset = () => {
@@ -241,14 +210,6 @@ const CategoryDetail = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <Container>
-        <CircularProgress />
-      </Container>
-    );
-  }
-
   if (error) {
     return (
       <Container>
@@ -266,6 +227,12 @@ const CategoryDetail = () => {
         gap: 2,
       }}
     >
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Box
         sx={{
           display: "flex",
@@ -274,7 +241,14 @@ const CategoryDetail = () => {
         }}
       >
         {/* Category Selects */}
-        <FormControl sx={{ width: "200px" }} margin="normal">
+        <CategorySelect
+          label="대분류를 선택하세요"
+          value={selectedLarge}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={largeCategoryList}
+          categoryType="large"
+        />
+        {/* <FormControl sx={{ width: "200px" }} margin="normal">
           <InputLabel
             style={{
               transform: selectedLarge
@@ -294,8 +268,15 @@ const CategoryDetail = () => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
-        <FormControl
+        </FormControl> */}
+        <CategorySelect
+          label="중분류를 선택하세요"
+          value={selectedMiddle}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={middleCategoryList}
+          categoryType="middle"
+        />
+        {/* <FormControl
           sx={{ width: "200px" }}
           margin="normal"
           disabled={!selectedLarge}
@@ -319,9 +300,16 @@ const CategoryDetail = () => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
+        <CategorySelect
+          label="소분류를 선택하세요"
+          value={selectedSmall}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={smallCategoryList}
+          categoryType="small"
+        />
 
-        <FormControl
+        {/* <FormControl
           sx={{ width: "200px" }}
           margin="normal"
           disabled={!selectedMiddle}
@@ -345,9 +333,16 @@ const CategoryDetail = () => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
+        <CategorySelect
+          label="등급을 선택하세요"
+          value={selectedRank}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={rankList}
+          categoryType="rank"
+        />
 
-        <FormControl
+        {/* <FormControl
           sx={{ width: "200px" }}
           margin="normal"
           disabled={!selectedSmall}
@@ -371,61 +366,14 @@ const CategoryDetail = () => {
               </MenuItem>
             ))}
           </Select>
-        </FormControl>
+        </FormControl> */}
 
-        {/* Date Selects */}
         <DateChange
           selectedStartDate={selectedStartDate}
           setSelectedStartDate={setSelectedStartDate}
           selectedEndDate={selectedEndDate}
           setSelectedEndDate={setSelectedEndDate}
         />
-        {/* <FormControl sx={{ width: "200px" }} margin="normal">
-          <Typography
-            variant="body2"
-            sx={{
-              position: "absolute",
-              top: -20,
-              fontSize: "0.75rem",
-              color: "text.secondary",
-              transition: "all 0.2s ease",
-            }}
-          >
-            시작일
-          </Typography>
-          <TextField
-            type="date"
-            value={selectedStartDate}
-            // onChange={(e) => setSelectedStartDate(e.target.value)}
-            onChange={handleStartDateChange}
-            error={!!startDateError} // Show error if any
-            helperText={startDateError} // Display the error message
-          />
-        </FormControl>
-
-        <FormControl sx={{ width: "200px" }} margin="normal">
-          <Typography
-            variant="body2"
-            sx={{
-              position: "absolute",
-              top: -20,
-              fontSize: "0.75rem",
-              color: "text.secondary",
-              transition: "all 0.2s ease",
-            }}
-          >
-            종료일
-          </Typography>
-          <TextField
-            type="date"
-            value={selectedEndDate}
-            // onChange={(e) => setSelectedEndDate(e.target.value)}
-            onChange={handleEndDateChange}
-            error={!!endDateError} // Show error if any
-            helperText={endDateError} // Display the error message
-          />
-        </FormControl> */}
-        {/* Action Buttons */}
         <Box
           sx={{
             display: "flex",
@@ -467,6 +415,7 @@ const CategoryDetail = () => {
           logined_username={logined_username}
           selectedStartDate={selectedStartDate}
           selectedEndDate={selectedEndDate}
+          showDownloadButton={showDownloadButton}
         />
       </Box>
       <ProductListView productList={productList} pageNum={pageNum} />

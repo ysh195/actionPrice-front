@@ -32,6 +32,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+//todo: dont allow render search button first
+
 const AdminPage = () => {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams(); //show the current page number in the URL

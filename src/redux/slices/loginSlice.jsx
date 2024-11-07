@@ -1,16 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const initialState = {
-  username: null,
+  username: localStorage.getItem("username") || null,
   isLoading: false,
   isError: false,
   errorMessage: "",
   isLoggedIn: false,
-  access_token: null,
-  role: "",
-  redirectStatus: "",
+  //isLoggedIn: !!localStorage.getItem("access_token"), // Set to true if access token exists
+
+  access_token: localStorage.getItem("access_token") || null,
+  role: localStorage.getItem("role") || null,
+  // redirectStatus: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -21,27 +22,27 @@ export const login = createAsyncThunk(
 
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/login`,
-        formData,
-        // {
-        //   username: formData.username,
-        //   password: formData.password,
-        // },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      // Setting Authorization header globally
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${response.data.access_token}`;
+      const response = await axios.post(`${BASE_URL}/user/login`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
-      if (!response.data.access_token) {
-        return rejectWithValue(
-          "로그인에 실패했습니다. 정보를 확인하세요."
-        );
+      // Get access_token from response
+      const { access_token, username, role } = response.data;
+
+      if (access_token) {
+        // Store token in localStorage and set Authorization header globally
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("username", username);
+        localStorage.setItem("role", role);
+
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${access_token}`;
+      } else {
+        return rejectWithValue("로그인에 실패했습니다. 정보를 확인하세요.");
       }
       console.log("Login Response:", response.data);
       return response.data;
@@ -56,30 +57,32 @@ export const login = createAsyncThunk(
   }
 );
 
-export const goLogin = createAsyncThunk(
-  "user/goLogin",
-  async (navigate, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/user/goLogin`);
+// export const goLogin = createAsyncThunk(
+//   "user/goLogin",
+//   async (navigate, { rejectWithValue }) => {
+//     const access_token = localStorage.getItem("access_token");
 
-         if (response.data.access_token) {
-           return rejectWithValue(
-             " 이미 로그인된 상태입니다."
-           );
-         }
-      if (response.data === "goLogin") {
-        navigate("/api/user/login");
-      }
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response ? error.response.data : "An error occurred"
-      );
-    }
-  }
-);
+//     if (access_token) {
+//       // If access token exists, the user is already logged in, reject and prevent further navigation
+//       return rejectWithValue("이미 로그인된 상태입니다."); // Returning the reject value for already logged-in users
+//     }
+//     try {
+//       const response = await axios.get(`${BASE_URL}/user/goLogin`);
+
+//       if (response.data === "goLogin") {
+//         navigate("/api/user/login");
+//       }
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(
+//         error.response ? error.response.data : "An error occurred"
+//       );
+//     }
+//   }
+// );
 
 //function for logoutUser (POST request) //
+
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
@@ -89,13 +92,9 @@ export const logoutUser = createAsyncThunk(
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {
+        localStorage.clear();
+        axios.defaults.headers.common["Authorization"] = null;
         console.log("Logout successful");
-
-        Cookies.remove("REMEMBERME");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
-
         return response.data;
       } else {
         // Handle unexpected status
@@ -117,10 +116,9 @@ const loginSlice = createSlice({
   reducers: {
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
-
+      console.log("checking if there's token:", access_token);
       const username = localStorage.getItem("username");
 
-      console.log("checking if there's token:", access_token);
       if (access_token) {
         state.isLoggedIn = true;
         state.access_token = access_token;
@@ -135,16 +133,13 @@ const loginSlice = createSlice({
         state.isLoading = true;
         state.isLoggedIn = false;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state) => {
         state.isLoading = false;
         state.isLoggedIn = true;
 
-        state.username = action.payload.username;
-        state.role = action.payload.role;
-        state.access_token = action.payload.access_token;
-        localStorage.setItem("username", action.payload.username);
-        localStorage.setItem("access_token", action.payload.access_token);
-        localStorage.setItem("role", action.payload.role);
+        // state.username = action.payload.username;
+        // state.role = action.payload.role;
+        // state.access_token = action.payload.access_token;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -158,19 +153,19 @@ const loginSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.errorMessage = action.payload; // Set the error message
-      })
-      .addCase(goLogin.pending, (state) => {
-        state.isLoading = true;
-        state.isError = null;
-      })
-      .addCase(goLogin.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.redirectStatus = action.payload; 
-      })
-      .addCase(goLogin.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = action.payload || "An error occurred";
       });
+    // .addCase(goLogin.pending, (state) => {
+    //   state.isLoading = true;
+    //   state.isError = null;
+    // })
+    // .addCase(goLogin.fulfilled, (state, action) => {
+    //   state.isLoading = false;
+    //   state.redirectStatus = action.payload;
+    // })
+    // .addCase(goLogin.rejected, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isError = action.payload || "An error occurred";
+    // });
   },
 });
 

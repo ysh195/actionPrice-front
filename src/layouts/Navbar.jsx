@@ -12,17 +12,15 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-import { goLogin, login, logoutUser } from "../redux/slices/loginSlice";
+import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { colors } from '../assets/assest.js'; 
-
+import { colors } from "../assets/assest.js";
 
 function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
   const { username, role } = useSelector((state) => state.login);
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,12 +44,12 @@ function Navbar() {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/api/user/login");
-      // dispatch(goLogin(navigate));
+    // dispatch(goLogin(navigate));
   };
 
   const handleLogin = () => {
     dispatch(login());
-    navigate("/");
+    navigate("/api/user/login");
   };
 
   return (
@@ -223,11 +221,8 @@ function Navbar() {
               </Box>
             </Box>
           ) : (
-            
             <Button
-              component={Link}
-              to="/api/user/login"
-              // onClick={handleLogin}
+              onClick={handleLogin}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               로그인

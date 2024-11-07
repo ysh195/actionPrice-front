@@ -11,6 +11,7 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api";
+const access_Token = localStorage.getItem("access_token");
 
 //function: create Favorite //
 export const createFavorite = createAsyncThunk(
@@ -19,13 +20,13 @@ export const createFavorite = createAsyncThunk(
     { large, middle, small, rank, logined_username, favorite_name },
     { rejectWithValue }
   ) => {
+     if (!access_Token) {
+       alert("You need to log in to write a post.");
+       return rejectWithValue("User not logged in");
+     }
+
     try {
-      const access_Token = localStorage.getItem("access_token");
-      if (!access_Token) {
-        alert("You need to log in to write a post.");
-        return rejectWithValue("User not logged in");
-      }
-      const response = await axios.post(
+           const response = await axios.post(
         `${API_URL}/category/${large}/${middle}/${small}/${rank}/favorite`,
         { logined_username, favorite_name },
         {
@@ -52,7 +53,14 @@ export const deleteFavorite = createAsyncThunk(
   async (favoriteId, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`
+        `${API_URL}/category/favorite/${favoriteId}/delete`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       if (response.data.status === "success") {
         return favoriteId; // Return favoriteId for updating the state
@@ -73,7 +81,14 @@ export const fetchFavoriteList = createAsyncThunk(
   async (username, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${API_URL}/mypage/${username}/wishlist`
+        `${API_URL}/mypage/${username}/wishlist`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       console.log("fetchFavoriteList:", response.data);
 

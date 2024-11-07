@@ -9,6 +9,7 @@ const initialState = {
 };
 
 const baseUrl = "http://localhost:8080/api/admin";
+const access_Token = localStorage.getItem("access_token");
 
 //function for fetchUserList //
 export const fetchUserList = createAsyncThunk(
@@ -16,7 +17,13 @@ export const fetchUserList = createAsyncThunk(
   async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${baseUrl}/userlist`, {
-        params: { pageNum, keyword }, // Using params to build the query string
+        params: { pageNum, keyword },
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        // Using params to build the query string
       });
       console.log("fetchUserList:", response.data);
       return response.data;

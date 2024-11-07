@@ -1,12 +1,19 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react'
-import { createFavorite } from '../../redux/slices/favoriteSlice';
-import { useDispatch } from 'react-redux';
-import { IconButton, Modal, Box, TextField, Button } from "@mui/material";
-import BookmarksIcon from "@mui/icons-material/Bookmarks";
-import { downloadExcel } from '../../redux/slices/categorySlice';
+import React, { useState } from "react";
+import { createFavorite } from "../../redux/slices/favoriteSlice";
+import { useDispatch } from "react-redux";
+import {
+  IconButton,
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Typography,
+} from "@mui/material";
+// import BookmarksIcon from "@mui/icons-material/Bookmarks";
+import { downloadExcel } from "../../redux/slices/categorySlice";
 import GetAppIcon from "@mui/icons-material/GetApp";
-
+import StarsIcon from "@mui/icons-material/Stars";
 
 const Favorite_DownloadButton = ({
   selectedLarge,
@@ -16,21 +23,21 @@ const Favorite_DownloadButton = ({
   logined_username,
   selectedStartDate,
   selectedEndDate,
-  productList,
+  showDownloadButton,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [favorite_name, setFavorite_name] = useState("");
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
   const dispatch = useDispatch();
 
-    useEffect(() => {
-      // Update visibility of download button if the productList has items
-      if (productList && productList.length > 0) {
-        setShowDownloadButton(true);
-      } else {
-        setShowDownloadButton(false);
-      }
-    }, [productList]);
+  const commonButtonStyles = {
+    color: "green",
+    "&:hover": {
+      backgroundColor: "transparent", // No hover effect
+    },
+    "&:focus": {
+      outline: "none", // Remove focus outline
+    },
+  };
 
   const handleFavoriteNameChange = (event) => {
     setFavorite_name(event.target.value);
@@ -39,6 +46,9 @@ const Favorite_DownloadButton = ({
   const handleAddFavorite = () => {
     if (favorite_name.trim() === "") {
       alert("Please enter a name for your favorite item.");
+      return;
+    }
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
 
@@ -53,7 +63,7 @@ const Favorite_DownloadButton = ({
       })
     );
 
-    setFavorite_name(""); 
+    setFavorite_name("");
     setModalOpen(false);
   };
 
@@ -72,77 +82,100 @@ const Favorite_DownloadButton = ({
   };
 
   return (
-    <Box>
-      {/* Add to Favorites Icon Button */}
-      <IconButton
-        onClick={() => setModalOpen(true)}
-        color="primary"
-        sx={{
-          color: "green", // Inherit color from parent
-          "&:hover": {
-            backgroundColor: "transparent", // No hover effect
-          },
-          "&:focus": {
-            outline: "none", // Remove focus outline
-          },
-        }}
-      >
-        <BookmarksIcon fontSize="large" sx={{ color: "green", mr: 2 }} />
-        <span style={{ color: "green" }}>찜하기</span>
-      </IconButton>
-
-      {/* Modal for Adding Favorite */}
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="add-favorite-modal"
-        aria-describedby="modal-to-add-favorite-name"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-            width: 300, // Adjust width as needed
-          }}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        gap: 1,
+        justifyContent: "flex-end",
+        width: "100%",
+      }}
+    >
+      {/* {showDownloadButton && ( */}
+      <>
+        <IconButton
+          onClick={() => setModalOpen(true)}
+          color="primary"
+          sx={commonButtonStyles}
         >
-          <h2 id="add-favorite-modal">Add to Favorites</h2>
-          <TextField
-            label="Favorite Name"
-            value={favorite_name}
-            onChange={handleFavoriteNameChange}
-            size="small"
-            variant="outlined"
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddFavorite}
+          <StarsIcon fontSize="medium" sx={{ color: "tomato", mr: 0.5 }} />
+          <span style={{ fontSize: "medium", color: "tomato" }}>즐겨찾기</span>
+        </IconButton>
+
+        {/* Modal for Adding Favorite */}
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          aria-labelledby="add-favorite-modal"
+          aria-describedby="modal-to-add-favorite-name"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+              width: 350,
+              maxWidth: 400,
+              minWidth: 250,
+            }}
           >
-            추가
-          </Button>
-        </Box>
-      </Modal>
-      {/* Download button */}
-      {showDownloadButton && (
+            <Typography
+              variant="h6"
+              component="h2"
+              sx={{ textAlign: "center", marginBottom: 2 }}
+            >
+              즐겨찾기 목록 추가
+            </Typography>
+
+            <TextField
+              label="즐겨찾기 이름"
+              value={favorite_name}
+              onChange={handleFavoriteNameChange}
+              size="small"
+              variant="outlined"
+              fullWidth
+              sx={{ marginBottom: 2 }}
+            />
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddFavorite}
+              sx={{
+                alignSelf: "center",
+                paddingX: 4,
+                fontWeight: "bold",
+                borderRadius: 1,
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              }}
+            >
+              추가
+            </Button>
+          </Box>
+        </Modal>
+
+        {/* Download Excel button */}
         <IconButton
           onClick={handleDownloadExcel}
           color="primary"
           aria-label="Download Excel"
-          sx={{ color: "green", display: "flex", alignItems: "center" }} 
+          sx={commonButtonStyles}
         >
-          <GetAppIcon fontSize="large" sx={{ color: "green", mr: 1 }} />
-          <span style={{ color: "green" }}>Excel</span>
+          <GetAppIcon fontSize="medium" sx={{ color: "tomato", mr: 0.5 }} />
+          <span style={{ fontSize: "medium", color: "tomato" }}>Excel</span>
         </IconButton>
-      )}
+      </>
+      {/* )} */}
     </Box>
   );
 };

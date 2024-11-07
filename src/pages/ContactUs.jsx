@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Pagination,
+  Backdrop,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../redux/slices/postSlice";
@@ -47,13 +48,7 @@ const ContactUs = () => {
   };
 
   // Render loading spinner
-  if (loading) {
-    return (
-      <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
-        <CircularProgress />
-      </Paper>
-    );
-  }
+
 
   // Render error message
   if (error) {
@@ -66,6 +61,12 @@ const ContactUs = () => {
 
   return (
     <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <img
         src={logo}
         alt="Logo"

@@ -56,7 +56,14 @@ export const checkEmailDup = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/user/checkForDuplicateEmail`,
-        { email }
+        { email },
+        {
+          headers: {
+            //todo:if error delete headers
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       console.log("email response:", response);
       return response.data; // Assuming the API returns a message

@@ -12,6 +12,7 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api/post";
+const access_Token = localStorage.getItem("access_token");
 
 //function: createComment //
 export const createComment = createAsyncThunk(
@@ -23,6 +24,7 @@ export const createComment = createAsyncThunk(
         { username, content },
         {
           headers: {
+            Authorization: `Bearer ${access_Token}`,
             "Content-Type": "application/json",
             Accept: "application/json",
           },
@@ -46,6 +48,13 @@ export const updateComment = createAsyncThunk(
         {
           username,
           content,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
         }
       );
       console.log("updateComment response:", response);
@@ -66,7 +75,14 @@ export const deleteComment = createAsyncThunk(
     try {
       const response = await axios.post(
         `${API_URL}/${postId}/detail/${commentId}/delete`,
-        { username }
+        { username },
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       console.log("deleteComment response:", response.data);
       return response.data;
@@ -81,10 +97,15 @@ export const deleteComment = createAsyncThunk(
 //function: fetchComments //
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
-  async ({ postId, page=0, size=10 }, { rejectWithValue }) => {
+  async ({ postId, page = 0, size = 10 }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/comments`, {
         params: { postId, page, size },
+
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       });
       console.log("fetchComments response:", response.data);
       return response.data;
@@ -101,7 +122,15 @@ export const fetchAdminAnswers = createAsyncThunk(
   "comments/fetchAdminAnswers",
   async ({ postId, answertype }) => {
     const response = await axios.get(
-      `/api/comments/${postId}/comment/admin/${answertype}`
+      `/api/comments/${postId}/comment/admin/${answertype}`,
+      {
+        //todo: check the header
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
     );
     console.log("fetchAdminAnswers response:", response.data);
     return response.data; // Assuming the response data is an array of comments

@@ -26,7 +26,12 @@ export const checkUserExists = createAsyncThunk(
       const response = await axios.post(`${BASE_URL}/user/checkUserExists`, {
         username,
       });
-      console.log("checkUserExists response:", response.data);
+      console.log("checkUserExists response:", response.data, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -46,7 +51,13 @@ export const sendVerificationCodeForChangingPW = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/user/sendVerificationCodeForChangingPW`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
       );
       return response.data; // Success message from the server
     } catch (error) {
@@ -68,10 +79,20 @@ export const changePassword = createAsyncThunk(
   "user/changePassword",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/user/changePassword`, {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/user/changePassword`,
+        {
+          username,
+          password,
+        },
+        {
+          headers: {
+            //todo" if error, delete header
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
       return response.data; // Expecting a success message if password change is successful
     } catch (error) {
       return rejectWithValue("Changing password failed. Please try again.");

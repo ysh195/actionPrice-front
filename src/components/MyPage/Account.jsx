@@ -5,21 +5,19 @@ import { useDispatch } from "react-redux";
 import { deleteAccount, getPersonalInfo } from "../../redux/slices/userSlice";
 
 import Swal from "sweetalert2";
-import { goLogin } from "../../redux/slices/loginSlice";
+
 import { useNavigate } from "react-router-dom";
 
 const Account = ({ username, email }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-  console.log("checking username in account:", username)
+  console.log("checking username in account:", username);
 
   useEffect(() => {
     if (username) {
       console.log("username:", username);
       dispatch(getPersonalInfo(username));
-      
     }
   }, [dispatch, username]);
 
@@ -33,7 +31,7 @@ const Account = ({ username, email }) => {
       confirmButtonText: "삭제하기",
       cancelButtonText: "취소",
     });
- 
+
     if (confirmation.isConfirmed) {
       const result = await dispatch(deleteAccount(username));
       if (deleteAccount.fulfilled.match(result)) {
@@ -42,8 +40,8 @@ const Account = ({ username, email }) => {
           icon: "success",
           timer: 3000,
         });
-        // navigate("/api/user/login");
-              dispatch(goLogin(navigate));
+        navigate("/api/user/login");
+        //  dispatch(goLogin(navigate));
       } else {
         Swal.fire({
           icon: "error",
