@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect } from "react";
@@ -41,7 +42,7 @@ const Account = ({ username, email }) => {
           timer: 3000,
         });
         navigate("/api/user/login");
-        //  dispatch(goLogin(navigate));
+        
       } else {
         Swal.fire({
           icon: "error",

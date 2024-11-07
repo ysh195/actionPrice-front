@@ -44,11 +44,10 @@ function Navbar() {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/api/user/login");
-    // dispatch(goLogin(navigate));
+
   };
 
   const handleLogin = () => {
-    dispatch(login());
     navigate("/api/user/login");
   };
 
@@ -221,12 +220,13 @@ function Navbar() {
               </Box>
             </Box>
           ) : (
-            <Button
-              onClick={handleLogin}
+            <Link
+            to={"/api/user/login"}
+              // onClick={handleLogin}
               sx={{ my: 2, color: "white", display: "block" }}
             >
               로그인
-            </Button>
+            </Link>
           )}
         </Toolbar>
       </Container>

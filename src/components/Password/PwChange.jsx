@@ -158,7 +158,6 @@ const PwChange = () => {
         timer: 2000,
       });
       navigate("/api/user/login");
-      //dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -166,10 +165,6 @@ const PwChange = () => {
       });
     }
   };
-
-  // const handleGoLogin = () => {
-  //   dispatch(goLogin(navigate));
-  // };
 
   return (
     <Container
@@ -356,19 +351,6 @@ const PwChange = () => {
           <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
             계장이 있으신가요?
           </Typography>
-          {/* <Button
-            onClick={handleGoLogin}
-            sx={{
-              color: colors.button2,
-              fontSize: "0.8rem",
-              padding: 0,
-              "&:hover": {
-                backgroundColor: "transparent", // Removes hover background color
-              },
-            }}
-          >
-            로그인 하세요
-          </Button> */}
 
           <Link
             to="/api/user/login"

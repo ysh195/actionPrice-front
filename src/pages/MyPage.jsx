@@ -62,7 +62,7 @@ const MyPage = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/api/user/login");
-    //  dispatch(goLogin(navigate));
+
   };
 
   return (
