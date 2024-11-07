@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const initialState = {
   username: null,
@@ -24,10 +23,7 @@ export const login = createAsyncThunk(
       const response = await axios.post(
         `${BASE_URL}/user/login`,
         formData,
-        // {
-        //   username: formData.username,
-        //   password: formData.password,
-        // },
+
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -39,9 +35,7 @@ export const login = createAsyncThunk(
       ] = `Bearer ${response.data.access_token}`;
 
       if (!response.data.access_token) {
-        return rejectWithValue(
-          "로그인에 실패했습니다. 정보를 확인하세요."
-        );
+        return rejectWithValue("로그인에 실패했습니다. 정보를 확인하세요.");
       }
       console.log("Login Response:", response.data);
       return response.data;
@@ -56,30 +50,32 @@ export const login = createAsyncThunk(
   }
 );
 
-export const goLogin = createAsyncThunk(
-  "user/goLogin",
-  async (navigate, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/user/goLogin`);
+// export const goLogin = createAsyncThunk(
+//   "user/goLogin",
+//   async (navigate, { rejectWithValue }) => {
+//     const access_token = localStorage.getItem("access_token");
 
-         if (response.data.access_token) {
-           return rejectWithValue(
-             " 이미 로그인된 상태입니다."
-           );
-         }
-      if (response.data === "goLogin") {
-        navigate("/api/user/login");
-      }
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response ? error.response.data : "An error occurred"
-      );
-    }
-  }
-);
+//     if (access_token) {
+//       // If access token exists, the user is already logged in, reject and prevent further navigation
+//       return rejectWithValue("이미 로그인된 상태입니다."); // Returning the reject value for already logged-in users
+//     }
+//     try {
+//       const response = await axios.get(`${BASE_URL}/user/goLogin`);
+
+//       if (response.data === "goLogin") {
+//         navigate("/api/user/login");
+//       }
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(
+//         error.response ? error.response.data : "An error occurred"
+//       );
+//     }
+//   }
+// );
 
 //function for logoutUser (POST request) //
+
 export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
@@ -89,13 +85,9 @@ export const logoutUser = createAsyncThunk(
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {
+        localStorage.clear();
+        axios.defaults.headers.common["Authorization"] = null;
         console.log("Logout successful");
-
-        Cookies.remove("REMEMBERME");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
-
         return response.data;
       } else {
         // Handle unexpected status
@@ -117,7 +109,6 @@ const loginSlice = createSlice({
   reducers: {
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
-
       const username = localStorage.getItem("username");
 
       console.log("checking if there's token:", access_token);
@@ -158,19 +149,19 @@ const loginSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.errorMessage = action.payload; // Set the error message
-      })
-      .addCase(goLogin.pending, (state) => {
-        state.isLoading = true;
-        state.isError = null;
-      })
-      .addCase(goLogin.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.redirectStatus = action.payload; 
-      })
-      .addCase(goLogin.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = action.payload || "An error occurred";
       });
+    // .addCase(goLogin.pending, (state) => {
+    //   state.isLoading = true;
+    //   state.isError = null;
+    // })
+    // .addCase(goLogin.fulfilled, (state, action) => {
+    //   state.isLoading = false;
+    //   state.redirectStatus = action.payload;
+    // })
+    // .addCase(goLogin.rejected, (state, action) => {
+    //   state.isLoading = false;
+    //   state.isError = action.payload || "An error occurred";
+    // });
   },
 });
 

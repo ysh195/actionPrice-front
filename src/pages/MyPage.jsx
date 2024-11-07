@@ -8,9 +8,10 @@ import {
   Avatar,
   Pagination,
 } from "@mui/material";
+
 import { colors } from "../assets/assest";
 import { useDispatch, useSelector } from "react-redux";
-import { goLogin, logoutUser } from "../redux/slices/loginSlice";
+import { logoutUser } from "../redux/slices/loginSlice";
 import {
   useNavigate,
   useParams,
@@ -30,19 +31,18 @@ const MyPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
-  
+
   const { username } = useParams();
   const { myPosts, email } = useSelector((state) => state.user);
   const { favoriteList } = useSelector((state) => state.category);
-  
-    // const handleSearch = (searchKeyword) => {
-    //   setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword
-    //   dispatch(fetchPosts({ pageNum: 0, keyword: searchKeyword }));
-    // };
-    // const handleResetSearch = () => {
-    //   setSearchParams({ pageNum: 1 }); // Reset to the first page
-    // };
 
+  // const handleSearch = (searchKeyword) => {
+  //   setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword
+  //   dispatch(fetchPosts({ pageNum: 0, keyword: searchKeyword }));
+  // };
+  // const handleResetSearch = () => {
+  //   setSearchParams({ pageNum: 1 }); // Reset to the first page
+  // };
 
   useEffect(() => {
     // Update URL based on the active tab
@@ -61,9 +61,8 @@ const MyPage = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    // navigate("/api/user/login");
-       dispatch(goLogin(navigate));
-
+    navigate("/api/user/login");
+    //  dispatch(goLogin(navigate));
   };
 
   return (
@@ -145,10 +144,7 @@ const MyPage = () => {
             path="personalinfo"
             element={<Account username={username} email={email} />}
           />
-          <Route
-            path="wishlist"
-            element={<Favorites username={username} />}
-          />
+          <Route path="wishlist" element={<Favorites username={username} />} />
           <Route
             path="myposts"
             element={

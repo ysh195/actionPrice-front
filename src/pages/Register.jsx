@@ -25,7 +25,7 @@ import {
 } from "@mui/material";
 import { colors } from "../assets/assest";
 
-import { goLogin } from "../redux/slices/loginSlice";
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -186,8 +186,8 @@ const Register = () => {
         timer: 2000,
         showConfirmButton: false,
       });
-      // navigate("/api/user/login");
-      dispatch(goLogin(navigate));
+      navigate("/api/user/login");
+      //dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -197,9 +197,9 @@ const Register = () => {
     }
   };
 
-  const handleGoLogin = () => {
-    dispatch(goLogin(navigate));
-  };
+  // const handleGoLogin = () => {
+  //   dispatch(goLogin(navigate));
+  // };
 
   return (
     <Container
@@ -393,7 +393,7 @@ const Register = () => {
           <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
             계장이 있으신가요?
           </Typography>
-          <Button
+          {/* <Button
             onClick={handleGoLogin}
             sx={{
               color: colors.button2,
@@ -405,13 +405,13 @@ const Register = () => {
             }}
           >
             로그인 하세요
-          </Button>
-          {/* <Link
+          </Button> */}
+          <Link
             to="/api/user/login"
             style={{ color: colors.button2, fontSize: "0.8rem" }}
           >
             로그인 하세요
-          </Link> */}
+          </Link>
         </Box>
       </Card>
     </Container>

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
-import { FormControl, TextField, Typography} from "@mui/material";
+import { Box, FormControl, TextField, Typography } from "@mui/material";
 import Swal from "sweetalert2"; // Import SweetAlert
 
 const DateChange = ({
@@ -35,8 +35,6 @@ const DateChange = ({
   const handleStartDateChange = (e) => {
     const newStartDate = e.target.value;
     setSelectedStartDate(newStartDate);
-    // Validate the new start date
-
     // Ensure end date is valid after start date change
     validateEndDate(newStartDate, selectedEndDate);
   };
@@ -49,8 +47,8 @@ const DateChange = ({
   };
 
   return (
-    <div>
-      <FormControl sx={{ width: "200px" }} margin="normal">
+    <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+      <FormControl margin="normal">
         <Typography
           variant="body2"
           sx={{
@@ -67,8 +65,8 @@ const DateChange = ({
           type="date"
           value={selectedStartDate}
           onChange={handleStartDateChange}
-          InputProps={{
-            inputProps: { max: today }, // Disable future dates
+          inputProps={{
+            max: today, // Disable future dates
           }}
         />
       </FormControl>
@@ -90,10 +88,12 @@ const DateChange = ({
           type="date"
           value={selectedEndDate}
           onChange={handleEndDateChange}
-          inputProps={{ max: today }}
+          inputProps={{
+            max: today, // Disable future dates
+          }}
         />
       </FormControl>
-    </div>
+    </Box>
   );
 };
 

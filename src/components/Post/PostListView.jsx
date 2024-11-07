@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
-import { styled } from "@mui/material";
+import { Backdrop, styled } from "@mui/material";
 import { useSelector } from "react-redux";
 import { colors } from "../../assets/assest";
 
@@ -23,8 +23,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 16,
   },
 }));
-
-const PostListView = ({ postList }) => {
+//any potential issues if postList is undefined by initializing it to an empty array.
+const PostListView = ({ postList=[] }) => {
   const logined_username = useSelector((state) => state.login.username);
   const role = useSelector((state) => state.login.role);
 
@@ -61,8 +61,8 @@ const PostListView = ({ postList }) => {
                     logined_username !== post.username &&
                     role !== "ROLE_ADMIN" ? (
                       <span style={{ display: "flex", alignItems: "center" }}>
-                        <LockIcon style={{ marginRight: 4 }} />
-                        비밀 글입니다.
+                        <LockIcon style={{ marginRight: 5 }} /> 비밀
+                        글입니다.
                       </span>
                     ) : (
                       <Link

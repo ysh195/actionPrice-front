@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import { colors } from "../../assets/assest.js";
 import { verifyCode } from "../../redux/slices/verificationSlice";
-import { goLogin } from "../../redux/slices/loginSlice.jsx";
 import {
   checkUserExists,
   sendVerificationCodeForChangingPW,
@@ -159,8 +158,8 @@ const PwChange = () => {
         text: "비밀번호가 성공적으로 변경되었습니다.",
         timer: 2000,
       });
-      // navigate("/api/user/login");
-      dispatch(goLogin(navigate));
+      navigate("/api/user/login");
+      //dispatch(goLogin(navigate));
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -169,9 +168,9 @@ const PwChange = () => {
     }
   };
 
-  const handleGoLogin = () => {
-    dispatch(goLogin(navigate));
-  };
+  // const handleGoLogin = () => {
+  //   dispatch(goLogin(navigate));
+  // };
 
   return (
     <Container
@@ -358,7 +357,7 @@ const PwChange = () => {
           <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
             계장이 있으신가요?
           </Typography>
-          <Button
+          {/* <Button
             onClick={handleGoLogin}
             sx={{
               color: colors.button2,
@@ -370,14 +369,14 @@ const PwChange = () => {
             }}
           >
             로그인 하세요
-          </Button>
+          </Button> */}
 
-          {/* <Link
+          <Link
             to="/api/user/login"
             style={{ color: colors.button2, fontSize: "0.8rem" }}
           >
             로그인 하세요
-          </Link> */}
+          </Link>
         </Box>
       </Card>
     </Container>

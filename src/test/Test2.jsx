@@ -13,7 +13,7 @@ import Button from "@mui/material/Button";
 
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-import { goLogin, login, logoutUser } from "../redux/slices/loginSlice";
+import { login, logoutUser } from "../redux/slices/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "../assets/assest";
 
@@ -36,8 +36,8 @@ function Navbar() {
   const handleLogout = () => {
     dispatch(logoutUser());
     setUserMenuOpen(false);
-    // navigate("/api/user/login");
-       dispatch(goLogin(navigate));
+    navigate("/api/user/login");
+      //  dispatch(goLogin(navigate));
   };
 
   const handleLogin = () => {

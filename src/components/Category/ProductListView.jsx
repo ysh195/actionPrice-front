@@ -28,23 +28,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const ProductListView = ({ productList, pageNum }) => {
   const itemsPerPage = 10;
 
- const formatToKoreanWon = (price) => {
-   return new Intl.NumberFormat("ko-KR", {
-     style: "currency",
-     currency: "KRW",
-     minimumFractionDigits: 0, // No decimal places for KRW
-   }).format(price);
- };
- const formatDate = (date) => {
-   const d = new Date(date);
-   return d.toISOString().split("T")[0]; // yyyy-mm-dd format
- };
+  const formatToKoreanWon = (price) => {
+    return new Intl.NumberFormat("ko-KR", {
+      style: "currency",
+      currency: "KRW",
+      minimumFractionDigits: 0, // No decimal places for KRW
+    }).format(price);
+  };
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+  };
 
   return (
     <Paper sx={{ width: "100%" }}>
-      <TableContainer
-       
-      >
+      <TableContainer>
         <Table aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -66,12 +64,7 @@ const ProductListView = ({ productList, pageNum }) => {
                   <TableCell>
                     {(pageNum - 1) * itemsPerPage + index + 1}
                   </TableCell>
-
-                  {/* <TableCell>
-                    {new Date(product.delDate).toLocaleDateString()}
-                  </TableCell> */}
                   <TableCell>{formatDate(product.delDate)}</TableCell>
-
                   <TableCell>{product.market_name}</TableCell>
                   <TableCell>{product.large}</TableCell>
                   <TableCell>{product.middle}</TableCell>
