@@ -7,24 +7,24 @@ import { useNavigate } from "react-router-dom";
 
 const ProtectedRoute = ({ element, redirectIfLoggedIn = false }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const authToken =
+
+  const access_token =
     useSelector((state) => state.login.access_token) ||
     localStorage.getItem("access_token");
 
   useEffect(() => {
-    if (authToken && redirectIfLoggedIn) {
+    if (access_token && redirectIfLoggedIn) {
       // If user is logged in and tries to access the login page, redirect to homepage
       navigate("/");
-    } else if (!authToken && !redirectIfLoggedIn) {
+    } else if (!access_token && !redirectIfLoggedIn) {
       // If user is not logged in and tries to access a protected page, redirect to login
       navigate("/api/user/login");
     }
-  }, [authToken, navigate, redirectIfLoggedIn]);
+  }, [access_token, navigate, redirectIfLoggedIn]);
 
   // Render the protected component only if conditions are met
-  return (!authToken && redirectIfLoggedIn) ||
-    (authToken && !redirectIfLoggedIn)
+  return (!access_token && redirectIfLoggedIn) ||
+    (access_token && !redirectIfLoggedIn)
     ? element
     : null;
 };

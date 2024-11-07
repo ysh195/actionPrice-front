@@ -2,14 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  username: null,
+  username: localStorage.getItem("username") || null,
   isLoading: false,
   isError: false,
   errorMessage: "",
   isLoggedIn: false,
-  access_token: null,
-  role: "",
-  redirectStatus: "",
+  //isLoggedIn: !!localStorage.getItem("access_token"), // Set to true if access token exists
+
+  access_token: localStorage.getItem("access_token") || null,
+  role: localStorage.getItem("role") || null,
+  // redirectStatus: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -20,21 +22,26 @@ export const login = createAsyncThunk(
 
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/login`,
-        formData,
+      const response = await axios.post(`${BASE_URL}/user/login`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
 
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-      // Setting Authorization header globally
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${response.data.access_token}`;
+      // Get access_token from response
+      const { access_token, username, role } = response.data;
 
-      if (!response.data.access_token) {
+      if (access_token) {
+        // Store token in localStorage and set Authorization header globally
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("username", username);
+        localStorage.setItem("role", role);
+
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${access_token}`;
+      } else {
         return rejectWithValue("로그인에 실패했습니다. 정보를 확인하세요.");
       }
       console.log("Login Response:", response.data);
@@ -109,9 +116,9 @@ const loginSlice = createSlice({
   reducers: {
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
+      console.log("checking if there's token:", access_token);
       const username = localStorage.getItem("username");
 
-      console.log("checking if there's token:", access_token);
       if (access_token) {
         state.isLoggedIn = true;
         state.access_token = access_token;
@@ -126,16 +133,13 @@ const loginSlice = createSlice({
         state.isLoading = true;
         state.isLoggedIn = false;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state) => {
         state.isLoading = false;
         state.isLoggedIn = true;
 
-        state.username = action.payload.username;
-        state.role = action.payload.role;
-        state.access_token = action.payload.access_token;
-        localStorage.setItem("username", action.payload.username);
-        localStorage.setItem("access_token", action.payload.access_token);
-        localStorage.setItem("role", action.payload.role);
+        // state.username = action.payload.username;
+        // state.role = action.payload.role;
+        // state.access_token = action.payload.access_token;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

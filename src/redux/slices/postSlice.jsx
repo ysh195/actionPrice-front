@@ -14,18 +14,19 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api";
+const access_Token = localStorage.getItem("access_token");
 
 //function: createPost //
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
     console.log("slice post data:", postData);
+    if (!access_Token) {
+      console.log("there is no access token:", access_Token);
+      alert("You need to log in to write a post.");
+      return rejectWithValue("User not logged in");
+    }
     try {
-      const access_Token = localStorage.getItem("access_token");
-      if (!access_Token) {
-        alert("You need to log in to write a post.");
-        return rejectWithValue("User not logged in");
-      }
       const response = await axios.post(`${API_URL}/post/create`, postData, {
         headers: {
           Authorization: `Bearer ${access_Token}`,
@@ -49,6 +50,11 @@ export const fetchPosts = createAsyncThunk(
     try {
       const response = await axios.get(`${API_URL}/post/list`, {
         params: { pageNum, keyword },
+        headers: {
+          //todo: check header
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       });
       console.log("Fetched posts:", response.data);
       return response.data;
@@ -59,12 +65,21 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+//TODO: CHECK IF THE HEADERS IS CORRECT
+
 //function: fetchPostForUpdate //
 export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
     const response = await axios.get(
-      `${API_URL}/post/${postId}/update/${username}`
+      `${API_URL}/post/${postId}/update/${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
     );
     return response.data;
   }
@@ -77,22 +92,21 @@ export const fetchPostById = createAsyncThunk(
     try {
       const response = await axios.get(`${API_URL}/post/${postId}/detail`, {
         params: { page },
+        headers: {
+          //todo: check header
+          // Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       });
       console.log("fetchPostById response:", response);
       return response.data;
-      //     .catch(error => {
-      //   if (error.response && error.response.status === 403) {
-      //     Swal.fire({
-      //       icon: 'error',
-      //       title: '접근 금지',
-      //       text: '비밀 글입니다. 접근 권한이 없습니다.',
-      //     });
-      //     navigate('/some-safe-page'); // Redirect to a safe page if needed
-      //   }
-      // });
     } catch (error) {
-      console.error("Error fetching post by ID:", error); // Log the error
-      return rejectWithValue(error.response.data);
+      console.error("Error fetching post by ID:", error);
+      if (error.response && error.response.status === 403) {
+        return rejectWithValue("접근 권한이 없습니다");
+      }
+      return rejectWithValue(error.response?.data || "An error occurred");
     }
   }
 );
@@ -102,7 +116,6 @@ export const deletePost = createAsyncThunk(
   async ({ postId, logined_username }, { rejectWithValue }) => {
     console.log("Post ID:", postId, "Logged-in Username:", logined_username);
     try {
-      const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to update a post.");
         return;
@@ -132,7 +145,6 @@ export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
     try {
-      const access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to update a post.");
         return;

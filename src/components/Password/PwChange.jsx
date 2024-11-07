@@ -41,7 +41,6 @@ const PwChange = () => {
     passwordChangeStatus,
     passwordChangeMessage,
   } = useSelector((state) => state.pwChange);
-  const redirectStatus = useSelector((state) => state.login.redirectStatus);
 
   const [formData, setFormData] = useState({
     username: "",
