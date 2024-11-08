@@ -11,6 +11,8 @@ import TableRow from "@mui/material/TableRow";
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
 import { styled } from "@mui/material";
+import { format } from "date-fns";
+
 
 import { colors } from "../../assets/assest";
 
@@ -25,17 +27,21 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 //any potential issues if postList is undefined by initializing it to an empty array.
 const PostListView = ({ postList = [] }) => {
-  // const logined_username = useSelector((state) => state.login.username);
+
   const logined_username = localStorage.getItem("username");
-  // const role = useSelector((state) => state.login.role);
   const role = localStorage.getItem("role");
 
   console.log("check postList in PostList component:", postList);
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    return d.toISOString().split("T")[0]; // yyyy-mm-dd format
-  };
+ 
+const formatDate = (date) => {
+  try {
+    return format(new Date(date), "yyyy-MM-dd"); // Format as 'yyyy-mm-dd'
+  } catch (error) {
+    console.error("Error formatting date:", error);
+    return "Invalid Date"; // Fallback message if error occurs
+  }
+};
 
   return (
     <Paper sx={{ width: "100%" }}>

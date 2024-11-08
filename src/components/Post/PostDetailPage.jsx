@@ -3,7 +3,13 @@ import React, { useEffect, Suspense, lazy, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { fetchPostById } from "../../redux/slices/postSlice";
-import { Box, CircularProgress, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Paper,
+  Typography,
+} from "@mui/material";
 import CreateCommentForm from "../Comment/CreateCommentForm";
 import { CommentList } from "../Comment/CommentList";
 
@@ -13,7 +19,6 @@ const PostActions = React.memo(lazy(() => import("./PostActions")));
 
 const PostDetailPage = () => {
   const { postId } = useParams();
-  console.log("Post ID:", postId);
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
@@ -21,6 +26,7 @@ const PostDetailPage = () => {
   const navigate = useNavigate();
   const { post, loading, error } = useSelector((state) => state.post);
 
+  console.log("PostDetailPage is rendered");
   useEffect(() => {
     if (!postId) return; // Early return if no postId
     dispatch(fetchPostById({ postId, page: page - 1 }));
@@ -31,25 +37,36 @@ const PostDetailPage = () => {
     navigate(`/api/post/${postId}/update/${post?.username}`);
   };
 
-  if (loading) return <CircularProgress />;
+  // if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
 
   return (
-    <Suspense fallback={<CircularProgress />}>
-      <Box
+    <Suspense fallback={loading ? <CircularProgress /> : null}>
+      <Container
         sx={{
-          width: "80%",
+          height: "100vh",
           margin: "auto",
-          marginTop: "30px",
-          padding: 2,
-          textAlign: "center",
-          boxShadow: 2,
-          backgroundColor: "white",
-          border: "1px solid blue",
+          marginTop: "10px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          backgroundColor: "#fff",
         }}
       >
-        <Box sx={{ marginBottom: 3 }}>
-          {/* <Paper sx={{ padding: 2,}}> */}
+        {/* Post section */}
+        <Box
+          sx={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1,
+            width: "100%",
+            padding: "20px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            backgroundColor: "#fff", // Ensure background color remains intact
+          }}
+        >
+          <Box sx={{ padding: 3, border: "1px solid #e0e0e0" }}>
             <PostHeader
               title={post.title}
               post_owner={post.username}
@@ -62,18 +79,29 @@ const PostDetailPage = () => {
               post_owner={post.username}
               onEdit={handleEdit}
             />
-          {/* </Paper> */}
+            <CreateCommentForm postId={postId} />
+          </Box>
         </Box>
-        <Paper sx={{ padding: 2, border: "1px solid pink" }}>
-          <section>
-            <div className="mt-4">
-              <CreateCommentForm postId={postId} />
-              <CommentList postId={postId} />
-            </div>
-          </section>
-        </Paper>
-      </Box>
-    </Suspense>
+
+        {/* Comments section */}
+        <Box
+          sx={{
+            padding: 3,
+            width: "100%",
+            maxHeight: "600px", // Limit the height of comments section
+            overflowY: "scroll", // Enable scrolling
+            borderRadius: "8px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            marginTop: 2, // Add spacing between post content and comments
+            "&::-webkit-scrollbar": {
+              display: "none", // Hide scrollbar
+            },
+          }}
+        >
+          <CommentList postId={postId} />
+        </Box>
+      </Container>
+  </Suspense>
   );
 };
 

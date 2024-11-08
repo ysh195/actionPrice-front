@@ -22,7 +22,7 @@ import {
 import Account from "../components/MyPage/Account";
 import Favorites from "../components/MyPage/Favorites";
 import MyPosts from "../components/MyPage/MyPosts";
-import { logout } from "../redux/slices/loginSlice";
+import { logoutUser } from "../redux/slices/loginSlice";
 
 const MyPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -59,8 +59,8 @@ const MyPage = () => {
   };
 
   const handleLogout = () => {
-    // dispatch(logoutUser());
-    dispatch(logout());
+
+    dispatch(logoutUser());
     navigate("/api/user/login");
   };
 

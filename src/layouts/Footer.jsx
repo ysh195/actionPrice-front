@@ -12,6 +12,10 @@ const Footer = () => {
         color: colors.white2,
         padding: "2rem 1rem",
         marginTop: "auto",
+        position: "sticky", // Makes the footer fixed at the bottom
+    // Positions it at the bottom of the screen
+        width: "100%", // Ensures full width
+        zIndex: 1000, // Makes sure it's above other elements if needed
       }}
     >
       <Grid container spacing={3}>

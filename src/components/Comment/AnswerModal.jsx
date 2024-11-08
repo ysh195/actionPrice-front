@@ -3,8 +3,6 @@
 import {
   Box,
   Button,
-  List,
-  ListItem,
   MenuItem,
   Modal,
   Select,
@@ -26,6 +24,9 @@ const style = {
 
 const AnswerModal = ({ open, onClose, onSubmit }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+
+
+  console.log("AnswerModal is rendered");
 
   const handleSubmit = () => {
     if (selectedAnswer) {

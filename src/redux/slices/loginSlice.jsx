@@ -2,15 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
-  username: localStorage.getItem("username") || null,
+  username: "",
   isLoading: false,
   isError: false,
   errorMessage: "",
   isLoggedIn: false,
-  //isLoggedIn: !!localStorage.getItem("access_token"), // Set to true if access token exists
-
-  access_token: localStorage.getItem("access_token") || null,
-  role: localStorage.getItem("role") || null,
+  access_token: "",
+  role: "",
 };
 
 const BASE_URL = "http://localhost:8080/api";
@@ -60,46 +58,60 @@ export const login = createAsyncThunk(
 );
 
 //function for logoutUser (POST request) //
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      //todo check axios.get for the logout
+      let access_Token = localStorage.getItem("access_token");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("role");
+      axios.defaults.headers.common["Authorization"] = null;
 
-// export const logoutUser = createAsyncThunk(
-//   "auth/logout",
-//   async (_, { rejectWithValue }) => {
-//     try {
-//       //todo check axios.get for the logout
-//       const response = await axios.post(`${BASE_URL}/user/logout`);
-//       console.log("logoutUser response status:", response.status);
+      const response = await axios.post(
+        `${BASE_URL}/user/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      console.log("logoutUser response status:", response.status);
 
-//       if (response.status === 200) {
-//         localStorage.clear();
-//         axios.defaults.headers.common["Authorization"] = null;
-//         console.log("Logout successful");
-//         return response.data;
-//       } else {
-//         // Handle unexpected status
-//         return rejectWithValue("로그아웃에 실패했습니다. 다시 시도해 주세요.");
-//       }
-//     } catch (error) {
-//       console.error("Logout failed:", error);
-//       // Handle logout error
-//       return rejectWithValue(
-//         error.response?.data || "로그아웃에 실패했습니다."
-//       );
-//     }
-//   }
-// );
+      if (response.status === 200) {
+        console.log("Logout successful");
+
+        return response.data;
+      } else {
+        // Handle unexpected status
+        return rejectWithValue("로그아웃에 실패했습니다. 다시 시도해 주세요.");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Handle logout error
+      return rejectWithValue(
+        error.response?.data || "로그아웃에 실패했습니다."
+      );
+    }
+  }
+);
 
 const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    logout: (state) => {
-      state.isLoggedIn = false;
-      state.access_token = null;
-      state.username = null;
-      localStorage.clear();
-      axios.defaults.headers.common["Authorization"] = null;
-      console.log("Logged out");
-    },
+    // logout: (state) => {
+    //   state.isLoggedIn = false;
+    //   state.access_token = null;
+    //   state.username = null;
+    //   localStorage.clear();
+    //   axios.defaults.headers.common["Authorization"] = null;
+    //   console.log("Logged out");
+    // },
 
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
@@ -121,29 +133,28 @@ const loginSlice = createSlice({
         state.isLoading = true;
         state.isLoggedIn = false;
       })
-      .addCase(login.fulfilled, (state) => {
+      .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLoggedIn = true;
-
-        // state.username = action.payload.username;
-        // state.role = action.payload.role;
-        // state.access_token = action.payload.access_token;
+        state.username = action.payload.username;
+        state.role = action.payload.role;
+        state.access_token = action.payload.access_token;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload;
         state.isLoggedIn = false;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isLoggedIn = false; // Update login status
+        state.isError = null; // Clear any errors
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.errorMessage = action.payload; // Set the error message
       });
-    // .addCase(logoutUser.fulfilled, (state) => {
-    //   state.isLoggedIn = false; // Update login status
-    //   state.isError = null; // Clear any errors
-    // })
-    // .addCase(logoutUser.rejected, (state, action) => {
-    //   state.errorMessage = action.payload; // Set the error message
-    // });
   },
 });
 
-export const { autoLogin, logout } = loginSlice.actions;
+export const { autoLogin } = loginSlice.actions;
 export default loginSlice.reducer;

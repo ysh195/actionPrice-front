@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "../assets/assest.js";
-import { logout } from "../redux/slices/loginSlice.jsx";
+import { logoutUser } from "../redux/slices/loginSlice.jsx";
 
 function Navbar() {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
@@ -45,12 +45,17 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-     dispatch(logout());
+    dispatch(logoutUser());
     navigate("/api/user/login");
   };
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: colors.primary }}>
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: colors.primary,
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Menu Button for mobile */}

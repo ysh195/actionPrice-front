@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { Box, Button, Divider, Snackbar, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import CommentEditView from "./CommentEditView";
 import { useDispatch } from "react-redux";
 import { deleteComment, updateComment } from "../../redux/slices/commentSlice";
-import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
+import { colors } from "../../assets/assest";
 
 const CommentItem = ({ comment, postId, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -17,8 +17,12 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   const dispatch = useDispatch();
 
   const formatDate = (date) => {
-    const d = new Date(date);
-    return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) {
+      console.error("Invalid date:", date);
+      return "Invalid Date"; // Return a fallback message
+    }
+    return parsedDate.toISOString().split("T")[0]; // Return formatted date
   };
 
   const handleEditClick = () => {
@@ -86,7 +90,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   return (
-    <Box sx={{ border: 1, borderColor: "grey.300", borderRadius: 2, p: 2 }}>
+    <>
       {isEditing ? (
         <CommentEditView
           content={content}
@@ -96,54 +100,60 @@ const CommentItem = ({ comment, postId, onDelete }) => {
         />
       ) : (
         <>
-          <Box
+          <Paper
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
+              borderRadius: 2,
+              p: 2,
+              border: "1px solid #E0E0E0",
+              boxShadow: 1,
             }}
           >
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
+                flex: 1,
               }}
             >
-              <Typography
-                variant="subtitle1"
-                color="primary.main"
-                sx={{ mb: 1, color: "gray" }}
-              >
+              <Typography variant="subtitle1" sx={{ color: colors.primary }}>
                 {comment.username}
               </Typography>
-              <Typography variant="caption" color="textSecondary">
+              <Typography variant="body2" color="textSecondary">
                 {formatDate(comment.createdAt)}
               </Typography>
+              <Typography variant="body1" sx={{ marginTop: 2, mb: 1 }}>
+                {comment.content}
+              </Typography>
+              {logined_username === comment.username && (
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleEditClick}
+                    sx={{ border: "none" }}
+                  >
+                    수정
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleDelete}
+                    sx={{ border: "none" }}
+                  >
+                    삭제
+                  </Button>
+                </Box>
+              )}
             </Box>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {comment.content}
-            </Typography>
-          </Box>
-          {logined_username === comment.username && (
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Button variant="outlined" onClick={handleEditClick}>
-                Edit
-              </Button>
-              <Button variant="outlined" color="error" onClick={handleDelete}>
-                Delete
-              </Button>
-            </Box>
-          )}
+          </Paper>
         </>
       )}
-      <Snackbar
+      {/* <Snackbar
         open={Boolean(errorMessage)}
         autoHideDuration={6000}
         onClose={() => setErrorMessage(null)}
         message={errorMessage}
-      />
-    </Box>
+      /> */}
+    </>
   );
 };
 

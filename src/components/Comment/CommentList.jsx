@@ -3,17 +3,16 @@
 import { Box, CircularProgress, Pagination, Typography } from "@mui/material";
 import CommentItem from "./CommentItem";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchComments,
-} from "../../redux/slices/commentSlice";
+import { fetchComments } from "../../redux/slices/commentSlice";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export function CommentList({ postId }) {
   const dispatch = useDispatch();
-    const [searchParams, setSearchParams] = useSearchParams();
-  const { commentList, loading, error, totalPageNum } =
-    useSelector((state) => state.comment);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { commentList, loading, error, totalPageNum } = useSelector(
+    (state) => state.comment
+  );
   const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export function CommentList({ postId }) {
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <Box>
+    <>
       {commentList.length > 0 ? (
         commentList.map((comment) => (
           <Box
@@ -54,7 +53,6 @@ export function CommentList({ postId }) {
               comment={comment}
               postId={postId}
               onDelete={handleDeleteComment}
- 
             />
           </Box>
         ))
@@ -70,6 +68,6 @@ export function CommentList({ postId }) {
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
       />
-    </Box>
+    </>
   );
 }

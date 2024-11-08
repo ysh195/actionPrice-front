@@ -3,8 +3,6 @@
 import React from "react";
 import { Button, Box, Divider, Alert, Stack, Fab } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ListIcon from '@mui/icons-material/List';
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deletePost } from "../../redux/slices/postSlice";
@@ -54,8 +52,6 @@ const PostActions = React.memo(({ postId, post_owner, onEdit }) => {
 
   return (
     <>
-      <Divider sx={{ margin: "16px 0" }} />
-
       <Box
         sx={{
           marginTop: 2,
@@ -64,58 +60,32 @@ const PostActions = React.memo(({ postId, post_owner, onEdit }) => {
         }}
       >
         <Box>
-          {/* <Button
+          <Button
             variant="outlined"
             onClick={() => navigate("/api/contact-us")}
-            sx={{ marginRight: 1 }}
+            sx={{ border: "none" }}
           >
             목록보기
-          </Button> */}
-
-          <Fab
-            variant="extended"
-            size="medium"
-            color="primary"
-            onClick={() => navigate("/api/contact-us")}
-            sx={{ marginLeft: 1 }}
-          >
-            <ListIcon sx={{ mr: 1 }} />
-            목록보기
-          </Fab>
+          </Button>
         </Box>
         {logined_username === post_owner && (
           <Box>
-            <Fab
-              variant="outlined"
-              color="secondary"
-              aria-label="edit"
-              onClick={onEdit}
-              sx={{ marginRight: 2 }}
-              size="medium"
-            >
-              <EditIcon />
-            </Fab>
-
-            {/* <Button
-              variant="outlined"
+            <Button
+              // variant="outlined"
               color="secondary"
               onClick={onEdit}
-              sx={{ marginRight: 1 }}
+              sx={{ border: "none" }}
             >
               글수정
-            </Button> */}
-            <Fab
-              size="medium"
+            </Button>
+            <Button
+              // variant="outlined"
               color="error"
-              aria-label="delete"
               onClick={handleDelete}
-              sx={{ marginRight: 2 }}
+              sx={{ border: "none" }}
             >
-              <DeleteIcon />
-            </Fab>
-            {/* <Button variant="outlined" color="error" onClick={handleDelete}>
               글삭제
-            </Button> */}
+            </Button>
           </Box>
         )}
       </Box>

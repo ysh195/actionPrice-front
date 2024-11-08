@@ -36,8 +36,12 @@ const ProductListView = ({ productList, pageNum }) => {
     }).format(price);
   };
   const formatDate = (date) => {
-    const d = new Date(date);
-    return d.toISOString().split("T")[0]; // yyyy-mm-dd format
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) {
+      console.error("Invalid date:", date);
+      return "Invalid Date"; // Return a fallback message
+    }
+    return parsedDate.toISOString().split("T")[0]; // Return formatted date
   };
 
   return (

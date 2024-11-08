@@ -13,7 +13,15 @@ const AppLayout = ({ children }) => {
       minHeight="100vh" // Ensures the layout takes full height
     >
       <Navbar />
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box
+        component="main"
+        sx={{
+          //  flexGrow: 1,
+          flex: 1,
+          paddingBottom: 24,
+          minHeight: "calc(100vh - 64px)", // Subtracts the height of the navbar
+        }}
+      >
         {children}
       </Box>
       <Footer />

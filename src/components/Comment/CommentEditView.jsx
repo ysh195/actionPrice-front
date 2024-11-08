@@ -17,8 +17,8 @@ const CommentEditView = ({ content, setContent, onUpdate, onCancel }) => {
         mb: 2,
       }}
     >
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Edit Comment
+      <Typography variant="h6" sx={{ mb: 1 }}>
+        댓글 수정
       </Typography>
       <TextField
         multiline
@@ -30,12 +30,12 @@ const CommentEditView = ({ content, setContent, onUpdate, onCancel }) => {
         required
         sx={{ mb: 2 }}
       />
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button variant="contained" color="primary" onClick={onUpdate}>
-          Update Comment
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button color="primary" onClick={onUpdate} sx={{ border: "none" }}>
+          저장
         </Button>
-        <Button variant="outlined" color="error" onClick={onCancel}>
-          Cancel
+        <Button color="error" onClick={onCancel} sx={{ border: "none" }}>
+          취소
         </Button>
       </Box>
     </Box>
