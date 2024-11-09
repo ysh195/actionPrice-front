@@ -26,9 +26,12 @@ import {
   fetchSmallCategories,
   fetchRankCategories,
   fetchProductList,
+  fetchPriceData,
   clearProductList,
+  clearPriceData,
 } from "../../redux/slices/categorySlice";
 import ProductListView from "./ProductListView.jsx";
+import PriceGraghView from "./PriceGraghView.jsx";
 
 import Favorite_DownloadButton from "./Favorite_DownloadButton.jsx";
 import DateChange from "./DateChange.jsx";
@@ -62,9 +65,11 @@ const CategoryDetail = () => {
     smallCategoryList,
     rankList,
     productList,
+    priceData,
     loading,
     error,
     totalPageNum,
+    timeIntervals,
   } = useSelector((state) => state.category);
 
   console.log(
@@ -177,6 +182,16 @@ const CategoryDetail = () => {
         pageNum: pageNum - 1, // Adjust for zero-based index
       })
     );
+    dispatch(
+      fetchPriceData({
+        large: selectedLarge,
+        middle: selectedMiddle,
+        small: selectedSmall,
+        rank: selectedRank,
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+      })
+    );
     setShowDownloadButton(true);
   };
 
@@ -189,6 +204,7 @@ const CategoryDetail = () => {
     setSelectedEndDate("");
     setSearchParams({});
     dispatch(clearProductList());
+    dispatch(clearPriceData());
     navigate(`/api/category/:large`);
   };
 
@@ -428,6 +444,7 @@ const CategoryDetail = () => {
         variant="outlined"
         sx={{ margin: "auto" }}
       />
+      <PriceGraghView timeIntervals={timeIntervals} priceData={priceData} />
     </Box>
   );
 };
