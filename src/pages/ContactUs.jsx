@@ -12,12 +12,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../redux/slices/postSlice";
 import PostListView from "../components/Post/PostListView";
-import {useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import PostSearch from "../components/Post/PostSearch";
 import { colors } from "../assets/assest";
 import Test from "../test/Test";
-
 
 const ContactUs = () => {
   const dispatch = useDispatch();
@@ -25,20 +24,26 @@ const ContactUs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || ""; // Get keyword from searchParams
   const pageNum = parseInt(searchParams.get("pageNum")) || 1; // Get current page number from searchParams
-  const { postList, loading, error, totalPageNum } =
-    useSelector((state) => state.post);
+  const { postList, loading, error, totalPageNum } = useSelector(
+    (state) => state.post
+  );
 
-  // Fetch posts when pageNum or keyword changes
+  //effect: Fetch posts when pageNum or keyword changes
   useEffect(() => {
+    console.log(
+      "api call for fetchPosts-Fetch posts when pageNum or keyword changes"
+    );
     dispatch(fetchPosts({ pageNum: pageNum - 1, keyword })); // Adjust for API (0-based index)
   }, [dispatch, pageNum, keyword]);
 
-  // Handle search submission
+  //function: Handle search submission // 
   const handleSearch = (searchKeyword) => {
     setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword
+    console.log("api call for fetchPosts-Handle search submission");
+
     dispatch(fetchPosts({ pageNum: 0, keyword: searchKeyword }));
   };
-
+  //function: handleResetSearch  submission // 
   const handleResetSearch = () => {
     setSearchParams({ pageNum: 1 }); // Reset to the first page
   };
@@ -48,7 +53,6 @@ const ContactUs = () => {
     setSearchParams({ pageNum: value, keyword }); // Update pageNum while retaining keyword
   };
 
-  // Render loading spinner
 
 
   // Render error message
@@ -106,7 +110,6 @@ const ContactUs = () => {
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
       />
-      
     </Paper>
   );
 };

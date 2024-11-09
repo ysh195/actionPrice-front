@@ -3,7 +3,7 @@ import categoryReducer from "./slices/categorySlice";
 import loginReducer from "./slices/loginSlice";
 import registerReducer from "./slices/registerSlice";
 import verificationReducer from "./slices/verificationSlice";
-import userReducer from "./slices/userSlice";
+import myPageReducer from "./slices/myPageSlice";
 import postReducer from "./slices/postSlice";
 import commentReducer from "./slices/commentSlice";
 import adminPageReducer from "./slices/adminPageSlice";
@@ -16,7 +16,7 @@ export const store = configureStore({
     login: loginReducer,
     register: registerReducer,
     verification: verificationReducer,
-    user: userReducer,
+    myPage: myPageReducer,
     post: postReducer,
     comment: commentReducer,
     adminPage: adminPageReducer,

@@ -10,48 +10,46 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
-import { styled } from "@mui/material";
+import { styled, Typography } from "@mui/material";
 import { format } from "date-fns";
-
 
 import { colors } from "../../assets/assest";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: colors.tableHead,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 16,
-  },
-}));
+const StyledTableCell = (props) => (
+  <TableCell
+    {...props}
+    sx={{
+      fontWeight: "bold",
+      backgroundColor: colors.primary,
+      color: "white",
+    }}
+  />
+);
 //any potential issues if postList is undefined by initializing it to an empty array.
 const PostListView = ({ postList = [] }) => {
-
   const logined_username = localStorage.getItem("username");
   const role = localStorage.getItem("role");
 
   console.log("check postList in PostList component:", postList);
 
- 
-const formatDate = (date) => {
-  try {
-    return format(new Date(date), "yyyy-MM-dd"); // Format as 'yyyy-mm-dd'
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return "Invalid Date"; // Fallback message if error occurs
-  }
-};
+  const formatDate = (date) => {
+    try {
+      return format(new Date(date), "yyyy-MM-dd"); // Format as 'yyyy-mm-dd'
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
+  };
 
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Paper sx={{ width: "100%", borderRadius: 2, boxShadow: 3 }}>
       <TableContainer
         sx={{
           marginTop: 2,
           marginBottom: 2,
         }}
       >
-        <Table aria-label="sticky table">
+        <Table aria-label="custom styled table">
           <TableHead>
             <TableRow>
               <StyledTableCell>등록일</StyledTableCell>
@@ -61,8 +59,18 @@ const formatDate = (date) => {
           </TableHead>
           <TableBody>
             {postList && postList.length > 0 ? (
-              postList.map((post) => (
-                <TableRow key={post.postId}>
+              postList.map((post, index) => (
+                <TableRow
+                  key={post.postId}
+                  sx={{
+                    "&:nth-of-type(even)": {
+                      backgroundColor: "#f9f9f9",
+                    },
+                    "&:hover": {
+                      backgroundColor: "#f0f0f0",
+                    },
+                  }}
+                >
                   <TableCell>{formatDate(post.createdAt)}</TableCell>
                   <TableCell>
                     {!post.published &&
@@ -74,7 +82,10 @@ const formatDate = (date) => {
                     ) : (
                       <Link
                         to={`/api/post/${post.postId}/detail?page=1`}
-                        style={{ color: colors.primary }}
+                        style={{
+                          color: colors.primary,
+                          textDecoration: "none",
+                        }}
                       >
                         {post.title}
                       </Link>
@@ -85,8 +96,8 @@ const formatDate = (date) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} align="center">
-                  No posts available
+                <TableCell colSpan={3} align="center">
+                  <Typography>No posts available</Typography>
                 </TableCell>
               </TableRow>
             )}
