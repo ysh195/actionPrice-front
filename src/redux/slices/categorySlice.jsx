@@ -1,5 +1,3 @@
- 
- 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -9,6 +7,7 @@ const initialState = {
   rankList: [],
   productList: [],
   priceData: [],
+  countries: [],
   selectedMiddle: "",
   selectedSmall: "",
   selectedRank: "",
@@ -131,6 +130,7 @@ export const categorySlice = createSlice({
     },
     clearPriceData: (state) => {
       state.priceData = [];
+      state.countries = [];
       state.timeIntervals = "";
     },
     resetDownloadState: (state) => {
@@ -199,6 +199,7 @@ export const categorySlice = createSlice({
       .addCase(fetchPriceData.fulfilled, (state, action) => {
         state.loading = false;
         state.priceData = action.payload.chartDataList;
+        state.countries = action.payload.countries;
         state.timeIntervals = action.payload.timeIntervals;
       })
       .addCase(fetchPriceData.rejected, (state, action) => {

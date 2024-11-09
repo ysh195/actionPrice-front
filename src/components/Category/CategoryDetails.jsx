@@ -66,6 +66,7 @@ const CategoryDetail = () => {
     rankList,
     productList,
     priceData,
+    countries,
     loading,
     error,
     totalPageNum,
@@ -444,7 +445,7 @@ const CategoryDetail = () => {
         variant="outlined"
         sx={{ margin: "auto" }}
       />
-      <PriceGraghView timeIntervals={timeIntervals} priceData={priceData} />
+      <PriceGraghView timeIntervals={timeIntervals} priceData={priceData} countries={countries} />
     </Box>
   );
 };

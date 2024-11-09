@@ -10,21 +10,7 @@ import {
     ResponsiveContainer
 } from "recharts";
 
-const PriceGraghView = ({ timeIntervals, priceData }) => {
-    const data = [];
-
-    // 데이터를 날짜별로 그룹화하여 각 지역별 가격을 추가합니다.
-    priceData.forEach(item => {
-        let existingDate = data.find(d => d.date === item.baseDay);
-        if (!existingDate) {
-            existingDate = { date: item.baseDay };
-            data.push(existingDate);
-        }
-        existingDate[item.country] = item.averagePrice; // 지역별 가격 데이터를 추가
-    });
-
-    // 지역 목록을 구합니다.
-    const countries = [...new Set(priceData.map(item => item.country))];
+const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
 
     // 랜덤색깔(흰색 제외)
     const getRandomColor = () => {
@@ -47,7 +33,7 @@ const PriceGraghView = ({ timeIntervals, priceData }) => {
                 <>
                     <h3>[ 구분 : {timeIntervals} ]</h3>
                     <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={data}>
+                        <LineChart data={priceData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="date" tickMargin={15} />
                             <YAxis 
@@ -55,7 +41,7 @@ const PriceGraghView = ({ timeIntervals, priceData }) => {
                                 tickFormatter={formatPrice}
                             />
                             <Tooltip formatter={(value) => `${value.toLocaleString()}원`} />
-                            {countries.map((country, index) => (
+                            {countries.map((country) => (
                                 <Line 
                                 key={country} 
                                 type="monotone" 
@@ -84,5 +70,5 @@ const PriceGraghView = ({ timeIntervals, priceData }) => {
         </>
     );
 };
-  
-  export default PriceGraghView;
+
+export default PriceGraghView;
