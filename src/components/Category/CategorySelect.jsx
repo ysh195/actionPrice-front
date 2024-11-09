@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 

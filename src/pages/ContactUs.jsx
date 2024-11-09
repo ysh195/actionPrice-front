@@ -13,9 +13,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPosts } from "../redux/slices/postSlice";
 import PostListView from "../components/Post/PostListView";
 import {useNavigate, useSearchParams } from "react-router-dom";
-import logo from "../assets/images/logo.png";
+
 import PostSearch from "../components/Post/PostSearch";
 import { colors } from "../assets/assest";
+import Test from "../test/Test";
 
 
 const ContactUs = () => {
@@ -68,7 +69,7 @@ const ContactUs = () => {
         <CircularProgress color="inherit" />
       </Backdrop>
       <img
-        src={logo}
+        // src={logo}
         alt="Logo"
         style={{ maxHeight: "30px", marginBottom: "10px", display: "flex" }}
       />
@@ -105,6 +106,7 @@ const ContactUs = () => {
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
       />
+      
     </Paper>
   );
 };

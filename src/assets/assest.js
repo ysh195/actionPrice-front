@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import logo from "./images/logo.png";
+
 
 import axios from "axios";
 
-export const icons = {
-  logo,
-};
 
+
+//desc: ui colors
 export const colors = {
-  primary: "#2C3E50",
+  primary: "#344955",
+  // primary: "#538392",
   secondary: "#2ecc71",
   accent: "#e74c3c",
   text: "#2c3e50",
@@ -27,15 +27,28 @@ export const colors = {
 const response = await axios.get("http://localhost:8080/");
 const fetchedImages = response.data.images;
 
+
 export const largeCategoryList = [
-  { id: 1, name: "채소류", image: fetchedImages.meat },
-  { id: 2, name: "축산물", image: fetchedImages.egg },
-  { id: 3, name: "과일류", image: fetchedImages.cookie },
-  { id: 4, name: "식량작물", image: fetchedImages.veggie },
-  { id: 5, name: "수산물", image: fetchedImages.veggie },
-  { id: 6, name: "특용작물", image: fetchedImages.salted },
+  { id: 1, name: "채소류", image: fetchedImages.ve },
+  { id: 2, name: "축산물", image: fetchedImages.meat },
+  { id: 3, name: "과일류", image: fetchedImages.fruit },
+  { id: 4, name: "식량작물", image: fetchedImages.crop },
+  { id: 5, name: "수산물", image: fetchedImages.fish },
+  { id: 6, name: "특용작물", image: fetchedImages.scrop },
 ];
 
+export const slideImageList = [
+  { id: 1, name: "slide_blue", image: fetchedImages.slide_blue },
+  { id: 2, name: "slide_cherry", image: fetchedImages.slide_cherry },
+  { id: 3, name: "slide_chicken", image: fetchedImages.slide_chicken },
+  { id: 4, name: "slide_grape", image: fetchedImages.slide_grape },
+  { id: 5, name: "slide_lab", image: fetchedImages.slide_lab },
+  { id: 6, name: "slide_lemon", image: fetchedImages.slide_lemon },
+  { id: 7, name: "slide_meat", image: fetchedImages.slide_meat },
+  // { id: 8, name: "slide_ve", image: fetchedImages.slide_ve },
+];
+
+//desc: admin answer list
 export const adminAnswers = [
   { id: 1, answerType: "AI", text: "It's an answer by chat-gpt" },
   {

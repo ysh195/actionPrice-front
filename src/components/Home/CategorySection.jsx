@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { largeCategoryList } from "../../assets/assest.js";
-import React, { useEffect, useState } from "react";
+
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -11,28 +12,11 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  Box,
 } from "@mui/material";
 
-const CategorySection = () => {
+const CategorySection = ({ categories, loading, error }) => {
   const navigate = useNavigate();
-
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchImages = async () => {
-    try {
-      setCategories(largeCategoryList);
-    } catch (error) {
-      console.error("Error fetching images:", error);
-      setError("Failed to load categories. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchImages();
-  }, []);
 
   const handleCategoryClick = (category) => {
     navigate(`api/category/${category.name}/:middle/:small/:rank`);
@@ -54,16 +38,24 @@ const CategorySection = () => {
     );
   }
   return (
-    <Container id="categories" sx={{ py: 5 }}>
+    <Box id="categories" sx={{ py: 5 }}>
       <Typography variant="h4" align="center" gutterBottom>
-        메인 카테고리 선택
+        대분료 선택
       </Typography>
       <Grid container spacing={2}>
         {categories.map((category) => (
           <Grid item xs={12} sm={6} md={4} key={category.id}>
             <Card
               onClick={() => handleCategoryClick(category)}
-              sx={{ cursor: "pointer", height: "100%" }}
+              sx={{
+                cursor: "pointer",
+                position: "relative",
+                overflow: "hidden",
+                height: "100%",
+                "&:hover .overlay": {
+                  transform: "translateY(0)",
+                },
+              }}
               aria-label={`Go to ${category.name} category`}
             >
               <CardMedia
@@ -76,16 +68,35 @@ const CategorySection = () => {
                   objectFit: "cover",
                 }}
               />
-              <CardContent>
+              <Box
+                className="overlay"
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  transform: "translateY(100%)",
+                  transition: "transform 0.6s ease",
+                }}
+              >
                 <Typography variant="h6" component="div">
                   {category.name}
                 </Typography>
-              </CardContent>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  Explore the {category.name} category
+                </Typography>
+              </Box>
             </Card>
           </Grid>
         ))}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

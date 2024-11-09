@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import Footer from "./Footer";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar";
 import { Box } from "@mui/material";
 
 const AppLayout = ({ children }) => {
@@ -13,12 +13,15 @@ const AppLayout = ({ children }) => {
       minHeight="100vh" // Ensures the layout takes full height
     >
       <Navbar />
+
       <Box
         component="main"
         sx={{
-          //  flexGrow: 1,
-          flex: 1,
-          paddingBottom: 24,
+          width: "80%",
+          flex: 1, // Allows main to expand to push the footer down
+          mx: "auto", // Centers the main content horizontally
+          paddingY: 4, // Adjusts vertical padding
+          
           minHeight: "calc(100vh - 64px)", // Subtracts the height of the navbar
         }}
       >

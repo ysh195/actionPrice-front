@@ -18,6 +18,9 @@ import Home from "./pages/Home";
 import "./App.css";
 import PwChange from "./components/Password/PwChange";
 
+import UserPage from "./test/UserPage";
+
+
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -28,23 +31,30 @@ function App() {
       <AppLayout>
         <Routes>
           <Route path="/" exact element={<Home />} />
+
           <Route
             path="api/user/login"
             element={
               <ProtectedRoute element={<Login />} redirectIfLoggedIn={true} />
             }
           />
-    
+
           <Route path="api/user/register" exact element={<Register />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
           <Route
             path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryDetails />}
           />
-          <Route
+          {/* <Route
             path="api/mypage/:username/*"
             element={<ProtectedRoute element={<MyPage />} />}
+          /> */}
+
+          <Route
+            path="api/mypage/:username/*"
+            element={<ProtectedRoute element={<UserPage />} />}
           />
+
           <Route path="api/contact-us" element={<ContactUs />} />
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
           <Route

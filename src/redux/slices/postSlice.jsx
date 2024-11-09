@@ -1,6 +1,8 @@
 /* eslint-disable no-empty-pattern */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const initialState = {
   postList: [],
@@ -85,37 +87,55 @@ export const fetchPostForUpdate = createAsyncThunk(
   }
 );
 
+//todo: users without token cant see the post. check it
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      var response
-      if(access_Token === null){
-        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
-          params: { page }});
-      } else {
+      const access_Token = localStorage.getItem("access_token");
+      let response;
+      if (access_Token === null) {
         response = await axios.get(`${API_URL}/post/${postId}/detail`, {
           params: { page },
-          headers: {
-            //todo: check header
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
         });
+      } else {
+        response = await axios.get(
+          `${API_URL}/post/${postId}/detail`,
+          { params: { page } },
+          {
+            headers: {
+              Authorization: `Bearer ${access_Token}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          }
+        );
       }
       console.log("fetchPostById response:", response);
       return response.data;
     } catch (error) {
-      console.error("Error fetching post by ID:", error);
+      console.error("Error fetching post by ID:", error); // Log the error
       if (error.response && error.response.status === 403) {
-        return rejectWithValue("접근 권한이 없습니다");
+        Swal.fire({
+          icon: "error",
+          title: "접근 금지",
+          text: "접근 권한이 없습니다.",
+        });
+        return rejectWithValue("접근 권한이 없습니다.");
+      } else if (error.response.status === 401) {
+        Swal.fire({
+          icon: "error",
+          text: "로그인이 필요합니다",
+        });
+        return rejectWithValue("로그인 해주세요");
       }
-      return rejectWithValue(error.response?.data || "An error occurred");
+
+      return rejectWithValue(error.response.data);
     }
   }
 );
+
 //function: deletePost //
 export const deletePost = createAsyncThunk(
   "posts/deletePost",

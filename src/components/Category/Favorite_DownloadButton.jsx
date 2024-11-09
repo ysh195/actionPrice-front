@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { createFavorite } from "../../redux/slices/favoriteSlice";
@@ -10,10 +11,10 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-// import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import { downloadExcel } from "../../redux/slices/categorySlice";
 import GetAppIcon from "@mui/icons-material/GetApp";
-import StarsIcon from "@mui/icons-material/Stars";
+import StarOutlineIcon from "@mui/icons-material/StarOutline";
+import Swal from "sweetalert2";
 
 const Favorite_DownloadButton = ({
   selectedLarge,
@@ -23,19 +24,26 @@ const Favorite_DownloadButton = ({
   logined_username,
   selectedStartDate,
   selectedEndDate,
-  showDownloadButton,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [favorite_name, setFavorite_name] = useState("");
   const dispatch = useDispatch();
 
   const commonButtonStyles = {
-    color: "green",
+    color: "gray",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    border: "1px solid lightgray",
+    borderRadius: "5px",
+    cursor: "pointer",
     "&:hover": {
-      backgroundColor: "transparent", // No hover effect
+      backgroundColor: "transparent",
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds shadow on hover
     },
     "&:focus": {
       outline: "none", // Remove focus outline
+      boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.3)", // Optional shadow for focus
     },
   };
 
@@ -45,9 +53,27 @@ const Favorite_DownloadButton = ({
 
   const handleAddFavorite = () => {
     if (favorite_name.trim() === "") {
-      alert("Please enter a name for your favorite item.");
+      setModalOpen(false);
+      setFavorite_name("");
+      Swal.fire({
+        icon: "error",
+        title: "잠깐!",
+        text: "즐겨찾기 항목의 이름을 입력해주세요.",
+      });
       return;
     }
+
+    if (!logined_username) {
+      setModalOpen(false);
+      setFavorite_name("");
+      Swal.fire({
+        icon: "error",
+        text: "로그인 하고 나서 즐겨찾기 등록이 가능합니다.",
+      });
+
+      return;
+    }
+
     if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
@@ -98,8 +124,15 @@ const Favorite_DownloadButton = ({
           color="primary"
           sx={commonButtonStyles}
         >
-          <StarsIcon fontSize="medium" sx={{ color: "tomato", mr: 0.5 }} />
-          <span style={{ fontSize: "medium", color: "tomato" }}>즐겨찾기</span>
+          <StarOutlineIcon fontSize="medium" />
+          <span
+            style={{
+              fontSize: "medium",
+
+            }}
+          >
+            관심설정
+          </span>
         </IconButton>
 
         {/* Modal for Adding Favorite */}
@@ -152,7 +185,7 @@ const Favorite_DownloadButton = ({
               sx={{
                 alignSelf: "center",
                 paddingX: 4,
-                fontWeight: "bold",
+                 fontWeight: "bold",
                 borderRadius: 1,
                 "&:hover": {
                   backgroundColor: "primary.dark",
@@ -171,8 +204,8 @@ const Favorite_DownloadButton = ({
           aria-label="Download Excel"
           sx={commonButtonStyles}
         >
-          <GetAppIcon fontSize="medium" sx={{ color: "tomato", mr: 0.5 }} />
-          <span style={{ fontSize: "medium", color: "tomato" }}>Excel</span>
+          <GetAppIcon fontSize="medium" />
+          <span style={{ fontSize: "medium" }}>Excel</span>
         </IconButton>
       </>
       {/* )} */}

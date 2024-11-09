@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
 import AppBar from "@mui/material/AppBar";
@@ -17,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { colors } from "../assets/assest.js";
 import { logoutUser } from "../redux/slices/loginSlice.jsx";
 
-function Navbar() {
+function Navbar({ toggleSidebar }) {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
@@ -204,7 +205,7 @@ function Navbar() {
                       My Page
                     </Typography>
                   </MenuItem>
-
+                  {/* 
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography
                       component={Link}
@@ -213,7 +214,7 @@ function Navbar() {
                     >
                       WishList
                     </Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem onClick={handleLogout}>
                     <Typography sx={{ color: colors.warning }}>
                       Logout
@@ -223,12 +224,12 @@ function Navbar() {
               </Box>
             </Box>
           ) : (
-            <Link
-              to="/api/user/login"
-              sx={{ my: 2, color: "white", display: "block" }}
+            <Button
+              onClick={() => navigate("/api/user/login")}
+              sx={{ color: "white" }}
             >
               로그인
-            </Link>
+            </Button>
           )}
         </Toolbar>
       </Container>

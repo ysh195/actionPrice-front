@@ -63,7 +63,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       //todo check axios.get for the logout
-      let access_Token = localStorage.getItem("access_token");
+      const access_Token = localStorage.getItem("access_token");
       localStorage.removeItem("access_token");
       localStorage.removeItem("username");
       localStorage.removeItem("role");
@@ -104,14 +104,7 @@ const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    // logout: (state) => {
-    //   state.isLoggedIn = false;
-    //   state.access_token = null;
-    //   state.username = null;
-    //   localStorage.clear();
-    //   axios.defaults.headers.common["Authorization"] = null;
-    //   console.log("Logged out");
-    // },
+
 
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
@@ -147,6 +140,9 @@ const loginSlice = createSlice({
         state.isLoggedIn = false;
       })
       .addCase(logoutUser.fulfilled, (state) => {
+        state.username = null;
+        state.role = null;
+        state.access_token = null;
         state.isLoggedIn = false; // Update login status
         state.isError = null; // Clear any errors
       })

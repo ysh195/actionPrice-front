@@ -12,24 +12,21 @@ const Footer = () => {
         color: colors.white2,
         padding: "2rem 1rem",
         marginTop: "auto",
-        position: "sticky", // Makes the footer fixed at the bottom
-    // Positions it at the bottom of the screen
+        position: "relative",
+        bottom: 0, // Makes it stick to the bottom of the page
         width: "100%", // Ensures full width
         zIndex: 1000, // Makes sure it's above other elements if needed
+        boxShadow: "0px -2px 5px rgba(0, 0, 0, 0.2)",
       }}
     >
       <Grid container spacing={3}>
         <Grid item xs={12} sm={4}>
-          <Box display="flex" flexDirection="column" alignItems="flex-start">
+          <Box display="flex" alignItems="flex-start">
             <img
               src={""}
               alt="logo"
               style={{ marginBottom: "1rem", width: "100px" }}
             />
-            <Typography variant="body2">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry.
-            </Typography>
           </Box>
         </Grid>
         <Grid item xs={12} sm={4}>
