@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-empty-pattern */
+ 
+ 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -8,9 +8,11 @@ const initialState = {
   smallCategoryList: [],
   rankList: [],
   productList: [],
+  priceData: [],
   selectedMiddle: "",
   selectedSmall: "",
   selectedRank: "",
+  timeIntervals: "",
   loading: false,
   error: "",
   totalPageNum: 0,
@@ -66,6 +68,20 @@ export const fetchProductList = createAsyncThunk(
   }
 );
 
+export const fetchPriceData = createAsyncThunk(
+  "categories/fetchPriceData",
+  async ({ large, middle, small, rank, startDate, endDate}) => {
+    const response = await axios.get(
+      `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/gragh`,
+      {
+        params: { startDate, endDate },
+      }
+    );
+    console.log("fetchPriceData:", response.data);
+    return response.data;
+  }
+);
+
 //function: download excel //
 export const downloadExcel = createAsyncThunk(
   "download/downloadExcel",
@@ -112,6 +128,10 @@ export const categorySlice = createSlice({
   reducers: {
     clearProductList: (state) => {
       state.productList = [];
+    },
+    clearPriceData: (state) => {
+      state.priceData = [];
+      state.timeIntervals = "";
     },
     resetDownloadState: (state) => {
       state.loading = false;
@@ -172,6 +192,19 @@ export const categorySlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+      .addCase(fetchPriceData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPriceData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.priceData = action.payload.chartDataList;
+        state.timeIntervals = action.payload.timeIntervals;
+      })
+      .addCase(fetchPriceData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       .addCase(downloadExcel.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -189,5 +222,6 @@ export const categorySlice = createSlice({
 });
 
 export const { clearProductList } = categorySlice.actions;
+export const { clearPriceData } = categorySlice.actions;
 
 export default categorySlice.reducer;
