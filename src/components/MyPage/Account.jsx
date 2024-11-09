@@ -3,7 +3,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { deleteAccount, getPersonalInfo } from "../../redux/slices/userSlice";
+import { deleteAccount, getPersonalInfo } from "../../redux/slices/myPageSlice";
 
 import Swal from "sweetalert2";
 
@@ -42,7 +42,6 @@ const Account = ({ username, email }) => {
           timer: 3000,
         });
         navigate("/api/user/login");
-        
       } else {
         Swal.fire({
           icon: "error",

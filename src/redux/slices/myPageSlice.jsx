@@ -41,9 +41,9 @@ export const deleteAccount = createAsyncThunk(
       console.log("delete user response:", response);
       if (response.status === 200) {
         console.log("delete account successful");
-        localStorage.clear();
-        // localStorage.removeItem("access_token");
-        // localStorage.removeItem("username");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
 
         return response.data;
       } else {
@@ -97,7 +97,7 @@ export const getMyPosts = createAsyncThunk(
           },
 
           headers: {
-            Authorization: `Bearer ${access_Token}`,
+           Authorization: `Bearer ${access_Token}`,
             //todo:if error delete content part
             "Content-Type": "application/json",
             Accept: "application/json",

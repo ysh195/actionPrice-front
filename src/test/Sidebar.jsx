@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 import {
   List,
   ListItem,
@@ -23,11 +24,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/slices/loginSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  deleteAccount,
-  getMyPosts,
-  getPersonalInfo,
-} from "../redux/slices/userSlice";
+import { deleteAccount } from "../redux/slices/myPageSlice";
 import Swal from "sweetalert2";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
@@ -37,17 +34,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const email = useSelector((state) => state.user.email);
-
-  useEffect(() => {
-    if (username) {
-      
-      dispatch(getPersonalInfo(username));
-      console.log("api call for getPersonalInfo");
-      dispatch(getMyPosts);
-       console.log("api call for getMyPosts");
-    }
-  }, [dispatch, username]);
+  const email = useSelector((state) => state.myPage.email);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleAccountMenu = () => setIsAccountOpen(!isAccountOpen);
@@ -113,12 +100,12 @@ const Sidebar = () => {
     >
       <Box>
         <List>
-          <ListItem>
-            <IconButton onClick={toggleSidebar} sx={{ color: "#fff" }}>
-              {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </ListItem>
+          <ListItemIcon onClick={toggleSidebar} sx={{ color: "#fff" }}>
+            {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </ListItemIcon>
+
           <Divider />
+
           <Typography
             variant="body2"
             sx={{
@@ -126,7 +113,7 @@ const Sidebar = () => {
               margin: isOpen ? "8px 1rem" : "16px 1rem",
             }}
           >
-            프로필
+            Profile
           </Typography>
           <Divider />
 
@@ -139,15 +126,24 @@ const Sidebar = () => {
               justifyContent: isOpen ? "space-evenly" : "center",
             }}
           >
-            <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 2 : 0 }}>
-              <BadgeIcon fontSize="large" />
-            </ListItemIcon>
-            {isOpen && (
-              <Box>
-                <Typography variant="body2">{username}</Typography>
-                <Typography variant="body2">{email}</Typography>
-              </Box>
-            )}
+            <ListItem
+              component="button"
+              sx={{
+                color: "#fff",
+                cursor: "pointer !important",
+                backgroundColor: "transparent",
+              }}
+            >
+              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 2 : 0 }}>
+                <BadgeIcon onClick={toggleSidebar} />
+              </ListItemIcon>
+              {isOpen && (
+                <Box>
+                  <Typography variant="body2">{username}</Typography>
+                  <Typography variant="body2">{email}</Typography>
+                </Box>
+              )}
+            </ListItem>
           </Box>
 
           <Divider />
@@ -158,7 +154,7 @@ const Sidebar = () => {
               margin: isOpen ? "8px 1rem" : "16px 1rem",
             }}
           >
-            메뉴
+            Menu
           </Typography>
           <Divider />
           <Tooltip

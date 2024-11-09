@@ -199,7 +199,7 @@ function Navbar({ toggleSidebar }) {
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography
                       component={Link}
-                      to={`/api/mypage/${username}`}
+                      to={`/api/mypage/${username}/myposts`}
                       sx={{ textDecoration: "none", color: "inherit" }}
                     >
                       My Page
