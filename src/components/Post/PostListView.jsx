@@ -4,13 +4,13 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import LockIcon from "@mui/icons-material/Lock";
 import { Link } from "react-router-dom";
-import { styled, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { format } from "date-fns";
 
 import { colors } from "../../assets/assest";
@@ -20,13 +20,14 @@ const StyledTableCell = (props) => (
     {...props}
     sx={{
       fontWeight: "bold",
-      backgroundColor: colors.primary,
+      backgroundColor: colors.tableHead,
       color: "white",
     }}
   />
 );
 //any potential issues if postList is undefined by initializing it to an empty array.
-const PostListView = ({ postList = [] }) => {
+const PostListView = ({ postList = [], pageNum }) => {
+  const itemsPerPage = 10;
   const logined_username = localStorage.getItem("username");
   const role = localStorage.getItem("role");
 
@@ -52,6 +53,7 @@ const PostListView = ({ postList = [] }) => {
         <Table aria-label="custom styled table">
           <TableHead>
             <TableRow>
+              <StyledTableCell>No</StyledTableCell>
               <StyledTableCell>등록일</StyledTableCell>
               <StyledTableCell>제목</StyledTableCell>
               <StyledTableCell>작성자</StyledTableCell>
@@ -71,6 +73,9 @@ const PostListView = ({ postList = [] }) => {
                     },
                   }}
                 >
+                  <TableCell>
+                    {(pageNum - 1) * itemsPerPage + index + 1}
+                  </TableCell>
                   <TableCell>{formatDate(post.createdAt)}</TableCell>
                   <TableCell>
                     {!post.published &&

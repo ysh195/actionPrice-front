@@ -117,7 +117,6 @@ const Favorite_DownloadButton = ({
         width: "100%",
       }}
     >
-      {/* {showDownloadButton && ( */}
       <>
         <IconButton
           onClick={() => setModalOpen(true)}
@@ -128,7 +127,6 @@ const Favorite_DownloadButton = ({
           <span
             style={{
               fontSize: "medium",
-
             }}
           >
             관심설정
@@ -185,7 +183,7 @@ const Favorite_DownloadButton = ({
               sx={{
                 alignSelf: "center",
                 paddingX: 4,
-                 fontWeight: "bold",
+                fontWeight: "bold",
                 borderRadius: 1,
                 "&:hover": {
                   backgroundColor: "primary.dark",
@@ -208,7 +206,6 @@ const Favorite_DownloadButton = ({
           <span style={{ fontSize: "medium" }}>Excel</span>
         </IconButton>
       </>
-      {/* )} */}
     </Box>
   );
 };

@@ -8,21 +8,25 @@ import { Box } from "@mui/material";
 const AppLayout = ({ children }) => {
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      minHeight="100vh" // Ensures the layout takes full height
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <Navbar />
 
       <Box
         component="main"
         sx={{
-          width: "80%",
+          width: "100%",
           flex: 1, // Allows main to expand to push the footer down
           mx: "auto", // Centers the main content horizontally
-          paddingY: 4, // Adjusts vertical padding
-          
           minHeight: "calc(100vh - 64px)", // Subtracts the height of the navbar
+          px: { xs: 2, sm: 4 },
+          py: 4,
+          backgroundColor: "#fafafa",
+          // backgroundColor: "#f5f5f5",
         }}
       >
         {children}

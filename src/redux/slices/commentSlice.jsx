@@ -120,22 +120,31 @@ export const fetchComments = createAsyncThunk(
 //function: Get admin Answers //
 export const fetchAdminAnswers = createAsyncThunk(
   "comments/fetchAdminAnswers",
-  async ({ postId, answertype }) => {
-    const response = await axios.get(
-      `/api/comments/${postId}/comment/admin/${answertype}`,
-      {
-        //todo: check the header
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
-    console.log("fetchAdminAnswers response:", response.data);
-    return response.data; // Assuming the response data is an array of comments
+  async ({ postId, answertype }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/${postId}/comment/admin/${answertype}`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      console.log("fetchAdminAnswers response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching admin answers:",
+        error.response?.data || error
+      );
+      return rejectWithValue(error.response?.data || error.message);
+    }
   }
 );
+
+
 
 export const commentSlice = createSlice({
   name: "comment",

@@ -1,88 +1,189 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from "react";
 import {
-    Line,
-    LineChart,
-    CartesianGrid,
-    XAxis,
-    YAxis,
-    Tooltip,
-    Legend,
-    ResponsiveContainer
+  Line,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
 } from "recharts";
 
-const PriceGraghView = ({ timeIntervals, priceData }) => {
-    const data = [];
+const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
+  /**
+   * priceData
+   * [
+   *  {
+   *      "date": date,
+   *      "country1": price1,
+   *      "country2": price2,
+   *      ...,
+   *  },
+   *  ...,
+   * ]
+   */
 
-    // 데이터를 날짜별로 그룹화하여 각 지역별 가격을 추가합니다.
-    priceData.forEach(item => {
-        let existingDate = data.find(d => d.date === item.baseDay);
-        if (!existingDate) {
-            existingDate = { date: item.baseDay };
-            data.push(existingDate);
-        }
-        existingDate[item.country] = item.averagePrice; // 지역별 가격 데이터를 추가
+  /**
+   * countries
+   * ["country1", "country2", ...]
+   */
+
+  /**
+   * random color(except black, white)
+   * @author 연상훈
+   * @param None
+   * @returns {number} color
+   */
+  const getRandomColor = () => {
+    let color;
+    do {
+      color = `#${(((1 << 24) * Math.random()) | 0)
+        .toString(16)
+        .padStart(6, "0")}`;
+    } while (color === "#ffffff" || color === "#000000");
+    return color;
+  };
+
+  /**
+   * useState and useEffect for saving line colors
+   * @author 연상훈
+   * @info If this is not present, the color changes every time the mouse is hovered over.
+   */
+  const [lineColors, setLineColors] = useState({});
+  useEffect(() => {
+    const colors = {};
+    countries.forEach((country) => {
+      colors[country] = getRandomColor();
     });
+    setLineColors(colors);
+  }, [countries]);
 
-    // 지역 목록을 구합니다.
-    const countries = [...new Set(priceData.map(item => item.country))];
+  /**
+   * price format
+   * @author 연상훈
+   * @param {number} value
+   * @returns {text} 0,000원
+   * @info Display in Korean won with thousand-unit separators.
+   */
+  const formatPrice = (value) => {
+    if (value === null || value === undefined) return "";
+    return `${value.toLocaleString()}원`;
+  };
 
-    // 랜덤색깔(흰색 제외)
-    const getRandomColor = () => {
-        let color;
-        do {
-            color = `#${((1 << 24) * Math.random() | 0).toString(16)}`;
-        } while (color === '#ffffff'); // 흰색 제외
-        return color;
-    };
+  const [highLightedLine, setHighLightedLine] = useState(null);
 
-    // 가격 포맷
-    const formatPrice = (value) => {
-        if (value === null || value === undefined) return '';
-        return `${value.toLocaleString()}원`;  // 천 단위로 구분, 원화 표기
-    };
+  /**
+   * mouse movement event on lines - activate
+   * @author 연상훈
+   * @param {text} country
+   * @info set highlighted line if the new one differs from the existing one
+   */
+  const handleMouseMove = (country) => {
+    if (highLightedLine !== country) {
+      setHighLightedLine(country);
+    }
+  };
 
-    return (
+  /**
+   * mouse movement event on lines - unactivate
+   * @author 연상훈
+   * @info It is difficult to select the line
+   * and the style kept changing every time the mouse moved, making it confusing.
+   * so I disabled it.
+   */
+  // const handleMouseLeave = () => {
+  //     setHighLightedLine(null);
+  // };
+
+  return (
+    <>
+      {priceData && priceData.length > 0 ? (
         <>
-            {priceData && priceData.length > 0 ? (
-                <>
-                    <h3>[ 구분 : {timeIntervals} ]</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={data}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" tickMargin={15} />
-                            <YAxis 
-                                domain={['dataMin - 50', 'dataMax + 50']}
-                                tickFormatter={formatPrice}
-                            />
-                            <Tooltip formatter={(value) => `${value.toLocaleString()}원`} />
-                            {countries.map((country, index) => (
-                                <Line 
-                                key={country} 
-                                type="monotone" 
-                                dataKey={country}
-                                name={country}
-                                stroke={getRandomColor()} // random color
-                                style={{ strokeWidth: 2 }}
-                                dot={false}
-                                />
-                            ))}
-                            <Legend wrapperStyle={{ paddingTop: "20px" }} />
-                            {/* 오른쪽 위/아이콘 둥글게 */}
-                            {/* <Legend
+          <h3>[ 구분 : {timeIntervals} ]</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={priceData} margin={{ left: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              {/* this applies only tickMargin, not margin. */}
+              <XAxis dataKey="date" tickMargin={15} />
+              <YAxis
+                domain={["auto", "auto"]} // min & max values will be updated automatically
+                tickFormatter={formatPrice}
+              />
+              <Tooltip formatter={formatPrice} />
+              {countries.map((country) => (
+                <Line
+                  key={country}
+                  type="monotone" // line style
+                  dataKey={country}
+                  name={country}
+                  stroke={lineColors[country]} // saved random color
+                  strokeWidth={highLightedLine === country ? 6 : 2} // line thickness. and now highlight only the seleceted one
+                  dot={highLightedLine === country ? { r: 6 } : false} // dot style for the price lines. and now activate only the seleceted one
+                  activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }} // dot style for the date lines
+                  onMouseMove={() => handleMouseMove(country)}
+                  // onMouseLeave={handleMouseLeave} // now disabled
+                />
+              ))}
+              {/* Legend applies only padding, not margin and tickMargin. */}
+              <Legend wrapperStyle={{ paddingTop: "20px" }} />
+              {/* Up and right/circle icon */}
+              {/* <Legend
                                 align="right"
                                 verticalAlign="top"
                                 iconType="circle"
                                 iconSize={12}
                                 wrapperStyle={{ paddingBottom: "20px" }}
                             /> */}
-                        </LineChart>
-                    </ResponsiveContainer>
-                </>
-            ) : (
-                <p>검색 결과가 없습니다.</p>
-            )}
+            </LineChart>
+          </ResponsiveContainer>
         </>
-    );
+      ) : (
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "400px",
+          }}
+        >
+          {/* Centered Text */}
+          <p
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              fontSize: "18px",
+              color: "#888",
+              textAlign: "center",
+              pointerEvents: "none", // makes text unclickable
+            }}
+          >
+            검색 결과가 없습니다.
+          </p>
+
+          {/* Render empty chart if no data */}
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={[{ date: "", value: 0 }]}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis tickFormatter={formatPrice} />
+              <Tooltip formatter={(value) => `${value.toLocaleString()}원`} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#ccc"
+                dot={false}
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </>
+  );
 };
-  
-  export default PriceGraghView;
+
+export default PriceGraghView;

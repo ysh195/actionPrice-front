@@ -134,6 +134,7 @@ const userSlice = createSlice({
       .addCase(getPersonalInfo.fulfilled, (state, action) => {
         state.loading = false;
         state.email = action.payload.email;
+        state.username = action.payload.username;
       })
       .addCase(getPersonalInfo.rejected, (state, action) => {
         state.loading = false;

@@ -13,7 +13,6 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "../assets/assest.js";
 import { logoutUser } from "../redux/slices/loginSlice.jsx";
@@ -22,7 +21,6 @@ function Navbar({ toggleSidebar }) {
   const [navMenuOpen, setNavMenuOpen] = React.useState(null);
   const [userMenuOpen, setUserMenuOpen] = React.useState(null);
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn);
-  // const { username, role } = useSelector((state) => state.login);
   const username = localStorage.getItem("username");
   const role = localStorage.getItem("role");
 
@@ -53,13 +51,34 @@ function Navbar({ toggleSidebar }) {
   return (
     <AppBar
       position="sticky"
+      elevation={4}
       sx={{
         backgroundColor: colors.primary,
+        color: colors.white2,
+        borderRadius: "0 0 12px 12px",
       }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* Menu Button for mobile */}
+          {/* Logo Positioned on the Left for Desktop */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".15rem",
+              color: "white",
+              textDecoration: "none",
+              display: { xs: "none", md: "flex" },
+            }}
+          >
+            AuctionPrice
+          </Typography>
+
+          {/* Menu Button for Mobile */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -92,7 +111,8 @@ function Navbar({ toggleSidebar }) {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="api/category/:large?/:middle?/:small?/:rank?"
+                  // to="api/category/:large?/:middle?/:small?/:rank?"
+                  to="api/category/:large"
                   sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Category
@@ -110,54 +130,38 @@ function Navbar({ toggleSidebar }) {
             </Menu>
           </Box>
 
-          {/* Logo Positioned on the Left for Desktop */}
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
-              justifyContent: "flex-start",
-            }}
-          >
-            <Typography
-              variant="h6"
-              noWrap
-              component={Link}
-              to="/"
-              sx={{
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".1rem",
-                color: "white",
-                textDecoration: "none",
-              }}
-            >
-              AuctionPrice
-            </Typography>
-          </Box>
-
           {/* Desktop Menu Items */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             <Button
               component={Link}
               to="/"
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                color: "white",
+                borderRadius: "12px",
+                "&:hover": { backgroundColor: colors.secondary },
+              }}
             >
               Home
             </Button>
             <Button
               component={Link}
               to="api/category/:large"
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                color: "white",
+                borderRadius: "12px",
+                "&:hover": { backgroundColor: colors.secondary },
+              }}
             >
               Category
             </Button>
             <Button
               component={Link}
               to="api/contact-us"
-              onClick={handleCloseNavMenu}
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                color: "white",
+                borderRadius: "12px",
+                "&:hover": { backgroundColor: colors.secondary },
+              }}
             >
               Contact Us
             </Button>
@@ -165,68 +169,58 @@ function Navbar({ toggleSidebar }) {
 
           {/* User Menu */}
           {isLoggedIn ? (
-            <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               {role === "ROLE_ADMIN" && (
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Button
-                    component={Link}
-                    to="/api/admin/userlist"
-                    sx={{
-                      textDecoration: "none",
-                      color: "inherit",
-                      marginRight: 1,
-                    }}
-                  >
-                    Admin Page
-                  </Button>
-                </MenuItem>
-              )}
-              <Box>
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <AccountCircle sx={{ color: "white" }} />
-                </IconButton>
-
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={userMenuOpen}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                  keepMounted
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  open={Boolean(userMenuOpen)}
-                  onClose={handleCloseUserMenu}
+                <Button
+                  component={Link}
+                  to="/api/admin/userlist"
+                  sx={{
+                    color: "white",
+                    textDecoration: "none",
+                    marginRight: 1,
+                    "&:hover": { color: colors.secondary },
+                  }}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      component={Link}
-                      to={`/api/mypage/${username}/myposts`}
-                      sx={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      My Page
-                    </Typography>
-                  </MenuItem>
-                  {/* 
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      component={Link}
-                      to="/api/user/wishlist"
-                      sx={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      WishList
-                    </Typography>
-                  </MenuItem> */}
-                  <MenuItem onClick={handleLogout}>
-                    <Typography sx={{ color: colors.warning }}>
-                      Logout
-                    </Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
+                  Admin Page
+                </Button>
+              )}
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <AccountCircle sx={{ color: "white", fontSize: "28px" }} />
+              </IconButton>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={userMenuOpen}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                keepMounted
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                open={Boolean(userMenuOpen)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography
+                    component={Link}
+                    to={`/api/mypage/${username}/myposts`}
+                    sx={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    My Page
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <Typography sx={{ color: colors.warning }}>Logout</Typography>
+                </MenuItem>
+              </Menu>
             </Box>
           ) : (
             <Button
               onClick={() => navigate("/api/user/login")}
-              sx={{ color: "white" }}
+              sx={{
+                color: "white",
+                border: "1px solid white",
+                borderRadius: "12px",
+                paddingX: 2,
+                "&:hover": { backgroundColor: colors.secondary },
+              }}
             >
               로그인
             </Button>

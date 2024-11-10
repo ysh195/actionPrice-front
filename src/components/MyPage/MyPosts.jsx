@@ -1,14 +1,16 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import {
   Backdrop,
   Box,
   CircularProgress,
   Pagination,
   Typography,
-  Button,
+
 } from "@mui/material";
 import React, { useEffect } from "react";
 import PostListView from "../Post/PostListView";
-import { getMyPosts, getPersonalInfo } from "../../redux/slices/myPageSlice";
+import { getMyPosts} from "../../redux/slices/myPageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import PostSearch from "../Post/PostSearch";
 import { useSearchParams } from "react-router-dom";
@@ -24,7 +26,7 @@ const MyPosts = ({ username }) => {
 
   useEffect(() => {
     if (username) {
-      dispatch(getPersonalInfo(username));
+
       dispatch(getMyPosts({ username, keyword, pageNum: pageNum - 1 }));
     }
   }, [dispatch, username, keyword, pageNum]);
@@ -65,7 +67,7 @@ const MyPosts = ({ username }) => {
         />
       </Box>
 
-      <PostListView postList={myPosts} />
+      <PostListView postList={myPosts} pageNum={pageNum} />
       <Pagination
         count={totalPageNum}
         page={pageNum}

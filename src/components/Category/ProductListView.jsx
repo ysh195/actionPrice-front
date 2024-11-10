@@ -2,29 +2,28 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import {
-  Box,
-  Button,
   Paper,
   styled,
   Table,
   TableBody,
   TableCell,
-  tableCellClasses,
+
   TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
 import { colors } from "../../assets/assest";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: colors.tableHead,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 16,
-  },
-}));
+const StyledTableCell = (props) => (
+  <TableCell
+    {...props}
+    sx={{
+      fontWeight: "bold",
+      backgroundColor: colors.primary,
+      color: "white",
+    }}
+  />
+);
 const ProductListView = ({ productList, pageNum }) => {
   const itemsPerPage = 10;
 
@@ -64,7 +63,17 @@ const ProductListView = ({ productList, pageNum }) => {
           <TableBody>
             {productList && productList.length > 0 ? (
               productList.map((product, index) => (
-                <TableRow key={product.delId}>
+                <TableRow
+                  key={product.delId}
+                  sx={{
+                    "&:nth-of-type(even)": {
+                      backgroundColor: "#f9f9f9",
+                    },
+                    "&:hover": {
+                      backgroundColor: "#f0f0f0",
+                    },
+                  }}
+                >
                   <TableCell>
                     {(pageNum - 1) * itemsPerPage + index + 1}
                   </TableCell>

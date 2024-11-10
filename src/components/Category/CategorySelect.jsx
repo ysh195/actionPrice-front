@@ -7,7 +7,7 @@ const CategorySelect = ({
   value,
   handleCategoryChange,
   categoryList,
-  categoryType, // 'large', 'middle', 'small', etc.
+  categoryType, 
 }) => {
   return (
     <FormControl sx={{ width: "200px" }} margin="normal">
