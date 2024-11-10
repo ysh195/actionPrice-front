@@ -22,11 +22,12 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import BadgeIcon from "@mui/icons-material/Badge";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/slices/loginSlice";
+import { logoutUser } from "../../redux/slices/loginSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { deleteAccount } from "../redux/slices/myPageSlice";
+import { deleteAccount } from "../../redux/slices/myPageSlice";
 import Swal from "sweetalert2";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { colors } from "../../assets/assest";
 
 const Sidebar = () => {
   const { username } = useParams();
@@ -34,7 +35,6 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const email = useSelector((state) => state.myPage.email);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleAccountMenu = () => setIsAccountOpen(!isAccountOpen);
@@ -86,7 +86,7 @@ const Sidebar = () => {
     <Box
       open={isOpen}
       sx={{
-        backgroundColor: "#2f323a",
+        backgroundColor: colors.primary,
         padding: 2,
         height: "100%",
         position: "fixed",
@@ -137,12 +137,7 @@ const Sidebar = () => {
               <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 2 : 0 }}>
                 <BadgeIcon onClick={toggleSidebar} />
               </ListItemIcon>
-              {isOpen && (
-                <Box>
-                  <Typography variant="body2">{username}</Typography>
-                  <Typography variant="body2">{email}</Typography>
-                </Box>
-              )}
+              {isOpen && <Typography variant="body2">{username}</Typography>}
             </ListItem>
           </Box>
 

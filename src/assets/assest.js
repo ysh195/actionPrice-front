@@ -7,14 +7,15 @@ import axios from "axios";
 
 //desc: ui colors
 export const colors = {
-  primary: "#344955",
+  primary: "#4D766E",
+
   // primary: "#538392",
   secondary: "#2ecc71",
   accent: "#e74c3c",
   text: "#2c3e50",
   white: "#ffffff",
   white2: "#ecf0f1",
-  tableHead: "#C5705D",
+  tableHead: "#4D766E",
   button1: "#2C3E50",
   button2: "#CB6040",
   hover1: "#49557e",

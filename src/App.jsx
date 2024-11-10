@@ -1,4 +1,3 @@
-import CategoryDetails from "./components/Category/CategoryDetails";
 import CreatePostView from "./components/Post/CreatePostView";
 import PostDetailPage from "./components/Post/PostDetailPage";
 import UpdatePostView from "./components/Post/UpdatePostView";
@@ -17,8 +16,7 @@ import Home from "./pages/Home";
 
 import "./App.css";
 import PwChange from "./components/Password/PwChange";
-
-import UserPage from "./test/UserPage";
+import Category from "./pages/Category";
 
 
 function App() {
@@ -41,18 +39,19 @@ function App() {
 
           <Route path="api/user/register" exact element={<Register />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
-          <Route
+          {/* <Route
             path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryDetails />}
-          />
-          {/* <Route
-            path="api/mypage/:username/*"
-            element={<ProtectedRoute element={<MyPage />} />}
           /> */}
 
           <Route
+            path="api/category/:large?/:middle?/:small?/:rank?"
+            element={<Category />}
+          />
+
+          <Route
             path="api/mypage/:username/*"
-            element={<ProtectedRoute element={<UserPage />} />}
+            element={<ProtectedRoute element={<MyPage />} />}
           />
 
           <Route path="api/contact-us" element={<ContactUs />} />

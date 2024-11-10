@@ -16,7 +16,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import PostSearch from "../components/Post/PostSearch";
 import { colors } from "../assets/assest";
-import Test from "../test/Test";
+
 
 const ContactUs = () => {
   const dispatch = useDispatch();
@@ -58,14 +58,14 @@ const ContactUs = () => {
   // Render error message
   if (error) {
     return (
-      <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
+      <Box sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
         <Typography color="error">{`Error: ${error}`}</Typography>
-      </Paper>
+      </Box>
     );
   }
 
   return (
-    <Paper sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
+    <Box sx={{ marginTop: 2, padding: 2, textAlign: "center" }}>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
@@ -102,7 +102,7 @@ const ContactUs = () => {
           onReset={handleResetSearch}
         />
       </Box>
-      <PostListView postList={postList} />
+      <PostListView postList={postList} pageNum={pageNum} />
       <Pagination
         count={totalPageNum} // Total number of pages from Redux state
         page={pageNum} // Current page
@@ -110,7 +110,7 @@ const ContactUs = () => {
         variant="outlined"
         sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
       />
-    </Paper>
+    </Box>
   );
 };
 

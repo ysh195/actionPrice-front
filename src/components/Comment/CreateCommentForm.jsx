@@ -23,8 +23,6 @@ const CreateCommentForm = ({ postId }) => {
   console.log("CreateCommentForm is rendered");
   console.log("adminAnswers:", adminAnswers);
 
-
-
   const handleCreateComment = async () => {
     if (!content.trim()) {
       Swal.fire({
@@ -59,7 +57,14 @@ const CreateCommentForm = ({ postId }) => {
   const handleSubmitAnswer = (answertype) => {
     console.log("Selected Answer:", answertype);
     setContent(answertype);
-    dispatch(fetchAdminAnswers({ postId, answertype })); //
+    dispatch(fetchAdminAnswers({ postId, answertype }))
+      .unwrap()
+      .then((answer) => {
+        console.log("Fetched answer:", answer);
+      })
+      .catch((error) => {
+        console.error("Error fetching admin answer:", error);
+      });
   };
 
   const handleCancelComment = () => {

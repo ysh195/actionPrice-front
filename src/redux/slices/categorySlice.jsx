@@ -199,7 +199,7 @@ export const categorySlice = createSlice({
       .addCase(fetchPriceData.fulfilled, (state, action) => {
         state.loading = false;
         state.priceData = action.payload.chartDataList;
-        state.countries = action.payload.countries;
+         state.countries = action.payload.countries;
         state.timeIntervals = action.payload.timeIntervals;
       })
       .addCase(fetchPriceData.rejected, (state, action) => {
