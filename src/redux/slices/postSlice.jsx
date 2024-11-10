@@ -94,7 +94,7 @@ export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      const access_Token = localStorage.getItem("access_token");
+      let access_Token = localStorage.getItem("access_token");
       let response;
       if (access_Token === null) {
         response = await axios.get(`${API_URL}/post/${postId}/detail`, {
