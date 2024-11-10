@@ -47,7 +47,6 @@ export const blockUser = createAsyncThunk(
 
     const response = await axios.post(
       `${baseUrl}/userlist/${username}/block`,
-      {},
       {
         headers: {
           Authorization: `Bearer ${access_Token}`,
@@ -76,7 +75,6 @@ export const resetRefreshToken = createAsyncThunk(
 
     const response = await axios.post(
       `${baseUrl}/userlist/${username}/reset`,
-      {},
       {
         headers: {
           Authorization: `Bearer ${access_Token}`,

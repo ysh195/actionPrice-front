@@ -1,4 +1,4 @@
-/* eslint-disable no-empty-pattern */
+ 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -28,13 +28,16 @@ export const createPost = createAsyncThunk(
       return rejectWithValue("User not logged in");
     }
     try {
-      const response = await axios.post(`${API_URL}/post/create`, postData, {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axios.post(`${API_URL}/post/create`,
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+    );
       console.log("post response:", response);
       return response.data;
     } catch (error) {
