@@ -60,7 +60,6 @@ const CreateCommentForm = ({ postId }) => {
     dispatch(fetchAdminAnswers({ postId, answertype }))
       .unwrap()
       .then((answer) => {
-        // The response data (answer) can be used to populate a comment or show it in the UI
         console.log("Fetched answer:", answer);
       })
       .catch((error) => {
