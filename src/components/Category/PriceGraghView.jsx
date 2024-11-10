@@ -12,19 +12,48 @@ import {
 
 const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
 
-    // 랜덤색깔(흰색 제외)
+    /**
+     * priceData
+     * [
+     *  {
+     *      "date": date,
+     *      "country1": price1,
+     *      "country2": price2,
+     *      ...,
+     *  },
+     *  ...,
+     * ]
+     */
+
+    /**
+     * countries
+     * ["country1", "country2", ...]
+     */
+
+    /**
+     * random color(except white)
+     * @author 연상훈
+     * @param None
+     * @returns {number} color
+     */
     const getRandomColor = () => {
         let color;
         do {
             color = `#${((1 << 24) * Math.random() | 0).toString(16)}`;
-        } while (color === '#ffffff'); // 흰색 제외
+        } while (color === '#ffffff');
         return color;
     };
 
-    // 가격 포맷
+    /**
+     * price format
+     * @author 연상훈
+     * @param {number} value 
+     * @returns {text} 0,000원
+     * @info Display in Korean won with thousand-unit separators.
+     */
     const formatPrice = (value) => {
         if (value === null || value === undefined) return '';
-        return `${value.toLocaleString()}원`;  // 천 단위로 구분, 원화 표기
+        return `${value.toLocaleString()}원`;
     };
 
     return (
@@ -33,27 +62,29 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
                 <>
                     <h3>[ 구분 : {timeIntervals} ]</h3>
                     <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={priceData}>
+                        <LineChart data={priceData} margin={{ left: 30 }}>
                             <CartesianGrid strokeDasharray="3 3" />
+                            {/* this applies only tickMargin, not margin. */}
                             <XAxis dataKey="date" tickMargin={15} />
                             <YAxis 
-                                domain={['dataMin - 50', 'dataMax + 50']}
+                                domain={['auto', 'auto']} // min & max values will be updated automatically
                                 tickFormatter={formatPrice}
                             />
-                            <Tooltip formatter={(value) => `${value.toLocaleString()}원`} />
+                            <Tooltip formatter={formatPrice} />
                             {countries.map((country) => (
                                 <Line 
-                                key={country} 
-                                type="monotone" 
-                                dataKey={country}
-                                name={country}
-                                stroke={getRandomColor()} // random color
-                                style={{ strokeWidth: 2 }}
-                                dot={false}
+                                    key={country} 
+                                    type="monotone" // line style
+                                    dataKey={country}
+                                    name={country}
+                                    stroke={getRandomColor()} // random color
+                                    style={{ strokeWidth: 2 }} // line thickness
+                                    dot={false} // disable dots on line
                                 />
                             ))}
+                            {/* Legend applies only padding, not margin and tickMargin. */}
                             <Legend wrapperStyle={{ paddingTop: "20px" }} />
-                            {/* 오른쪽 위/아이콘 둥글게 */}
+                            {/* Up and right/circle icon */}
                             {/* <Legend
                                 align="right"
                                 verticalAlign="top"
