@@ -17,7 +17,7 @@ import PriceGraghView from "../components/Category/PriceGraghView.jsx";
 import CategoryDetail from "../components/Category/CategoryDetails.jsx";
 import Favorite_DownloadButton from "../components/Category/Favorite_DownloadButton.jsx";
 
-const Category = () => {
+const CategoryPage = () => {
   const { large, middle, small, rank } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const startDate = searchParams.get("startDate") || "";
@@ -129,4 +129,4 @@ const Category = () => {
     </Box>
   );
 };
-export default Category;
+export default CategoryPage;

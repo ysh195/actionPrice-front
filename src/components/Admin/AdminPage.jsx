@@ -18,42 +18,55 @@ import {
   fetchUserList,
   blockUser,
   resetRefreshToken,
-  selectUserList,
 } from "../../redux/slices/adminPageSlice";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import PostSearch from "../Post/PostSearch.jsx";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: colors.tableHead,
-    color: colors.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 16,
-  },
-}));
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//   [`&.${tableCellClasses.head}`]: {
+//     backgroundColor: colors.tableHead,
+//     color: colors.white,
+//   },
+//   [`&.${tableCellClasses.body}`]: {
+//     fontSize: 16,
+//   },
+// }));
+
+const StyledTableCell = (props) => (
+  <TableCell
+    {...props}
+    sx={{
+      fontWeight: "bold",
+      backgroundColor: colors.tableHead,
+      color: "white",
+    }}
+  />
+);
 
 //todo: dont allow render search button first
 
 const AdminPage = () => {
+  const itemsPerPage = 10;
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams(); //show the current page number in the URL
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const pageNum = parseInt(searchParams.get("pageNum")) || 1; // Get pageNum from URL or default to 1
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageNum = parseInt(searchParams.get("pageNum")) || 1;
   const keyword = searchParams.get("keyword") || "";
-  const { userList, totalPageNum, hasNext } = useSelector(
-    (state) => state.adminPage
-  );
+  const { userList, totalPageNum } = useSelector((state) => state.adminPage);
 
   // Fetch user list based on page number and keyword
   useEffect(() => {
     dispatch(fetchUserList({ pageNum: pageNum - 1, keyword }));
-    setSearchParams({ pageNum, keyword }); // Update URL with current page number
-  }, [dispatch, pageNum, keyword, setSearchParams]);
+  }, [dispatch, pageNum, keyword]);
 
-  const handleSearch = () => {
-    // Update the searchParams in the URL
+  //function: Handle search submission //
+  const handleSearch = (searchKeyword) => {
     setSearchParams({ keyword: searchKeyword, pageNum: 1 }); // Reset to page 1 on new search
+    console.log("api call for fetchUserList-handleSearch submission");
     dispatch(fetchUserList({ pageNum: 0, keyword: searchKeyword })); // Fetch user list with new keyword
+  };
+  //function: handleResetSearch  submission //
+  const handleResetSearch = () => {
+    setSearchParams({ pageNum: 1 }); // Reset to the first page
   };
 
   const handlePageChange = (event, value) => {
@@ -91,21 +104,11 @@ const AdminPage = () => {
           mb: 2,
         }}
       >
-        <TextField
-          type="text"
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          placeholder="Search by username or email"
-          sx={{ mr: 2, width: "250px" }}
+        <PostSearch
+          keyword={keyword}
+          onSearch={handleSearch}
+          onReset={handleResetSearch}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          onClick={handleSearch}
-          sx={{ backgroundColor: colors.button1 }}
-        >
-          Search
-        </Button>
       </Box>
 
       <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -113,6 +116,7 @@ const AdminPage = () => {
           <Table aria-label="User List Table">
             <TableHead>
               <TableRow>
+                <StyledTableCell>No</StyledTableCell>
                 <StyledTableCell>Username</StyledTableCell>
                 <StyledTableCell>Email</StyledTableCell>
                 <StyledTableCell>Posts</StyledTableCell>
@@ -127,12 +131,25 @@ const AdminPage = () => {
               {userList.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    No user exists with that keyword in the username or email.
+                    해당 키워드로 사용자나 이메일을 찾을 수 없습니다.
                   </TableCell>
                 </TableRow>
               ) : (
-                userList.map((user) => (
-                  <TableRow key={user.username}>
+                userList.map((user, index) => (
+                  <TableRow
+                    key={user.username}
+                    sx={{
+                      "&:nth-of-type(even)": {
+                        backgroundColor: "#f9f9f9",
+                      },
+                      "&:hover": {
+                        backgroundColor: "#f0f0f0",
+                      },
+                    }}
+                  >
+                    <TableCell>
+                      {(pageNum - 1) * itemsPerPage + index + 1}
+                    </TableCell>
                     <TableCell>
                       <Link
                         to={`/api/mypage/${user.username}`}

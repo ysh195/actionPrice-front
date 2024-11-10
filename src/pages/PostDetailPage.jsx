@@ -2,7 +2,7 @@
 import React, { useEffect, Suspense, lazy, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { fetchPostById } from "../../redux/slices/postSlice";
+import { fetchPostById } from "../redux/slices/postSlice";
 import {
   Box,
   CircularProgress,
@@ -10,12 +10,18 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import CreateCommentForm from "../Comment/CreateCommentForm";
-import { CommentList } from "../Comment/CommentList";
+import CreateCommentForm from "../components/Comment/CreateCommentForm";
+import { CommentList } from "../components/Comment/CommentList";
 
-const PostHeader = React.memo(lazy(() => import("./PostHeader")));
-const PostContent = React.memo(lazy(() => import("./PostContent")));
-const PostActions = React.memo(lazy(() => import("./PostActions")));
+const PostHeader = React.memo(
+  lazy(() => import("../components/Post/PostHeader"))
+);
+const PostContent = React.memo(
+  lazy(() => import("../components/Post/PostContent"))
+);
+const PostActions = React.memo(
+  lazy(() => import("../components/Post/PostActions"))
+);
 
 const PostDetailPage = () => {
   const { postId } = useParams();
@@ -101,7 +107,7 @@ const PostDetailPage = () => {
           <CommentList postId={postId} />
         </Box>
       </Container>
-  </Suspense>
+    </Suspense>
   );
 };
 

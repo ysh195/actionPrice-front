@@ -21,7 +21,7 @@ const UpdatePostView = () => {
   const [content, setContent] = useState(post.content || "");
 
 
-  console.log("check post in PostDetailPage component:", post);
+  console.log("check post in PostDetailPage:", post);
  useEffect(() => {
    dispatch(fetchPostForUpdate({ postId, username }));
  }, [dispatch, postId, username]);

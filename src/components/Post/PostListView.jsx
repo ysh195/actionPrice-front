@@ -32,6 +32,8 @@ const PostListView = ({ postList = [], pageNum }) => {
   const role = localStorage.getItem("role");
 
   console.log("check postList in PostList component:", postList);
+  console.log("checking role in postList:", role);
+    console.log("checking logined_username in postList:", logined_username);
 
   const formatDate = (date) => {
     try {
@@ -102,7 +104,7 @@ const PostListView = ({ postList = [], pageNum }) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={3} align="center">
-                  <Typography>No posts available</Typography>
+                  <Typography>게시글이 없습니다</Typography>
                 </TableCell>
               </TableRow>
             )}

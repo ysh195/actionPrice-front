@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Paper,
   Typography,
@@ -18,7 +18,7 @@ import PostSearch from "../components/Post/PostSearch";
 import { colors } from "../assets/assest";
 
 
-const ContactUs = () => {
+const ContactUsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,14 +36,13 @@ const ContactUs = () => {
     dispatch(fetchPosts({ pageNum: pageNum - 1, keyword })); // Adjust for API (0-based index)
   }, [dispatch, pageNum, keyword]);
 
-  //function: Handle search submission // 
+  //function: Handle search submission //
   const handleSearch = (searchKeyword) => {
     setSearchParams({ pageNum: 1, keyword: searchKeyword }); // Reset to first page and set keyword
     console.log("api call for fetchPosts-Handle search submission");
-
     dispatch(fetchPosts({ pageNum: 0, keyword: searchKeyword }));
   };
-  //function: handleResetSearch  submission // 
+  //function: handleResetSearch  submission //
   const handleResetSearch = () => {
     setSearchParams({ pageNum: 1 }); // Reset to the first page
   };
@@ -52,8 +51,6 @@ const ContactUs = () => {
     if (value < 1) return; // Prevent navigating to less than page 1
     setSearchParams({ pageNum: value, keyword }); // Update pageNum while retaining keyword
   };
-
-
 
   // Render error message
   if (error) {
@@ -114,4 +111,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactUsPage;

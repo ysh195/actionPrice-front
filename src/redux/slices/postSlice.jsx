@@ -1,7 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const initialState = {
@@ -87,7 +86,6 @@ export const fetchPostForUpdate = createAsyncThunk(
   }
 );
 
-//todo: users without token cant see the post. check it
 //function: fetchPostById //
 export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
@@ -100,17 +98,14 @@ export const fetchPostById = createAsyncThunk(
           params: { page },
         });
       } else {
-        response = await axios.get(
-          `${API_URL}/post/${postId}/detail`,
-          { params: { page } },
-          {
-            headers: {
-              Authorization: `Bearer ${access_Token}`,
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
+        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
+          params: { page },
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
       }
       console.log("fetchPostById response:", response);
       return response.data;

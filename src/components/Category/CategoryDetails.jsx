@@ -126,7 +126,6 @@ const CategoryDetail = ({
 
   const handleSearch = () => {
     // Check all conditions before running search
-
     if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
@@ -136,7 +135,6 @@ const CategoryDetail = ({
       pageNum: 1, // Reset to page 1 on new search
     });
     dispatch(
-      //todo: cancel fetch after date selection
       fetchProductList({
         large: selectedLarge,
         middle: selectedMiddle,
@@ -144,7 +142,7 @@ const CategoryDetail = ({
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum: pageNum - 1, // Adjust for zero-based index
+        pageNum: pageNum - 1, 
       })
     );
     dispatch(

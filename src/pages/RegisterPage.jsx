@@ -27,7 +27,7 @@ import { colors } from "../assets/assest";
 
 
 
-const Register = () => {
+const RegisterPage = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -122,7 +122,7 @@ const Register = () => {
       title: "잠시 기다려 주세요...",
       text: "인증 코드가 전송 중이며 최대 30초가 걸릴 수 있습니다.",
       icon: "info",
-      allowOutsideClick: false, 
+      allowOutsideClick: false,
       showConfirmButton: false,
     });
 
@@ -187,7 +187,6 @@ const Register = () => {
         showConfirmButton: false,
       });
       navigate("/api/user/login");
-
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -196,7 +195,6 @@ const Register = () => {
       });
     }
   };
-
 
   return (
     <Container
@@ -403,4 +401,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterPage;

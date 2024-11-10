@@ -1,25 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 
-import { colors } from "../../assets/assest";
-
-const PostSearch = ({ onSearch, onReset, keyword }) => {
+const PostSearch = ({ onSearch, keyword }) => {
   const [searchKeyword, setSearchKeyword] = useState(keyword);
-  const [isSearching, setIsSearching] = useState(true);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
-
-  // Effect to sync the keyword from props
-  // useEffect(() => {
-  //   setSearchKeyword(keyword);
-  // }, [keyword]);
-
-  const handleSearch = () => {
-    onSearch(searchKeyword); // Trigger search with current keyword
-  };
 
   const handleChange = (e) => {
     const newKeyword = e.target.value;
@@ -42,7 +28,7 @@ const PostSearch = ({ onSearch, onReset, keyword }) => {
     <div style={{ display: "flex", alignItems: "center" }}>
       <TextField
         id="outlined-search"
-        label="게시글 검색"
+        label="검색"
         type="search"
         value={searchKeyword}
         onChange={handleChange}
