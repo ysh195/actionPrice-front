@@ -54,6 +54,8 @@ function Navbar({ toggleSidebar }) {
       elevation={4}
       sx={{
         backgroundColor: colors.primary,
+        height: 100,
+        justifyContent: "center",
         color: colors.white2,
         borderRadius: "0 0 12px 12px",
       }}
@@ -131,14 +133,14 @@ function Navbar({ toggleSidebar }) {
           </Box>
 
           {/* Desktop Menu Items */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
+          <Box sx={{ display: { xs: "none", md: "flex" },  gap: 2 }}>
             <Button
               component={Link}
               to="/"
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.secondary },
+                "&:hover": { backgroundColor: colors.button2 },
               }}
             >
               Home
@@ -149,7 +151,7 @@ function Navbar({ toggleSidebar }) {
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.secondary },
+                "&:hover": { backgroundColor: colors.button2 },
               }}
             >
               Category
@@ -160,7 +162,7 @@ function Navbar({ toggleSidebar }) {
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.secondary },
+                "&:hover": { backgroundColor: colors.button2 },
               }}
             >
               Contact Us
@@ -178,13 +180,16 @@ function Navbar({ toggleSidebar }) {
                     color: "white",
                     textDecoration: "none",
                     marginRight: 1,
-                    "&:hover": { color: colors.secondary },
+                    "&:hover": { color: colors.button2 },
                   }}
                 >
                   Admin Page
                 </Button>
               )}
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0, marginLeft: 2 }}
+              >
                 <AccountCircle sx={{ color: "white", fontSize: "28px" }} />
               </IconButton>
               <Menu
@@ -219,7 +224,8 @@ function Navbar({ toggleSidebar }) {
                 border: "1px solid white",
                 borderRadius: "12px",
                 paddingX: 2,
-                "&:hover": { backgroundColor: colors.secondary },
+                marginLeft: 2,
+                "&:hover": { backgroundColor: colors.button2 },
               }}
             >
               로그인

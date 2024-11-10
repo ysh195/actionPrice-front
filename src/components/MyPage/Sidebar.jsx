@@ -5,7 +5,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  IconButton,
   Divider,
   Typography,
   Box,
@@ -21,7 +20,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import BadgeIcon from "@mui/icons-material/Badge";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/slices/loginSlice";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { deleteAccount } from "../../redux/slices/myPageSlice";
@@ -93,60 +92,109 @@ const Sidebar = () => {
         overflowY: "auto",
         top: "3rem",
         left: 0,
-        width: isOpen ? 250 : 100,
+        width: isOpen ? 210 : 90,
         flexShrink: 0,
         color: "#fff",
+        zIndex:2
       }}
     >
-      <Box>
-        <List>
-          <ListItemIcon onClick={toggleSidebar} sx={{ color: "#fff" }}>
-            {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </ListItemIcon>
+      <List>
+        <ListItemIcon onClick={toggleSidebar} sx={{ color: "#fff" }}>
+          {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+        </ListItemIcon>
 
+        <Box
+          sx={{
+            
+            mt: "3rem",
+          }}
+        >
           <Divider />
-
           <Typography
             variant="body2"
             sx={{
               color: "rgb(137, 135, 135)",
-              margin: isOpen ? "8px 1rem" : "16px 1rem",
+              margin: isOpen ? "10px 1rem" : "16px 0.5rem",
             }}
           >
             Profile
           </Typography>
           <Divider />
 
-          <Box
+          <ListItem
+            component="button"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              paddingBottom: "46px",
-              paddingTop: "0",
-              justifyContent: isOpen ? "space-evenly" : "center",
+              color: "#fff",
+              cursor: "pointer !important",
+              backgroundColor: "transparent",
             }}
+          >
+            <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+              <BadgeIcon onClick={toggleSidebar} />
+            </ListItemIcon>
+            {isOpen && <Typography variant="body2">{username}</Typography>}
+          </ListItem>
+          <Tooltip
+            title="계정"
+            placement="right"
+            arrow
+            disableHoverListener={isOpen}
           >
             <ListItem
               component="button"
+              onClick={toggleAccountMenu}
               sx={{
                 color: "#fff",
                 cursor: "pointer !important",
                 backgroundColor: "transparent",
               }}
             >
-              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 2 : 0 }}>
-                <BadgeIcon onClick={toggleSidebar} />
+              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+                <ManageAccountsIcon />
               </ListItemIcon>
-              {isOpen && <Typography variant="body2">{username}</Typography>}
+              {isOpen && (
+                <>
+                  <ListItemText primary="계정" />
+                  {isAccountOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </>
+              )}
             </ListItem>
-          </Box>
+          </Tooltip>
+          <Collapse in={isAccountOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <Tooltip
+                title="계정 삭제"
+                placement="right"
+                arrow
+                disableHoverListener={isOpen}
+              >
+                <ListItem
+                  component="button"
+                  onClick={handleDeleteAccount}
+                  sx={{
+                    pl: 4,
+                    color: "#fff",
+                    cursor: "pointer !important",
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+                    <PersonRemoveIcon />
+                  </ListItemIcon>
+                  {isOpen && <ListItemText primary="계정 삭제" />}
+                </ListItem>
+              </Tooltip>
+            </List>
+          </Collapse>
+        </Box>
 
+        <Box sx={{ mt: "3rem" }}>
           <Divider />
           <Typography
             variant="body2"
             sx={{
               color: "rgb(137, 135, 135)",
-              margin: isOpen ? "8px 1rem" : "16px 1rem",
+              margin: isOpen ? "10px 1rem" : "16px 0.5rem",
             }}
           >
             Menu
@@ -186,85 +234,34 @@ const Sidebar = () => {
               {isOpen && <ListItemText primary="내 관심 목록" />}
             </ListItem>
           </Tooltip>
-        </List>
-      </Box>
+        </Box>
 
-      <Box>
-        <Tooltip
-          title="계정"
-          placement="right"
-          arrow
-          disableHoverListener={isOpen}
-        >
-          <ListItem
-            component="button"
-            onClick={toggleAccountMenu}
-            sx={{
-              color: "#fff",
-              cursor: "pointer !important",
-              backgroundColor: "transparent",
-            }}
+        {/* Spacer between menu and logout */}
+        <Box sx={{ flexGrow: 1 }} />
+
+        <Box sx={{  mt: "20rem" }}>
+          <Tooltip
+            title="로그아웃"
+            placement="right"
+            arrow
+            disableHoverListener={isOpen}
           >
-            <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
-              <ManageAccountsIcon />
-            </ListItemIcon>
-            {isOpen && (
-              <>
-                <ListItemText primary="계정" />
-                {isAccountOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              </>
-            )}
-          </ListItem>
-        </Tooltip>
-
-        <Collapse in={isAccountOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <Tooltip
-              title="계정 삭제"
-              placement="right"
-              arrow
-              disableHoverListener={isOpen}
+            <ListItem
+              onClick={handleLogout}
+              sx={{
+                color: "#fff",
+                cursor: "pointer !important",
+                backgroundColor: "transparent",
+              }}
             >
-              <ListItem
-                component="button"
-                onClick={handleDeleteAccount}
-                sx={{
-                  pl: 4,
-                  color: "#fff",
-                  cursor: "pointer !important",
-                  backgroundColor: "transparent",
-                }}
-              >
-                <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
-                  <PersonRemoveIcon />
-                </ListItemIcon>
-                {isOpen && <ListItemText primary="계정 삭제" />}
-              </ListItem>
-            </Tooltip>
-          </List>
-        </Collapse>
-
-        <Tooltip
-          title="로그아웃"
-          placement="right"
-          arrow
-          disableHoverListener={isOpen}
-        >
-          <ListItem
-            onClick={handleLogout}
-            sx={{
-              color: "#fff",
-              cursor: "pointer !important",
-              backgroundColor: "transparent",
-            }}
-          >
-            <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
-              <LogoutIcon />
-            </ListItemIcon>
-            {isOpen && <ListItemText primary="로그아웃" />}
-          </ListItem>
-        </Tooltip>
-      </Box>
+              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+                <LogoutIcon />
+              </ListItemIcon>
+              {isOpen && <ListItemText primary="로그아웃" />}
+            </ListItem>
+          </Tooltip>
+        </Box>
+      </List>
     </Box>
   );
 };

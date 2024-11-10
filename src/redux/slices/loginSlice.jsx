@@ -69,16 +69,13 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("role");
       axios.defaults.headers.common["Authorization"] = null;
 
-      const response = await axios.post(
-        `${BASE_URL}/user/logout`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/user/logout`, {
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {
@@ -103,8 +100,6 @@ const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-
-
     autoLogin: (state) => {
       const access_token = localStorage.getItem("access_token");
       console.log("checking if there's token:", access_token);

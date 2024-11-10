@@ -120,11 +120,11 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
                   dataKey={country}
                   name={country}
                   stroke={lineColors[country]} // saved random color
-                  strokeWidth={highLightedLine === country ? 6 : 2} // line thickness. and now highlight only the seleceted one
+                  strokeWidth={highLightedLine === country ? 3 : 2} // line thickness. and now highlight only the seleceted one
                   dot={highLightedLine === country ? { r: 6 } : false} // dot style for the price lines. and now activate only the seleceted one
                   activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }} // dot style for the date lines
                   onMouseMove={() => handleMouseMove(country)}
-                  // onMouseLeave={handleMouseLeave} // now disabled
+                   //onMouseLeave={handleMouseLeave} // now disabled
                 />
               ))}
               {/* Legend applies only padding, not margin and tickMargin. */}

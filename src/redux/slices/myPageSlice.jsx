@@ -96,7 +96,7 @@ export const getMyPosts = createAsyncThunk(
           },
 
           headers: {
-           Authorization: `Bearer ${access_Token}`,
+            Authorization: `Bearer ${access_Token}`,
             //todo:if error delete content part
             "Content-Type": "application/json",
             Accept: "application/json",

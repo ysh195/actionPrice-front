@@ -23,7 +23,8 @@ export const checkUserExists = createAsyncThunk(
 
   async ({ username }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/user/checkUserExists`,
+      const response = await axios.post(
+        `${BASE_URL}/user/checkUserExists`,
         { username },
         {
           headers: {
@@ -31,7 +32,7 @@ export const checkUserExists = createAsyncThunk(
             Accept: "application/json",
           },
         }
-    );
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(

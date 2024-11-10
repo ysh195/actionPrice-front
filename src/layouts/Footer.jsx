@@ -15,7 +15,7 @@ const Footer = () => {
           position: "relative",
           bottom: 0,
           width: "100%",
-          zIndex: 1000,
+          zIndex: 1,
           height: "100px",
           mb: 1,
         }}

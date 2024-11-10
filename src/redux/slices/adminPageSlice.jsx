@@ -1,5 +1,3 @@
-// src/slices/adminPageSlice.js
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 const initialState = {
@@ -39,27 +37,37 @@ export const fetchUserList = createAsyncThunk(
 export const blockUser = createAsyncThunk(
   "admin/blockUser",
   async (username) => {
-    const access_Token = localStorage.getItem("access_token");
     if (!access_Token) {
-      alert("You need to log in to update a post.");
+      alert("You need to log in to block a user.");
       return;
     }
+    // todo: if error accusr check empty object {}
+    //desc: {} If there's no request body, pass an empty object
+    try {
+      const response = await axios.post(
+        `${baseUrl}/userlist/${username}/block`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
 
-    const response = await axios.post(
-      `${baseUrl}/userlist/${username}/block`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+      if (!response.data || !response.data.message) {
+        throw new Error("Unexpected response format, check {}");
       }
-    );
-    return {
-      username,
-      message: response.data.message,
-      isBlocked: response.data.isBlocked,
-    };
+      return {
+        username,
+        message: response.data.message,
+        isBlocked: response.data.isBlocked,
+      };
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      // Handle specific error cases or return a default error message
+      return { error: error.message || "Failed to block user" };
+    }
   }
 );
 
@@ -67,26 +75,33 @@ export const blockUser = createAsyncThunk(
 export const resetRefreshToken = createAsyncThunk(
   "admin/resetUser",
   async (username) => {
-    const access_Token = localStorage.getItem("access_token");
     if (!access_Token) {
-      alert("You need to log in to update a post.");
+      alert("You need to log in to reset refresh token.");
       return;
     }
-
-    const response = await axios.post(
-      `${baseUrl}/userlist/${username}/reset`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+    try {
+      const response = await axios.post(
+        `${baseUrl}/userlist/${username}/reset`,
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      // Check if the message exists in the response
+      if (!response.data || !response.data.message) {
+        throw new Error("No message returned from the server.");
       }
-    );
-    return { username, message: response.data.messege };
+      return { username, message: response.data.message };
+    } catch (error) {
+      console.error("Error resetting refresh token:", error);
+      // Return an error object to handle the failure
+      return { error: error.message || "Failed to reset refresh token" };
+    }
   }
 );
-
 const adminPageSlice = createSlice({
   name: "adminPage",
   initialState,

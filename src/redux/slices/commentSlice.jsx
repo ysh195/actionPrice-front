@@ -1,4 +1,3 @@
- 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -101,27 +100,23 @@ export const fetchComments = createAsyncThunk(
     try {
       let access_Token = localStorage.getItem("access_token");
       let response;
-      if(access_Token === null) {
-        response = await axios.get(`${API_URL}/comments`,
-          {
-            params: { postId, page, size },
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
+      if (access_Token === null) {
+        response = await axios.get(`${API_URL}/comments`, {
+          params: { postId, page, size },
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
       } else {
-        response = await axios.get(`${API_URL}/comments`,
-          {
-            params: { postId, page, size },
-            headers: {
-              Authorization: `Bearer ${access_Token}`,
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-          }
-        );
+        response = await axios.get(`${API_URL}/comments`, {
+          params: { postId, page, size },
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
       }
       console.log("fetchComments response:", response.data);
       return response.data;
@@ -159,8 +154,6 @@ export const fetchAdminAnswers = createAsyncThunk(
     }
   }
 );
-
-
 
 export const commentSlice = createSlice({
   name: "comment",
