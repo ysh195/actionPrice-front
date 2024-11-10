@@ -53,7 +53,7 @@ export const deleteFavorite = createAsyncThunk(
   async (favoriteId, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`,
+        `${API_URL}/category/favorite/${favoriteId}/delete`,{},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -113,7 +113,11 @@ export const favoriteSlice = createSlice({
       })
       .addCase(createFavorite.fulfilled, (state, action) => {
         state.loading = false;
-        state.favoriteList.push(action.payload);
+
+        // state.favoriteList.push(action.payload);
+         state.favoriteList = Array.isArray(action.payload)
+           ? [...action.payload] // Use spread to ensure it's a fresh array
+           : []; 
       })
       .addCase(createFavorite.rejected, (state, action) => {
         state.loading = false;
@@ -134,10 +138,11 @@ export const favoriteSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(fetchFavoriteList.pending, (state) => {
-        state.status = "loading";
+        state.loading = true;
       })
       .addCase(fetchFavoriteList.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.loading = false;
         state.favoriteList = action.payload; // Store fetched wishlist data in state
       })
       .addCase(fetchFavoriteList.rejected, (state, action) => {

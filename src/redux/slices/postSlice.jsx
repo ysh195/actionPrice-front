@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -91,7 +90,7 @@ export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      const access_Token = localStorage.getItem("access_token");
+      let access_Token = localStorage.getItem("access_token");
       let response;
       if (access_Token === null) {
         response = await axios.get(`${API_URL}/post/${postId}/detail`, {
