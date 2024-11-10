@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Line,
     LineChart,
@@ -31,7 +31,7 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
      */
 
     /**
-     * random color(except white)
+     * random color(except black, white)
      * @author 연상훈
      * @param None
      * @returns {number} color
@@ -39,15 +39,29 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
     const getRandomColor = () => {
         let color;
         do {
-            color = `#${((1 << 24) * Math.random() | 0).toString(16)}`;
-        } while (color === '#ffffff');
+            color = `#${((1 << 24) * Math.random() | 0).toString(16).padStart(6, '0')}`;
+        } while (color === '#ffffff' || color === '#000000');
         return color;
     };
 
     /**
+     * useState and useEffect for saving line colors
+     * @author 연상훈
+     * @info If this is not present, the color changes every time the mouse is hovered over.
+     */
+    const [lineColors, setLineColors] = useState({});
+    useEffect(() => {
+        const colors = {};
+        countries.forEach((country) => {
+            colors[country] = getRandomColor();
+        });
+        setLineColors(colors);
+    }, [countries]);
+
+    /**
      * price format
      * @author 연상훈
-     * @param {number} value 
+     * @param {number} value
      * @returns {text} 0,000원
      * @info Display in Korean won with thousand-unit separators.
      */
@@ -55,6 +69,31 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
         if (value === null || value === undefined) return '';
         return `${value.toLocaleString()}원`;
     };
+
+    const [highLightedLine, setHighLightedLine] = useState(null);
+
+    /**
+     * mouse movement event on lines - activate
+     * @author 연상훈
+     * @param {text} country
+     * @info set highlighted line if the new one differs from the existing one
+     */
+    const handleMouseMove = (country) => {
+        if (highLightedLine !== country) {
+            setHighLightedLine(country);
+        }
+    };
+
+    /**
+     * mouse movement event on lines - unactivate
+     * @author 연상훈
+     * @info It is difficult to select the line
+     * and the style kept changing every time the mouse moved, making it confusing.
+     * so I disabled it.
+     */
+    // const handleMouseLeave = () => {
+    //     setHighLightedLine(null);
+    // };
 
     return (
         <>
@@ -77,9 +116,12 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
                                     type="monotone" // line style
                                     dataKey={country}
                                     name={country}
-                                    stroke={getRandomColor()} // random color
-                                    style={{ strokeWidth: 2 }} // line thickness
-                                    dot={false} // disable dots on line
+                                    stroke={lineColors[country]} // saved random color
+                                    strokeWidth={highLightedLine === country ? 6 : 2} // line thickness. and now highlight only the seleceted one
+                                    dot={highLightedLine === country ? {r: 6} : false} // dot style for the price lines. and now activate only the seleceted one
+                                    activeDot={ highLightedLine === country ? {r: 6} : {r: 4}} // dot style for the date lines
+                                    onMouseMove={() => handleMouseMove(country)}
+                                    // onMouseLeave={handleMouseLeave} // now disabled
                                 />
                             ))}
                             {/* Legend applies only padding, not margin and tickMargin. */}
