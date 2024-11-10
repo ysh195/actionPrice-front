@@ -53,7 +53,7 @@ export const deleteFavorite = createAsyncThunk(
   async (favoriteId, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`,{},
+        `${API_URL}/category/favorite/${favoriteId}/delete`,
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
