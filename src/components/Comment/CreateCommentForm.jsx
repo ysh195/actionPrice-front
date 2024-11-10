@@ -23,7 +23,6 @@ const CreateCommentForm = ({ postId }) => {
   console.log("CreateCommentForm is rendered");
   console.log("adminAnswers:", adminAnswers);
 
-
   const handleCreateComment = async () => {
     if (!content.trim()) {
       Swal.fire({
@@ -58,26 +57,15 @@ const CreateCommentForm = ({ postId }) => {
   const handleSubmitAnswer = (answertype) => {
     console.log("Selected Answer:", answertype);
     setContent(answertype);
-     dispatch(fetchAdminAnswers({ postId, answertype }))
-       .unwrap()
-       .then((answer) => {
-         // The response data (answer) can be used to populate a comment or show it in the UI
-         console.log("Fetched answer:", answer);
-         Swal.fire({
-           icon: "success",
-           title: "Admin Answer Fetched",
-           text: answer, // You can display it here or do whatever is needed
-         });
-       })
-       .catch((error) => {
-         console.error("Error fetching admin answer:", error);
-         Swal.fire({
-           icon: "error",
-           title: "Failed to fetch answer",
-           text: error.message,
-         });
-       });
-    
+    dispatch(fetchAdminAnswers({ postId, answertype }))
+      .unwrap()
+      .then((answer) => {
+        // The response data (answer) can be used to populate a comment or show it in the UI
+        console.log("Fetched answer:", answer);
+      })
+      .catch((error) => {
+        console.error("Error fetching admin answer:", error);
+      });
   };
 
   const handleCancelComment = () => {
