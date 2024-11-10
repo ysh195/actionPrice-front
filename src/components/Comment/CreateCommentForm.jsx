@@ -56,15 +56,15 @@ const CreateCommentForm = ({ postId }) => {
 
   const handleSubmitAnswer = (answertype) => {
     console.log("Selected Answer:", answertype);
-    setContent(answertype);
     dispatch(fetchAdminAnswers({ postId, answertype }))
-      .unwrap()
-      .then((answer) => {
-        console.log("Fetched answer:", answer);
-      })
-      .catch((error) => {
-        console.error("Error fetching admin answer:", error);
-      });
+    .unwrap()
+    .then((answer) => {
+      console.log("Fetched answer:", answer);
+      setContent(answer);
+    })
+    .catch((error) => {
+      console.error("Error fetching admin answer:", error);
+    });
   };
 
   const handleCancelComment = () => {
