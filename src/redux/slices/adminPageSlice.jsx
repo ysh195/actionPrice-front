@@ -1,9 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Swal from "sweetalert2";
 const initialState = {
   userList: [],
   currentPageNum: 1,
   totalPageNum: 0, // 총 페이지 수
+  loading: false,
+  error: null,
 };
 
 const baseUrl = "http://localhost:8080/api/admin";
@@ -26,9 +29,15 @@ export const fetchUserList = createAsyncThunk(
       console.log("fetchUserList:", response.data);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || "Failed to fetch user list"
-      );
+      if (error.response && error.response.status === 403) {
+        Swal.fire({
+          icon: "error",
+          title: "접근 금지",
+          text: "접근 권한이 없습니다.",
+        });
+        return rejectWithValue("접근 권한이 없습니다.");
+      }
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -112,13 +121,19 @@ const adminPageSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUserList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchUserList.fulfilled, (state, action) => {
         state.loading = false;
         state.userList = action.payload.userList;
         state.totalPageNum = action.payload.totalPageNum;
         state.currentPageNum = action.payload.currentPageNum;
+      }).addCase(fetchUserList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload; // Set error message
       })
-
       .addCase(blockUser.fulfilled, (state, action) => {
         const user = state.userList.find(
           (user) => user.username === action.payload.username

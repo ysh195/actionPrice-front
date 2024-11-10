@@ -51,7 +51,7 @@ const AdminPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
   const keyword = searchParams.get("keyword") || "";
-  const { userList, totalPageNum } = useSelector((state) => state.adminPage);
+  const { userList, totalPageNum, error } = useSelector((state) => state.adminPage);
 
   // Fetch user list based on page number and keyword
   useEffect(() => {
@@ -81,6 +81,8 @@ const AdminPage = () => {
   const handleResetRefreshToken = (username) => {
     dispatch(resetRefreshToken(username));
   };
+
+  if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
 
   return (
     <Box
