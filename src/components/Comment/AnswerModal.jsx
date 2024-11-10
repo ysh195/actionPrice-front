@@ -51,7 +51,7 @@ const AnswerModal = ({ open, onClose, onSubmit }) => {
             Choose an answer
           </MenuItem>
           {adminAnswers.map((answer) => (
-            <MenuItem key={answer.id} value={answer.text}>
+            <MenuItem key={answer.id} value={answer.answerType}>
               {answer.answerType}
             </MenuItem>
           ))}
