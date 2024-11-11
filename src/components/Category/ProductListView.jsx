@@ -3,7 +3,6 @@
 import React from "react";
 import {
   Paper,
-  styled,
   Table,
   TableBody,
   TableCell,
@@ -19,7 +18,7 @@ const StyledTableCell = (props) => (
     {...props}
     sx={{
       fontWeight: "bold",
-      backgroundColor: colors.primary,
+      backgroundColor: colors.tableHead,
       color: "white",
     }}
   />

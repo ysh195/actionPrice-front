@@ -72,7 +72,7 @@ const CreateCommentForm = ({ postId }) => {
 
   return (
     <Box>
-      <Box display="flex" alignItems="center">
+      <Box display="flex">
         <TextField
           multiline
           value={content}
@@ -82,32 +82,15 @@ const CreateCommentForm = ({ postId }) => {
           fullWidth
         />
 
-        {role === "ROLE_ADMIN" && (
-          <>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleAdminClick}
-            >
-              Admin
-            </Button>
-            <AnswerModal
-              open={modalOpen}
-              onClose={handleModalClose}
-              adminAnswers={adminAnswers}
-              onSubmit={handleSubmitAnswer}
-            />
-          </>
-        )}
         {content.trim() && (
-          <>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
               type="submit"
               color="primary"
               onClick={handleCreateComment}
               sx={{ border: "none" }}
             >
-              {loading ? "로딩..." : "등럭"}
+              {loading ? "로딩..." : "등록"}
             </Button>
             <Button
               color="secondary"
@@ -116,9 +99,23 @@ const CreateCommentForm = ({ postId }) => {
             >
               취소
             </Button>
-          </>
+          </Box>
         )}
       </Box>
+      {role === "ROLE_ADMIN" && (
+        <Box sx={{ display: "flex", mt: 2 }}>
+          <Button variant="outlined" color="primary" onClick={handleAdminClick}>
+            Admin
+          </Button>
+          <AnswerModal
+            open={modalOpen}
+            onClose={handleModalClose}
+            adminAnswers={adminAnswers}
+            onSubmit={handleSubmitAnswer}
+          />
+        </Box>
+      )}
+
       {error && (
         <Typography color="error" variant="body2" sx={{ marginTop: 1 }}>
           {error}

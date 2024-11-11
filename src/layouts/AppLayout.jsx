@@ -4,6 +4,7 @@ import React from "react";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import { Box } from "@mui/material";
+import { colors } from "../assets/assest";
 
 const AppLayout = ({ children }) => {
   return (
@@ -25,8 +26,7 @@ const AppLayout = ({ children }) => {
           minHeight: "calc(100vh - 64px)", // Subtracts the height of the navbar
           px: { xs: 2, sm: 4 },
           py: 4,
-          backgroundColor: "#fafafa",
-          // backgroundColor: "#f5f5f5",
+          backgroundColor: colors.backgroundColor,
         }}
       >
         {children}

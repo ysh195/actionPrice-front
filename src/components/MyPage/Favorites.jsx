@@ -108,7 +108,9 @@ const Favorites = ({ username }) => {
                 "&:hover": { boxShadow: 4 },
               }}
             >
-              <Typography variant="subtitle1" fontWeight="bold" sx={{ ml: 1 }}>
+              <Typography variant="subtitle1" 
+              // fontWeight="bold" 
+              sx={{ ml: 1 }}>
                 {index + 1}.
               </Typography>
               <CardContent sx={{ flex: 1 }}>

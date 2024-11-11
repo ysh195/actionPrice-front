@@ -71,7 +71,7 @@ const DateChange = ({
         />
       </FormControl>
 
-      <FormControl sx={{ width: "200px" }} margin="normal">
+      <FormControl  margin="normal">
         <Typography
           variant="body2"
           sx={{

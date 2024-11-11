@@ -14,6 +14,7 @@ import {
   Box,
   Divider,
 } from "@mui/material";
+import { colors } from "../../assets/assest";
 
 const CategorySection = ({ categories, loading, error }) => {
   const navigate = useNavigate();
@@ -72,6 +73,7 @@ const CategorySection = ({ categories, loading, error }) => {
                 boxShadow: 3,
                 borderRadius: 2,
                 backgroundColor: "#f5f5f5", // light background
+        
                 "&:hover": {
                   boxShadow: 10, // Add hover shadow
                   transform: "scale(1.05)", // Slightly scale on hover

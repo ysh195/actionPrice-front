@@ -44,13 +44,10 @@ function App() {
 
           <Route path="api/user/register" exact element={<RegisterPage />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
-          {/* <Route
-            path="api/category/:large?/:middle?/:small?/:rank?"
-            element={<CategoryDetails />}
-          /> */}
+   
 
           <Route
-            path="api/category/:large?/:middle?/:small?/:rank?"
+            path="api/category/:large/:middle?/:small?/:rank?"
             element={<CategoryPage />}
           />
 
