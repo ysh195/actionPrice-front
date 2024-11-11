@@ -2,6 +2,7 @@
 import React from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import { logo2, logo1, logo3 } from "../assets/assest";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -42,6 +43,17 @@ const Footer = () => {
             <Typography variant="body2">이메일: contact@contact.com</Typography>
             <Typography variant="body2" sx={{ mt: 1 }}>
               © {new Date().getFullYear()} AuctionPrice. All rights reserved.
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center" justifyContent="flex-end">
+            <Typography variant="body2">
+              
+              <h3>약관 및 정책</h3>
+              <ul>
+                <li><Link to={"/api/policies/termsAndCondition"}>이용 약관</Link></li>
+                <li><Link to={"/api/policies/personalInfoPolicy"}>개인정보 처리방침</Link></li>
+                <li><Link to={"/api/policies/operationalPolicy"}>운영정책</Link></li>
+              </ul>
             </Typography>
           </Box>
         </Box>
