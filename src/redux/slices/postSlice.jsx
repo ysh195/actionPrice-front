@@ -14,12 +14,12 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api";
-const access_Token = localStorage.getItem("access_token");
 
 //function: createPost //
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
+    let access_Token = localStorage.getItem("access_token");
     console.log("slice post data:", postData);
     if (!access_Token) {
       console.log("there is no access token:", access_Token);
@@ -74,6 +74,7 @@ export const fetchPosts = createAsyncThunk(
 export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
+    let access_Token = localStorage.getItem("access_token");
     const response = await axios.get(
       `${API_URL}/post/${postId}/update/${username}`,
       {
@@ -139,6 +140,7 @@ export const deletePost = createAsyncThunk(
   async ({ postId, logined_username }, { rejectWithValue }) => {
     console.log("Post ID:", postId, "Logged-in Username:", logined_username);
     try {
+      let access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to update a post.");
         return;
@@ -168,6 +170,7 @@ export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to update a post.");
         return;

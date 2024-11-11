@@ -12,15 +12,13 @@ const initialState = {
 };
 
 const BASE_URL = "http://localhost:8080/api";
-const access_Token = localStorage.getItem("access_token");
-
-console.log("access_Token:", access_Token);
 
 //functions for deleteAccount //
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
   async (username, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       if (!access_Token) {
         alert("You need to log in to delete your account.");
         return rejectWithValue("User not logged in");
@@ -61,6 +59,7 @@ export const getPersonalInfo = createAsyncThunk(
   "user/personalInfo",
   async (username, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.get(
         `${BASE_URL}/mypage/${username}/personalinfo`,
         {
@@ -87,6 +86,7 @@ export const getMyPosts = createAsyncThunk(
   "posts/getMyPosts",
   async ({ username, keyword = "", pageNum = 0 }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.get(
         `${BASE_URL}/mypage/${username}/myposts`,
         {

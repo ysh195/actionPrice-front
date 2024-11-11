@@ -10,13 +10,14 @@ const initialState = {
 };
 
 const baseUrl = "http://localhost:8080/api/admin";
-const access_Token = localStorage.getItem("access_token");
 
 //function for fetchUserList //
 export const fetchUserList = createAsyncThunk(
   "admin/fetchUserList",
   async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
+      console.log("go adminPage - access_Token", access_Token);
       const response = await axios.get(`${baseUrl}/userlist`, {
         params: { pageNum, keyword },
         headers: {
@@ -46,6 +47,7 @@ export const fetchUserList = createAsyncThunk(
 export const blockUser = createAsyncThunk(
   "admin/blockUser",
   async (username) => {
+    let access_Token = localStorage.getItem("access_token");
     if (!access_Token) {
       alert("You need to log in to block a user.");
       return;
@@ -84,6 +86,7 @@ export const blockUser = createAsyncThunk(
 export const resetRefreshToken = createAsyncThunk(
   "admin/resetUser",
   async (username) => {
+    let access_Token = localStorage.getItem("access_token");
     if (!access_Token) {
       alert("You need to log in to reset refresh token.");
       return;
