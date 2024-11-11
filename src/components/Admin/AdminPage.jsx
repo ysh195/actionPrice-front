@@ -12,7 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import { colors } from "../../assets/assest.js";
 
 import { Link, useSearchParams } from "react-router-dom";
-import { Box, Pagination, styled, Typography } from "@mui/material";
+import { Box, Pagination, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchUserList,
@@ -21,16 +21,6 @@ import {
 } from "../../redux/slices/adminPageSlice";
 import { Button } from "@mui/material";
 import PostSearch from "../Post/PostSearch.jsx";
-
-// const StyledTableCell = styled(TableCell)(({ theme }) => ({
-//   [`&.${tableCellClasses.head}`]: {
-//     backgroundColor: colors.tableHead,
-//     color: colors.white,
-//   },
-//   [`&.${tableCellClasses.body}`]: {
-//     fontSize: 16,
-//   },
-// }));
 
 const StyledTableCell = (props) => (
   <TableCell
@@ -43,7 +33,6 @@ const StyledTableCell = (props) => (
   />
 );
 
-//todo: dont allow render search button first
 
 const AdminPage = () => {
   const itemsPerPage = 10;
@@ -90,8 +79,6 @@ const AdminPage = () => {
         m: 3,
         p: 3,
         borderRadius: 2,
-        boxShadow: 2,
-        backgroundColor: colors.white,
       }}
     >
       <Typography variant="h4" sx={{ mb: 3, textAlign: "center" }}>
@@ -113,7 +100,9 @@ const AdminPage = () => {
         />
       </Box>
 
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <Paper
+        sx={{ width: "100%", overflow: "hidden", bgcolor: colors.paperbeige }}
+      >
         <TableContainer>
           <Table aria-label="User List Table">
             <TableHead>
@@ -154,8 +143,8 @@ const AdminPage = () => {
                     </TableCell>
                     <TableCell>
                       <Link
-                        to={`/api/mypage/${user.username}`}
-                        style={{ color: colors.primary }}
+                        to={`/api/mypage/${user.username}/myposts`}
+                        style={{ color: colors.button1 }}
                       >
                         {user.username}
                       </Link>
@@ -172,8 +161,8 @@ const AdminPage = () => {
                           variant="contained"
                           sx={{
                             backgroundColor: user.blocked
-                              ? colors.button1
-                              : colors.button2,
+                              ? "#6A8B84"
+                              : "#6A8B84",
                             color: "white", // text color
                             "&:hover": {
                               backgroundColor: user.blocked

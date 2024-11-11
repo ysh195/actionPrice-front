@@ -113,7 +113,7 @@ function Navbar() {
                 textDecoration: "none",
               }}
             >
-              AuctionPrice
+              ActionPrice
             </Typography>
           </Box>
 

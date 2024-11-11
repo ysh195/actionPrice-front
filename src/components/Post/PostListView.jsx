@@ -33,7 +33,7 @@ const PostListView = ({ postList = [], pageNum }) => {
 
   console.log("check postList in PostList component:", postList);
   console.log("checking role in postList:", role);
-    console.log("checking logined_username in postList:", logined_username);
+  console.log("checking logined_username in postList:", logined_username);
 
   const formatDate = (date) => {
     try {
@@ -90,7 +90,8 @@ const PostListView = ({ postList = [], pageNum }) => {
                       <Link
                         to={`/api/post/${post.postId}/detail?page=1`}
                         style={{
-                          color: colors.primary,
+                          color: colors.link,
+               
                           textDecoration: "none",
                         }}
                       >

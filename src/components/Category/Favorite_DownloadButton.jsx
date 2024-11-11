@@ -93,19 +93,20 @@ const Favorite_DownloadButton = ({
 
     Swal.fire({
       icon: "success",
-      title: "성공!",
-      text: "즐겨찾기 항목에 추가 되었습니다.",
+      title: "완료!",
+      text: "관심 항목에 추가 되었습니다.",
       showConfirmButton: true,
-      // timer: 2000,
-      html: '<p>Click <a href="#" id="goToMypageLink">here</a> to go to your My Page.</p>',
-    }).then(() => {
-      // Navigate to the "MyPage" route when the link is clicked
-      const link = document.getElementById("goToMypageLink");
-      if (link) {
-        link.addEventListener("click", (e) => {
-          e.preventDefault(); // Prevent the default link behavior
-          navigate(`/mypage/${logined_username}/wishlist`);
-        });
+      confirmButtonText: "Go to My Page", // Button text for navigating
+      showCancelButton: true, // Show the cancel button
+      cancelButtonText: "Close", // Text for the cancel button
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If the user clicks the "Go to My Page" button
+        navigate(`/api/mypage/${logined_username}/wishlist`);
+      } else {
+        // If the user clicks the "Close" button
+        setFavorite_name("");
+        setModalOpen(false);
       }
     });
 
@@ -142,6 +143,7 @@ const Favorite_DownloadButton = ({
           onClick={() => setModalOpen(true)}
           color="primary"
           sx={commonButtonStyles}
+          aria-label="Set Favorite" // Add aria-label for accessibility
         >
           <StarOutlineIcon fontSize="medium" />
           <span
@@ -159,6 +161,7 @@ const Favorite_DownloadButton = ({
           onClose={() => setModalOpen(false)}
           aria-labelledby="add-favorite-modal"
           aria-describedby="modal-to-add-favorite-name"
+          aria-hidden={!modalOpen} // Ensure modal content is not hidden
         >
           <Box
             sx={{
@@ -197,7 +200,6 @@ const Favorite_DownloadButton = ({
             />
 
             <Button
-              variant="contained"
               color="primary"
               onClick={handleAddFavorite}
               sx={{
@@ -205,12 +207,9 @@ const Favorite_DownloadButton = ({
                 paddingX: 4,
                 fontWeight: "bold",
                 borderRadius: 1,
-                "&:hover": {
-                  backgroundColor: "primary.dark",
-                },
               }}
             >
-              추가
+              추가하시
             </Button>
           </Box>
         </Modal>

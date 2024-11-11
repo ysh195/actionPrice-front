@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { Box, Typography, Divider } from "@mui/material";
-import { logo2, logo1, logo3 } from "../assets/assest";
+import { logo, colors } from "../assets/assest";
 
 const Footer = () => {
   return (
@@ -10,14 +10,12 @@ const Footer = () => {
       <Box
         component="footer"
         sx={{
-          padding: "2rem 1rem",
-          marginTop: "auto",
+          padding: "0 3rem",
           position: "relative",
           bottom: 0,
           width: "100%",
           zIndex: 1,
-          height: "100px",
-          mb: 1,
+          backgroundColor: colors.backgroundColor,
         }}
       >
         <Box
@@ -29,10 +27,10 @@ const Footer = () => {
           {/* Logo Section */}
           <Box display="flex" alignItems="center" justifyContent="flex-start">
             <img
-               //src={logo1}
-              src={logo3}
+
+              src={logo}
               alt="logo"
-              style={{ width: "150px" }}
+              style={{ width: "200px" }}
             />
           </Box>
 

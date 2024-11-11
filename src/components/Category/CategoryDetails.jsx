@@ -19,7 +19,6 @@ import {
 import DateChange from "./DateChange.jsx";
 import CategorySelect from "./CategorySelect.jsx";
 
-
 const CategoryDetail = ({
   selectedLarge,
   selectedMiddle,
@@ -36,13 +35,10 @@ const CategoryDetail = ({
 }) => {
   const { large, middle, small, rank } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
-
-
 
   const { middleCategoryList, smallCategoryList, rankList } = useSelector(
     (state) => state.category
@@ -142,7 +138,7 @@ const CategoryDetail = ({
         rank: selectedRank,
         startDate: selectedStartDate,
         endDate: selectedEndDate,
-        pageNum: pageNum - 1, 
+        pageNum: pageNum - 1,
       })
     );
     dispatch(
@@ -155,7 +151,6 @@ const CategoryDetail = ({
         endDate: selectedEndDate,
       })
     );
-
   };
 
   const handleReset = () => {
@@ -175,61 +170,71 @@ const CategoryDetail = ({
     <Box
       sx={{
         display: "flex",
-        alignItems: "flex-end",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+        paddingX: 2,
+        paddingY: 1,
+
         gap: 2,
       }}
     >
-      {/* Category Selects */}
-      <CategorySelect
-        label="대분류를 선택하세요"
-        value={selectedLarge}
-        handleCategoryChange={handleCategoryChange}
-        categoryList={largeCategoryList}
-        categoryType="large"
-      />
-
-      <CategorySelect
-        label="중분류를 선택하세요"
-        value={selectedMiddle}
-        handleCategoryChange={handleCategoryChange}
-        categoryList={middleCategoryList}
-        categoryType="middle"
-      />
-
-      <CategorySelect
-        label="소분류를 선택하세요"
-        value={selectedSmall}
-        handleCategoryChange={handleCategoryChange}
-        categoryList={smallCategoryList}
-        categoryType="small"
-      />
-
-      <CategorySelect
-        label="등급을 선택하세요"
-        value={selectedRank}
-        handleCategoryChange={handleCategoryChange}
-        categoryList={rankList}
-        categoryType="rank"
-      />
-
-      <DateChange
-        selectedStartDate={selectedStartDate}
-        setSelectedStartDate={setSelectedStartDate}
-        selectedEndDate={selectedEndDate}
-        setSelectedEndDate={setSelectedEndDate}
-      />
       <Box
         sx={{
           display: "flex",
+
           gap: 2,
-          m: 1,
-          height: "56px",
+        }}
+      >
+        {/* Category Selects */}
+        <CategorySelect
+          label="대분류를 선택하세요"
+          value={selectedLarge}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={largeCategoryList}
+          categoryType="large"
+        />
+
+        <CategorySelect
+          label="중분류를 선택하세요"
+          value={selectedMiddle}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={middleCategoryList}
+          categoryType="middle"
+        />
+
+        <CategorySelect
+          label="소분류를 선택하세요"
+          value={selectedSmall}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={smallCategoryList}
+          categoryType="small"
+        />
+
+        <CategorySelect
+          label="등급을 선택하세요"
+          value={selectedRank}
+          handleCategoryChange={handleCategoryChange}
+          categoryList={rankList}
+          categoryType="rank"
+        />
+      </Box>
+      <Box sx={{ display: "flex" }}>
+        <DateChange
+          selectedStartDate={selectedStartDate}
+          setSelectedStartDate={setSelectedStartDate}
+          selectedEndDate={selectedEndDate}
+          setSelectedEndDate={setSelectedEndDate}
+        />
+      </Box>
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
         }}
       >
         <Button
-          variant="contained"
           color="primary"
-          sx={{ width: "100px" }}
           disabled={
             !selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank
           }
@@ -237,16 +242,10 @@ const CategoryDetail = ({
         >
           조회
         </Button>
-        <Button
-          variant="outlined"
-          color="secondary"
-          sx={{ width: "100px" }}
-          onClick={handleReset}
-        >
+        <Button color="secondary" onClick={handleReset}>
           초기화
         </Button>
       </Box>
-     
     </Box>
   );
 };

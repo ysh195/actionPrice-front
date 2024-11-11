@@ -38,7 +38,7 @@ const AnswerModal = ({ open, onClose, onSubmit }) => {
     <Modal open={open} onClose={onClose}>
       <Box sx={style}>
         <Typography variant="h6" component="h2" gutterBottom>
-          Select an Answer
+          답변 선택하세요
         </Typography>
 
         <Select
@@ -48,7 +48,7 @@ const AnswerModal = ({ open, onClose, onSubmit }) => {
           fullWidth
         >
           <MenuItem value="" disabled>
-            Choose an answer
+            답변 목록
           </MenuItem>
           {adminAnswers.map((answer) => (
             <MenuItem key={answer.id} value={answer.answerType}>
@@ -56,18 +56,18 @@ const AnswerModal = ({ open, onClose, onSubmit }) => {
             </MenuItem>
           ))}
         </Select>
-
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={!selectedAnswer}
-          sx={{ marginTop: 2 }}
-        >
-          Submit
-        </Button>
-        <Button variant="contained" onClick={onClose} sx={{ marginTop: 2 }}>
-          Cancel
-        </Button>
+        <Box display="flex" justifyContent="flex-end">
+          <Button
+            onClick={handleSubmit}
+            disabled={!selectedAnswer}
+            sx={{ marginTop: 2, marginRight: 1 }} // optional: adds spacing between buttons
+          >
+            등록
+          </Button>
+          <Button color="secondary" onClick={onClose} sx={{ marginTop: 2 }}>
+            취소
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

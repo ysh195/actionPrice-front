@@ -48,9 +48,15 @@ export const login = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error("Login Error:", error);
-      const errorMsg =
-        error.response?.data?.message ||
-        "로그인에 실패했습니다. 정보를 확인하세요.";
+      // Handle 403 Forbidden error specifically
+      let errorMsg;
+      if (error.response?.status === 403) {
+        errorMsg = "접근 권한이 없습니다. 관리자에게 문의하세요.";
+      } else {
+        errorMsg =
+          error.response?.data?.message ||
+          "로그인에 실패했습니다. 정보를 확인하세요.";
+      }
 
       return rejectWithValue(errorMsg);
     }
@@ -63,7 +69,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       //todo check axios.get for the logout
-      const access_Token = localStorage.getItem("access_token");
+      //const access_Token = localStorage.getItem("access_token");
       localStorage.removeItem("access_token");
       localStorage.removeItem("username");
       localStorage.removeItem("role");
