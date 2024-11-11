@@ -15,7 +15,7 @@ import PostListView from "../components/Post/PostListView";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import PostSearch from "../components/Post/PostSearch";
-import { colors } from "../assets/assest";
+import { colors,} from "../assets/assest";
 
 
 const ContactUsPage = () => {
@@ -69,11 +69,6 @@ const ContactUsPage = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <img
-        // src={logo}
-        alt="Logo"
-        style={{ maxHeight: "30px", marginBottom: "10px", display: "flex" }}
-      />
       <Typography variant="h5" gutterBottom sx={{ marginTop: 3 }}>
         문의 상황
       </Typography>

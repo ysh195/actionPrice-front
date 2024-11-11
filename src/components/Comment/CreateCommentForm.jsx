@@ -21,7 +21,6 @@ const CreateCommentForm = ({ postId }) => {
   const role = localStorage.getItem("role");
 
   console.log("CreateCommentForm is rendered");
-  console.log("adminAnswers:", adminAnswers);
 
   const handleCreateComment = async () => {
     if (!content.trim()) {
@@ -57,14 +56,14 @@ const CreateCommentForm = ({ postId }) => {
   const handleSubmitAnswer = (answertype) => {
     console.log("Selected Answer:", answertype);
     dispatch(fetchAdminAnswers({ postId, answertype }))
-    .unwrap()
-    .then((answer) => {
-      console.log("Fetched answer:", answer);
-      setContent(answer);
-    })
-    .catch((error) => {
-      console.error("Error fetching admin answer:", error);
-    });
+      .unwrap()
+      .then((answer) => {
+        console.log("Fetched answer:", answer);
+        setContent(answer);
+      })
+      .catch((error) => {
+        console.error("Error fetching admin answer:", error);
+      });
   };
 
   const handleCancelComment = () => {
@@ -108,7 +107,7 @@ const CreateCommentForm = ({ postId }) => {
               onClick={handleCreateComment}
               sx={{ border: "none" }}
             >
-              {loading ? "Loading..." : "추가"}
+              {loading ? "로딩..." : "등럭"}
             </Button>
             <Button
               color="secondary"

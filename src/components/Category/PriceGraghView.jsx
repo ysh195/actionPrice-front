@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import { debounce } from "lodash";
 import React, { useEffect, useState } from "react";
 import {
   Line,
@@ -10,9 +11,12 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 
 const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
+  const [clickedDateData, setClickedDateData] = useState(null);
+  const [clickedDate, setClickedDate] = useState(null);
   /**
    * priceData
    * [
@@ -81,11 +85,17 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
    * @param {text} country
    * @info set highlighted line if the new one differs from the existing one
    */
-  const handleMouseMove = (country) => {
+  // const handleMouseMove = (country) => {
+  //   if (highLightedLine !== country) {
+  //     setHighLightedLine(country);
+  //   }
+  // };
+
+  const handleMouseMove = debounce((country) => {
     if (highLightedLine !== country) {
       setHighLightedLine(country);
     }
-  };
+  }, 200); // 200ms delay before executing
 
   /**
    * mouse movement event on lines - unactivate
@@ -97,17 +107,41 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
   // const handleMouseLeave = () => {
   //     setHighLightedLine(null);
   // };
+  const handleDotClick = (e, index, country) => {
+    const clickedData = priceData[index];
+    console.log("Clicked Dot Data:", clickedData); // Logs the clicked data
+    setClickedDate(clickedData.date); // Set the clicked date
+    setClickedDateData({ country, data: clickedData }); // Set the data for the clicked country and date
+  };
 
   return (
-    <>
+    <div
+      className="price-graph-container"
+      style={{
+        zIndex: 2,
+        padding: "20px",
+        backgroundColor: "#f9f9f9",
+        borderRadius: "8px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       {priceData && priceData.length > 0 ? (
         <>
-          <h3>[ 구분 : {timeIntervals} ]</h3>
+          <h3
+            style={{
+              fontSize: "24px",
+              fontWeight: "500",
+              color: "#333",
+              marginBottom: "20px",
+            }}
+          >
+            [ 구분 : {timeIntervals} ]
+          </h3>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={priceData} margin={{ left: 30 }}>
+            <LineChart data={priceData} margin={{ left: 30, top: 10 }}>
               <CartesianGrid strokeDasharray="3 3" />
               {/* this applies only tickMargin, not margin. */}
-              <XAxis dataKey="date" tickMargin={15} />
+              <XAxis dataKey="date" tickMargin={13} />
               <YAxis
                 domain={["auto", "auto"]} // min & max values will be updated automatically
                 tickFormatter={formatPrice}
@@ -120,23 +154,36 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
                   dataKey={country}
                   name={country}
                   stroke={lineColors[country]} // saved random color
-                  strokeWidth={highLightedLine === country ? 3 : 2} // line thickness. and now highlight only the seleceted one
+                  strokeWidth={highLightedLine === country ? 3 : 2} // line thickness and now highlight only the seleceted one
                   dot={highLightedLine === country ? { r: 6 } : false} // dot style for the price lines. and now activate only the seleceted one
-                  activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }} // dot style for the date lines
+                  // activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }}
+                  // dot style for the date lines
                   onMouseMove={() => handleMouseMove(country)}
-                   //onMouseLeave={handleMouseLeave} // now disabled
+                  activeDot={{
+                    r: highLightedLine === country ? 6 : 4,
+                    onClick: (e) => handleDotClick(e, e.index, country),
+                  }}
+                  // Add the onClick handler for the dot
                 />
               ))}
+
               {/* Legend applies only padding, not margin and tickMargin. */}
-              <Legend wrapperStyle={{ paddingTop: "20px" }} />
+              <Legend
+                wrapperStyle={{
+                  paddingTop: "20px",
+                  fontSize: "14px",
+                  color: "#666",
+                }}
+              />
               {/* Up and right/circle icon */}
+
               {/* <Legend
-                                align="right"
-                                verticalAlign="top"
-                                iconType="circle"
-                                iconSize={12}
-                                wrapperStyle={{ paddingBottom: "20px" }}
-                            /> */}
+                               align="right"
+                             verticalAlign="top"
+                            iconType="circle"
+                             iconSize={12}
+                               wrapperStyle={{ paddingBottom: "20px" }}
+                      /> */}
             </LineChart>
           </ResponsiveContainer>
         </>
@@ -148,7 +195,6 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
             height: "400px",
           }}
         >
-          {/* Centered Text */}
           <p
             style={{
               position: "absolute",
@@ -163,7 +209,6 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
           >
             검색 결과가 없습니다.
           </p>
-
           {/* Render empty chart if no data */}
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={[{ date: "", value: 0 }]}>
@@ -182,7 +227,7 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

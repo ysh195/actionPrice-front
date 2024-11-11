@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { colors } from "../assets/assest.js";
+import { colors, whiteLogo } from "../assets/assest.js";
 import { logoutUser } from "../redux/slices/loginSlice.jsx";
 
 function Navbar({ toggleSidebar }) {
@@ -71,13 +71,14 @@ function Navbar({ toggleSidebar }) {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".15rem",
+              letterSpacing: ".1rem",
               color: "white",
               textDecoration: "none",
               display: { xs: "none", md: "flex" },
             }}
           >
-            AuctionPrice
+            <img src={whiteLogo} alt="logo" style={{ width: "250px" }} />
+            {/* AuctionPrice */}
           </Typography>
 
           {/* Menu Button for Mobile */}
@@ -133,7 +134,7 @@ function Navbar({ toggleSidebar }) {
           </Box>
 
           {/* Desktop Menu Items */}
-          <Box sx={{ display: { xs: "none", md: "flex" },  gap: 2 }}>
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             <Button
               component={Link}
               to="/"

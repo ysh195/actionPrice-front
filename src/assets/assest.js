@@ -1,13 +1,19 @@
 /* eslint-disable no-unused-vars */
 
 
+
 import axios from "axios";
+import logo1 from './logo1.png';
+import logo2 from "./logo2.png";
+import logo3 from "./logo3.png";
+import whiteLogo from "./whiteLogo.png";
 
 
+export { logo1, logo2, logo3, whiteLogo };
 
 //desc: ui colors
 export const colors = {
-  primary: "#4D766E",
+primary: "#4D766E",
 
   // primary: "#538392",
   secondary: "#2ecc71",

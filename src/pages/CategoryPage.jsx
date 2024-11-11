@@ -110,6 +110,7 @@ const CategoryPage = () => {
         logined_username={logined_username}
         selectedStartDate={selectedStartDate}
         selectedEndDate={selectedEndDate}
+
       />
 
       <ProductListView productList={productList} pageNum={pageNum} />

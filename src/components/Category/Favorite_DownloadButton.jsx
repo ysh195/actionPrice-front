@@ -15,6 +15,7 @@ import { downloadExcel } from "../../redux/slices/categorySlice";
 import GetAppIcon from "@mui/icons-material/GetApp";
 import StarOutlineIcon from "@mui/icons-material/StarOutline";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const Favorite_DownloadButton = ({
   selectedLarge,
@@ -28,6 +29,7 @@ const Favorite_DownloadButton = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [favorite_name, setFavorite_name] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const commonButtonStyles = {
     color: "gray",
@@ -88,6 +90,24 @@ const Favorite_DownloadButton = ({
         favorite_name,
       })
     );
+
+    Swal.fire({
+      icon: "success",
+      title: "성공!",
+      text: "즐겨찾기 항목에 추가 되었습니다.",
+      showConfirmButton: true,
+      // timer: 2000,
+      html: '<p>Click <a href="#" id="goToMypageLink">here</a> to go to your My Page.</p>',
+    }).then(() => {
+      // Navigate to the "MyPage" route when the link is clicked
+      const link = document.getElementById("goToMypageLink");
+      if (link) {
+        link.addEventListener("click", (e) => {
+          e.preventDefault(); // Prevent the default link behavior
+          navigate(`/mypage/${logined_username}/wishlist`);
+        });
+      }
+    });
 
     setFavorite_name("");
     setModalOpen(false);

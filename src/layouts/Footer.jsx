@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { Box, Typography, Divider } from "@mui/material";
-import { colors } from "../assets/assest";
+import { logo2, logo1, logo3 } from "../assets/assest";
 
 const Footer = () => {
   return (
@@ -29,9 +29,10 @@ const Footer = () => {
           {/* Logo Section */}
           <Box display="flex" alignItems="center" justifyContent="flex-start">
             <img
-              src={""}
+               //src={logo1}
+              src={logo3}
               alt="logo"
-              style={{ width: "100px", marginBottom: "1rem" }}
+              style={{ width: "150px" }}
             />
           </Box>
 

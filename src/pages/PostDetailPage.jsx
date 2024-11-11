@@ -5,6 +5,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { fetchPostById } from "../redux/slices/postSlice";
 import {
   Box,
+  Button,
   CircularProgress,
   Container,
   Paper,
@@ -27,23 +28,29 @@ const PostDetailPage = () => {
   const { postId } = useParams();
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { post, loading, error } = useSelector((state) => state.post);
 
+  const [isCommentFormVisible, setIsCommentFormVisible] = useState(false); // State for comment form visibility
+
   console.log("PostDetailPage is rendered");
   useEffect(() => {
     if (!postId) return; // Early return if no postId
+    console.log("api call for fetchPostById");
     dispatch(fetchPostById({ postId, page: page - 1 }));
   }, [dispatch, postId, page]);
+
+    const handleClickCommentInput = () => {
+      setIsCommentFormVisible(true); // Show comment form when input is clicked
+    };
 
   const handleEdit = () => {
     console.log("Navigating to edit page...");
     navigate(`/api/post/${postId}/update/${post?.username}`);
   };
 
-  // if (loading) return <CircularProgress />;
+
   if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;
 
   return (
@@ -84,8 +91,12 @@ const PostDetailPage = () => {
               postId={post.postId}
               post_owner={post.username}
               onEdit={handleEdit}
+              isCommentFormVisible={isCommentFormVisible}
+              setIsCommentFormVisible={setIsCommentFormVisible}
             />
-            <CreateCommentForm postId={postId} />
+          
+            {isCommentFormVisible && <CreateCommentForm postId={postId} />}
+            {/* <CreateCommentForm postId={postId} /> */}
           </Box>
         </Box>
 
