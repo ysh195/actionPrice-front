@@ -17,6 +17,9 @@ import Home from "./pages/Home";
 import "./App.css";
 import PwChange from "./components/Password/PwChange";
 import CategoryPage from "./pages/CategoryPage";
+import TermsAndConditionsOfUsePage from "./pages/TermsAndConditionsOfUsePage";
+import OperationalPolicyPage from "./pages/OperationalPolicyPage";
+import PersonalInformationProcessingPolicyPage from "./pages/PersonalInformationProcessingPolicyPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -67,6 +70,18 @@ function App() {
           <Route
             path="api/admin/userlist"
             element={<ProtectedRoute element={<AdminPage />} />}
+          />
+          <Route 
+            path="api/policies/termsAndCondition"
+            element={<TermsAndConditionsOfUsePage />}
+          />
+          <Route 
+            path="api/policies/personalInfoPolicy"
+            element={<PersonalInformationProcessingPolicyPage />}
+          />
+          <Route 
+            path="api/policies/operationalPolicy"
+            element={<OperationalPolicyPage />}
           />
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
