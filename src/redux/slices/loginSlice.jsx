@@ -107,7 +107,7 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     autoLogin: (state) => {
-      const access_token = localStorage.getItem("access_token");
+      let access_token = localStorage.getItem("access_token");
       console.log("checking if there's token:", access_token);
       const username = localStorage.getItem("username");
 

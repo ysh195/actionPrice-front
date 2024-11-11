@@ -11,13 +11,13 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api/post";
-const access_Token = localStorage.getItem("access_token");
 
 //function: createComment //
 export const createComment = createAsyncThunk(
   "comments/createComment",
   async ({ postId, username, content }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
         `${API_URL}/${postId}/detail`,
         { username, content },
@@ -42,6 +42,7 @@ export const updateComment = createAsyncThunk(
   "comments/updateComment",
   async ({ postId, commentId, username, content }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
         `${API_URL}/${postId}/detail/${commentId}/update`,
         {
@@ -72,6 +73,7 @@ export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async ({ postId, commentId, username }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
         `${API_URL}/${postId}/detail/${commentId}/delete`,
         { username },
@@ -133,6 +135,7 @@ export const fetchAdminAnswers = createAsyncThunk(
   "comments/fetchAdminAnswers",
   async ({ postId, answertype }, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.get(
         `${API_URL}/${postId}/comment/admin/${answertype}`,
         {

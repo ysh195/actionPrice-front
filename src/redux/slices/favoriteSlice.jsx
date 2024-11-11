@@ -11,7 +11,6 @@ const initialState = {
 };
 
 const API_URL = "http://localhost:8080/api";
-const access_Token = localStorage.getItem("access_token");
 
 //function: create Favorite //
 export const createFavorite = createAsyncThunk(
@@ -20,6 +19,7 @@ export const createFavorite = createAsyncThunk(
     { large, middle, small, rank, logined_username, favorite_name },
     { rejectWithValue }
   ) => {
+    let access_Token = localStorage.getItem("access_token");
      if (!access_Token) {
        alert("You need to log in to write a post.");
        return rejectWithValue("User not logged in");
@@ -52,6 +52,7 @@ export const deleteFavorite = createAsyncThunk(
   "favorite/deleteFavorite",
   async (favoriteId, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
         `${API_URL}/category/favorite/${favoriteId}/delete`,
         {
@@ -80,6 +81,7 @@ export const fetchFavoriteList = createAsyncThunk(
   "user/fetchFavoriteList",
   async (username, { rejectWithValue }) => {
     try {
+      let access_Token = localStorage.getItem("access_token");
       const response = await axios.get(
         `${API_URL}/mypage/${username}/wishlist`,
         {
