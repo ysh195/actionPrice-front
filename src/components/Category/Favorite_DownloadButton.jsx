@@ -105,8 +105,8 @@ const Favorite_DownloadButton = ({
     
     Swal.fire({
       icon: isSuccess ? "success" : "error",
-      title: isSuccess ? "완료!" : "즐겨찾기 최대 댓수 : 10",
-      text: isSuccess ? "즐겨찾기가 추가 되었습니다." : "즐겨찾기를 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요.",
+      title: isSuccess ? "완료!" : "더 이상 추가할 수 없습니다.",
+      text: isSuccess ? "즐겨찾기가 추가 되었습니다." : "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요.",
       showConfirmButton: true,
       confirmButtonText: "Go to My Page", // Button text for navigating
       showCancelButton: true, // Show the cancel button
