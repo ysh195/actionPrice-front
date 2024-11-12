@@ -82,6 +82,8 @@ const Favorite_DownloadButton = ({
     if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
       return;
     }
+
+    let isSuccess = true;
     
     try {
       await dispatch(
@@ -94,40 +96,28 @@ const Favorite_DownloadButton = ({
           favorite_name,
         })
       ).unwrap();
-  
-      Swal.fire({
-        icon: "success",
-        title: "완료!",
-        text: "관심 항목에 추가 되었습니다.",
-        showConfirmButton: true,
-        confirmButtonText: "Go to My Page", // Button text for navigating
-        showCancelButton: true, // Show the cancel button
-        cancelButtonText: "Close", // Text for the cancel button
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If the user clicks the "Go to My Page" button
-          navigate(`/api/mypage/${logined_username}/wishlist`);
-        } else {
-          // If the user clicks the "Close" button
-          setFavorite_name("");
-          setModalOpen(false);
-        }
-      });
-      
     } catch (error) {
-      console.error("error on adding favorite : ", error);
-      setFavorite_name("");
-      setModalOpen(false);
-
-      Swal.fire({
-        icon: "error",
-        title: "즐겨찾기의 최대 갯수 : 10개",
-        text: " 즐겨찾기를 더 이상 추가할 수 없습니다. 더 추가하고 싶으시다면 마이페이지에서 기존의 것을 삭제하신 뒤에 시도해주세요.",
-        showConfirmButton: true,
-        confirmButtonText: "OK, I got it.",
-      });
+      console.log("failure on adding new favorite")
+      isSuccess = false;
     }
-
+    
+    setFavorite_name("");
+    setModalOpen(false);
+    
+    Swal.fire({
+      icon: isSuccess ? "success" : "error",
+      title: isSuccess ? "완료!" : "즐겨찾기 최대 댓수 : 10",
+      text: isSuccess ? "즐겨찾기가 추가 되었습니다." : "즐겨찾기를 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요.",
+      showConfirmButton: true,
+      confirmButtonText: "Go to My Page", // Button text for navigating
+      showCancelButton: true, // Show the cancel button
+      cancelButtonText: "Close", // Text for the cancel button
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If the user clicks the "Go to My Page" button
+        navigate(`/api/mypage/${logined_username}/wishlist`);
+      }
+    });
   };
 
   const handleDownloadExcel = () => {
