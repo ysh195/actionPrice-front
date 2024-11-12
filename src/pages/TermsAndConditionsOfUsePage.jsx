@@ -135,10 +135,13 @@ const TermsAndConditionsOfUsePage = () => {
                     <Typography variant="body1" paragraph>
                         ① 프로젝트 팀은 본 서비스를 365일, 24시간 쉬지 않고 제공하기 위하여 최선의 노력을 다합니다. 다만, 아래 각 호의 경우 본 서비스의 전부 또는 일부를 제한하거나 중지할 수 있습니다.
                     </Typography>
-                    <Typography variant="body1" paragraph>1. 본 서비스용 설비의 유지·보수 등을 위한 정기 또는 임시 점검의 경우</Typography>
-                    <Typography variant="body1" paragraph>2. 정전, 제반 설비의 장애 또는 이용량의 폭주 등으로 정상적인 본 서비스 이용에 지장이 있는 경우</Typography>
-                    <Typography variant="body1" paragraph>3. 관계사와의 계약 종료, 정부의 명령/규제, 서비스/회원 정책 변경 등 프로젝트 팀의 제반 사정으로 본 서비스의 전부 또는 일부를 유지할 수 없는 경우</Typography>
-                    <Typography variant="body1" paragraph>4. 기타 천재지변, 국가비상사태 등 불가항력적 사유가 있는 경우</Typography>
+                    <List>
+                        <ListItem>1. 본 서비스용 설비의 유지·보수 등을 위한 정기 또는 임시 점검의 경우</ListItem>
+                        <ListItem ></ListItem>
+                        <ListItem >2. 정전, 제반 설비의 장애 또는 이용량의 폭주 등으로 정상적인 본 서비스 이용에 지장이 있는 경우</ListItem>
+                        <ListItem >3. 관계사와의 계약 종료, 정부의 명령/규제, 서비스/회원 정책 변경 등 프로젝트 팀의 제반 사정으로 본 서비스의 전부 또는 일부를 유지할 수 없는 경우</ListItem>
+                        <ListItem >4. 기타 천재지변, 국가비상사태 등 불가항력적 사유가 있는 경우</ListItem>
+                    </List>
                     <Typography variant="body1" paragraph>
                         ② 전항에 의한 본 서비스 중단의 경우에는 미리 제17조에서 정한 방법으로 여러분에게 통지 내지 공지하겠습니다. 이 때 원만한 서비스 및 정책 변경 등을 위하여 서비스 이용 시 재로그인 또는 추가적인 동의 절차 등이 필요할 수 있습니다. 다만, 프로젝트 팀로서도 예측할 수 없거나 통제할 수 없는 사유(프로젝트 팀의 과실이 없는 디스크 내지 서버 장애, 시스템 다운 등)로 인해 사전 통지 내지 공지가 불가능한 경우에는 그러하지 아니합니다. 이러한 경우에도 프로젝트 팀은 상황을 파악하는 즉시 최대한 빠른 시일 내에 서비스를 복구하도록 노력하고, 2시간 이상 복구가 지연되는 경우 서비스 공지사항, 카카오 고객센터 공지사항 등에 게시하여 알려 드리겠습니다.
                     </Typography>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+ 
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/slices/loginSlice";
@@ -58,10 +58,11 @@ const LoginPage = () => {
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
+
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "입력된 정보가 올바르지 않습니다. 다시 시도해 주세요.",
+        text: error,
         showConfirmButton: true,
       });
     }
