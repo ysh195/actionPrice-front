@@ -13,6 +13,7 @@ const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
   };
 
   return (
+    //todo: edit date formatting, it gives error
     <div>
       <Typography variant="h5" align="center" gutterBottom>
         {title}
@@ -35,7 +36,7 @@ const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
         >
           <Typography variant="subtitle1" sx={{ marginRight: 2 }}>
             작성일: {new Date(createdAt).toLocaleDateString()}
-            {/*   작성일: {formatDate(createdAt)} */}
+            {/* 작성일: {formatDate(createdAt)} */}
           </Typography>
           {updatedAt ? (
             <Typography variant="subtitle1">

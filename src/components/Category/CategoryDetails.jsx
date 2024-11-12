@@ -171,54 +171,43 @@ const CategoryDetail = ({
       sx={{
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-evenly",
         alignItems: "center",
-        paddingX: 2,
-        paddingY: 1,
-
         gap: 2,
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
+      {/* Category Selects */}
+      <CategorySelect
+        label="대분류를 선택하세요"
+        value={selectedLarge}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={largeCategoryList}
+        categoryType="large"
+      />
 
-          gap: 2,
-        }}
-      >
-        {/* Category Selects */}
-        <CategorySelect
-          label="대분류를 선택하세요"
-          value={selectedLarge}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={largeCategoryList}
-          categoryType="large"
-        />
+      <CategorySelect
+        label="중분류를 선택하세요"
+        value={selectedMiddle}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={middleCategoryList}
+        categoryType="middle"
+      />
 
-        <CategorySelect
-          label="중분류를 선택하세요"
-          value={selectedMiddle}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={middleCategoryList}
-          categoryType="middle"
-        />
+      <CategorySelect
+        label="소분류를 선택하세요"
+        value={selectedSmall}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={smallCategoryList}
+        categoryType="small"
+      />
 
-        <CategorySelect
-          label="소분류를 선택하세요"
-          value={selectedSmall}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={smallCategoryList}
-          categoryType="small"
-        />
+      <CategorySelect
+        label="등급을 선택하세요"
+        value={selectedRank}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={rankList}
+        categoryType="rank"
+      />
 
-        <CategorySelect
-          label="등급을 선택하세요"
-          value={selectedRank}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={rankList}
-          categoryType="rank"
-        />
-      </Box>
       <Box sx={{ display: "flex" }}>
         <DateChange
           selectedStartDate={selectedStartDate}
@@ -231,10 +220,20 @@ const CategoryDetail = ({
         sx={{
           height: "100%",
           display: "flex",
+          gap: 1,
         }}
       >
         <Button
-          color="primary"
+          sx={{
+            color: "#00403d",
+
+            cursor: "pointer",
+            "&:hover": {
+              color: "white",
+              backgroundColor: "#00403d",
+              boxShadow: "0px 4px 8px rgba(1, 2, 2, 0.2)", // Adds shadow on hover
+            },
+          }}
           disabled={
             !selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank
           }
@@ -242,7 +241,18 @@ const CategoryDetail = ({
         >
           조회
         </Button>
-        <Button color="secondary" onClick={handleReset}>
+        <Button
+          sx={{
+            color: "#7b482d",
+            cursor: "pointer",
+            "&:hover": {
+              color: "white",
+              backgroundColor: "#7b482d",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds shadow on hover
+            },
+          }}
+          onClick={handleReset}
+        >
           초기화
         </Button>
       </Box>

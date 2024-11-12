@@ -69,12 +69,7 @@ function Navbar({ toggleSidebar }) {
             to="/"
             sx={{
               flexGrow: 1,
-              // fontFamily: "'Poppins', sans-serif",
-              // fontWeight: 700, // Bold text
-              // letterSpacing: ".1rem", // Adjust letter spacing
-              // color: "white", // Text color
-              // textDecoration: "none", // Remove underline from the link
-              display: { xs: "none", md: "flex" }, // Show only on medium and larger screens
+              display: { xs: "none", md: "flex" }, 
             }}
           >
             <img src={textLogo2} alt="logo" style={{ width: "130px" }} />
@@ -140,7 +135,7 @@ function Navbar({ toggleSidebar }) {
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.button2 },
+                "&:hover": { backgroundColor: colors.hover2 },
               }}
             >
               Home
@@ -151,7 +146,7 @@ function Navbar({ toggleSidebar }) {
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.button2 },
+                "&:hover": { backgroundColor: colors.hover2 },
               }}
             >
               Category
@@ -162,7 +157,7 @@ function Navbar({ toggleSidebar }) {
               sx={{
                 color: "white",
                 borderRadius: "12px",
-                "&:hover": { backgroundColor: colors.button2 },
+                "&:hover": { backgroundColor: colors.hover2 },
               }}
             >
               Contact Us
@@ -178,7 +173,7 @@ function Navbar({ toggleSidebar }) {
                     sx={{
                       color: "white",
                       borderRadius: "12px",
-                      "&:hover": { backgroundColor: colors.button2 },
+                      "&:hover": { backgroundColor: colors.hover2 },
                     }}
                   >
                     Admin Page

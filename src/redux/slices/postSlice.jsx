@@ -124,9 +124,10 @@ export const fetchPostById = createAsyncThunk(
       } else if (error.response.status === 401) {
         Swal.fire({
           icon: "error",
-          text: "로그인이 필요합니다",
+          text: "다시 로그인해 주세요",
         });
-        return rejectWithValue("로그인 해주세요");
+        localStorage.removeItem("access_token");
+        return rejectWithValue("다시 로그인해 주세요");
       }
 
       return rejectWithValue(error.response.data);

@@ -10,29 +10,38 @@ export { logo, whiteLogo, textLogo2 };
 //desc: ui colors
 export const colors = {
   primary: "#4D766E",
-  backgroundColor: "#F0F5F4",
-  // primary: "#538392",
+  // backgroundColor: "#F0F5F4",
+
   secondary: "#2ecc71",
   accent: "#e74c3c",
   text: "#2c3e50",
   white: "#ffffff",
   white2: "#ecf0f1",
-  // tableHead: "#4D766E",
-  tableHead: "#CB6040",
+
   button1: "#2C3E50",
   button2: "#CB6040",
   hover1: "#49557e",
-  hover2: "#D76B4C",
+  hover2: "#a45f53",
   warning: "#d32f2f",
-  // paperb: "#F9F9F9",
+
   paperbeige: "#F7F2EF",
   disable: "#d3d3d3",
   chart: "#0e97a9",
   border: "#0c1e2a",
   link: "#8C6A4A",
+  // backgroundColor: "#f8f3e8",
+  tableHead: "#a45f53",
+  footerTitle: "#7b482d",
+  footerText: "#a45f53",
+  buttonBorder: "#d3817a",
+  rose: "#d3817a",
 
-  // 0e97a9 차트
-  // 0c1e2a 테두리
+  sidebar: "#dedad7",
+  sidebarText: "#00403d",
+
+  backgroundColor: "#f2eee6",
+  gray: "#dedad7",
+  background: "#f2eee6",
 };
 
 const response = await axios.get("http://localhost:8080/");

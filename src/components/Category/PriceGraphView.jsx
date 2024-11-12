@@ -11,13 +11,10 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine,
 } from "recharts";
 import { colors } from "../../assets/assest";
 
-const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
-  const [clickedDateData, setClickedDateData] = useState(null);
-  const [clickedDate, setClickedDate] = useState(null);
+const PriceGraphView = ({ timeIntervals, priceData, countries }) => {
   /**
    * priceData
    * [
@@ -108,21 +105,16 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
   // const handleMouseLeave = () => {
   //     setHighLightedLine(null);
   // };
-  const handleDotClick = (e, index, country) => {
-    const clickedData = priceData[index];
-    console.log("Clicked Dot Data:", clickedData); // Logs the clicked data
-    setClickedDate(clickedData.date); // Set the clicked date
-    setClickedDateData({ country, data: clickedData }); // Set the data for the clicked country and date
-  };
 
   return (
     <div
       className="price-graph-container"
       style={{
         zIndex: 2,
-        padding: "20px",
+        margin: "3rem 0",
+        padding: "2rem 2rem",
         backgroundColor: "#f9f9f9",
-
+        border: `1px solid ${colors.rose}`,
         borderRadius: "8px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
       }}
@@ -158,14 +150,9 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
                   stroke={lineColors[country]} // saved random color
                   strokeWidth={highLightedLine === country ? 3 : 2} // line thickness and now highlight only the seleceted one
                   dot={highLightedLine === country ? { r: 6 } : false} // dot style for the price lines. and now activate only the seleceted one
-                  // activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }}
+                  activeDot={highLightedLine === country ? { r: 6 } : { r: 4 }}
                   // dot style for the date lines
                   onMouseMove={() => handleMouseMove(country)}
-                  activeDot={{
-                    r: highLightedLine === country ? 6 : 4,
-                    onClick: (e) => handleDotClick(e, e.index, country),
-                  }}
-                  // Add the onClick handler for the dot
                 />
               ))}
 
@@ -233,4 +220,4 @@ const PriceGraghView = ({ timeIntervals, priceData, countries }) => {
   );
 };
 
-export default PriceGraghView;
+export default PriceGraphView;
