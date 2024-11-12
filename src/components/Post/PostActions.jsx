@@ -20,6 +20,7 @@ const PostActions = React.memo(
     const navigate = useNavigate();
 
     const logined_username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
 
     //function: handleDelete //
     const handleDelete = async () => {
@@ -84,7 +85,7 @@ const PostActions = React.memo(
               </Button>
             )}
           </Box>
-          {logined_username === post_owner && (
+          {(logined_username === post_owner || role === "ROLE_ADMIN") && (
             <Box>
               <Button
                 color="secondary"
