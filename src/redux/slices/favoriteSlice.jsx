@@ -54,7 +54,7 @@ export const deleteFavorite = createAsyncThunk(
     try {
       let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`,
+        `${API_URL}/category/favorite/${favoriteId}/delete`, {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,

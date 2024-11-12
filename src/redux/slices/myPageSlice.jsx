@@ -24,7 +24,7 @@ export const deleteAccount = createAsyncThunk(
         return rejectWithValue("User not logged in");
       }
       const response = await axios.post(
-        `${BASE_URL}/mypage/${username}/deleteUser`,
+        `${BASE_URL}/mypage/${username}/deleteUser`, {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,

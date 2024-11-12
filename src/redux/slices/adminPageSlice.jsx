@@ -56,7 +56,7 @@ export const blockUser = createAsyncThunk(
     //desc: {} If there's no request body, pass an empty object
     try {
       const response = await axios.post(
-        `${baseUrl}/userlist/${username}/block`,
+        `${baseUrl}/userlist/${username}/block`, {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -93,7 +93,7 @@ export const resetRefreshToken = createAsyncThunk(
     }
     try {
       const response = await axios.post(
-        `${baseUrl}/userlist/${username}/reset`,
+        `${baseUrl}/userlist/${username}/reset`, {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
