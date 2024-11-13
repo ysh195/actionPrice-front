@@ -41,7 +41,6 @@ const DarkGreenPage = ({ slideImages }) => {
           color: colors.green,
           letterSpacing: "-0.02rem",
           position: "absolute",
-          
           top:{xs: 1, md:"10%"},
           zIndex: 1,
         }}
