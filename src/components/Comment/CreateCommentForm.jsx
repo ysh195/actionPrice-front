@@ -9,7 +9,7 @@ import {
 } from "../../redux/slices/commentSlice";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import AnswerModal from "./AnswerModal";
-import { adminAnswers } from "../../assets/assest";
+import { adminAnswers, colors } from "../../assets/assest";
 import Swal from "sweetalert2";
 
 const CreateCommentForm = ({ postId }) => {
@@ -21,6 +21,22 @@ const CreateCommentForm = ({ postId }) => {
   const role = localStorage.getItem("role");
 
   console.log("CreateCommentForm is rendered");
+
+  const commentButtonStyles = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "5px",
+    cursor: "pointer",
+    "&:hover": {
+      color: "white",
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    },
+    "&:focus": {
+      outline: "none", // Remove focus outline
+      boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.2)",
+    },
+  };
 
   const handleCreateComment = async () => {
     if (!content.trim()) {
@@ -86,16 +102,15 @@ const CreateCommentForm = ({ postId }) => {
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
               type="submit"
-              color="primary"
               onClick={handleCreateComment}
-              sx={{ border: "none" }}
+              //  sx={{ border: "none", color: colors.green }}
+              sx={{commentButtonStyles }}
             >
               {loading ? "로딩..." : "등록"}
             </Button>
             <Button
-              color="secondary"
               onClick={handleCancelComment}
-              sx={{ border: "none" }}
+              sx={{ border: "none", color: colors.darkBrown }}
             >
               취소
             </Button>

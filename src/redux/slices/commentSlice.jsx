@@ -27,7 +27,7 @@ export const createComment = createAsyncThunk(
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-        },
+        }
       );
       console.log("create comment API Response:", response.data);
       return response.data;

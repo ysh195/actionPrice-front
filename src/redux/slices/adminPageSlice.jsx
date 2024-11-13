@@ -9,7 +9,7 @@ const initialState = {
   error: null,
 };
 
-const baseUrl = "http://localhost:8080/api/admin";
+const baseUrl = "http://localhost:8080/api";
 
 //function for fetchUserList //
 export const fetchUserList = createAsyncThunk(
@@ -18,7 +18,7 @@ export const fetchUserList = createAsyncThunk(
     try {
       let access_Token = localStorage.getItem("access_token");
       console.log("go adminPage - access_Token", access_Token);
-      const response = await axios.get(`${baseUrl}/userlist`, {
+      const response = await axios.get(`${baseUrl}/admin/userlist`, {
         params: { pageNum, keyword },
         headers: {
           Authorization: `Bearer ${access_Token}`,
@@ -56,7 +56,8 @@ export const blockUser = createAsyncThunk(
     //desc: {} If there's no request body, pass an empty object
     try {
       const response = await axios.post(
-        `${baseUrl}/userlist/${username}/block`,
+        `${baseUrl}/admin/userlist/${username}/block`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -93,7 +94,8 @@ export const resetRefreshToken = createAsyncThunk(
     }
     try {
       const response = await axios.post(
-        `${baseUrl}/userlist/${username}/reset`,
+        `${baseUrl}/admin/userlist/${username}/reset`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -133,7 +135,8 @@ const adminPageSlice = createSlice({
         state.userList = action.payload.userList;
         state.totalPageNum = action.payload.totalPageNum;
         state.currentPageNum = action.payload.currentPageNum;
-      }).addCase(fetchUserList.rejected, (state, action) => {
+      })
+      .addCase(fetchUserList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload; // Set error message
       })

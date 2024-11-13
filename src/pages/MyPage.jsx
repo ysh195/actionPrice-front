@@ -13,14 +13,19 @@ const MyPage = () => {
   console.log("getting username from url", username);
 
   return (
-    <div style={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        ml: "10rem",
+        minHeight: "100vh",
+      }}
+    >
       <Sidebar />
       <Box
         sx={{
-          marginLeft: "250px", 
-          padding: 2,
-          width: "calc(100% - 150px)", 
- 
+          pt: 12,
+          width: "calc(100% - 150px)",
         }}
       >
         <Routes>
@@ -28,7 +33,7 @@ const MyPage = () => {
           <Route path="wishlist" element={<Favorites username={username} />} />
         </Routes>
       </Box>
-    </div>
+    </Box>
   );
 };
 

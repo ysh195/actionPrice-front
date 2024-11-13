@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
 import { Box, FormControl, TextField, Typography } from "@mui/material";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
+import { colors } from "../../assets/assest";
 
 const DateChange = ({
   selectedStartDate,
@@ -47,16 +48,35 @@ const DateChange = ({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-      <FormControl margin="normal">
+    <FormControl
+      sx={{
+        width: "70%",
+        display: "flex",
+        flexDirection: "row",
+        gap: 1,
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "#00403d", // default border color
+          },
+
+          "&.Mui-focused fieldset": {
+            borderColor: "#00403d", // focused border color
+          },
+        },
+
+        // minWidth: 100,
+      }}
+    >
+      <Box>
         <Typography
           variant="body2"
           sx={{
             position: "absolute",
             top: -20,
             fontSize: "0.75rem",
-            color: "text.secondary",
+
             transition: "all 0.2s ease",
+            color: colors.brown,
           }}
         >
           시작일
@@ -65,20 +85,19 @@ const DateChange = ({
           type="date"
           value={selectedStartDate}
           onChange={handleStartDateChange}
-          inputProps={{
-            max: today, // Disable future dates
-          }}
+          inputProps={{ max: today }}
+          fullWidth
         />
-      </FormControl>
+      </Box>
 
-      <FormControl  margin="normal">
+      <Box>
         <Typography
           variant="body2"
           sx={{
             position: "absolute",
             top: -20,
             fontSize: "0.75rem",
-            color: "text.secondary",
+            color: colors.brown,
             transition: "all 0.2s ease",
           }}
         >
@@ -88,12 +107,11 @@ const DateChange = ({
           type="date"
           value={selectedEndDate}
           onChange={handleEndDateChange}
-          inputProps={{
-            max: today, // Disable future dates
-          }}
+          inputProps={{ max: today }}
+          fullWidth
         />
-      </FormControl>
-    </Box>
+      </Box>
+    </FormControl>
   );
 };
 

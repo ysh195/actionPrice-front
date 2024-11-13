@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -38,16 +39,16 @@ const Footer = () => {
     <>
       <Divider
         sx={{
-          height: "2px",
-          backgroundColor: colors.tableHead,
+          height: "3px",
+          backgroundColor: colors.rose,
         }}
       />
       <Box
         component="footer"
         sx={{
+          backgroundColor: "#f9f7f1",
           py: 2,
           px: { xs: 2, md: 6 },
-          backgroundColor: colors.backgroundColor,
           color: "#444",
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
@@ -74,7 +75,7 @@ const Footer = () => {
         <Box sx={{ flex: 1, textAlign: "center" }}>
           <Typography
             variant="body1"
-            sx={{ fontWeight: 600, color: colors.footerTitle, mb: 1 }}
+            sx={{ fontWeight: 600, color: colors.brown, mb: 1 }}
           >
             Contact Us
           </Typography>
@@ -128,7 +129,7 @@ const Footer = () => {
         <Box sx={{ textAlign: { xs: "center", md: "right" } }}>
           <Typography
             variant="body1"
-            sx={{ fontWeight: 600, color: colors.footerTitle, mb: 1 }}
+            sx={{ fontWeight: 600, color: colors.brown, mb: 1 }}
           >
             약관 및 정책
           </Typography>

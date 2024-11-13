@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
+import { colors } from "../../assets/assest";
 
 const PostSearch = ({ onSearch, keyword }) => {
   const [searchKeyword, setSearchKeyword] = useState(keyword);
@@ -25,15 +26,29 @@ const PostSearch = ({ onSearch, keyword }) => {
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <TextField
-        id="outlined-search"
-        label="검색"
-        type="search"
-        value={searchKeyword}
-        onChange={handleChange}
-      />
-    </div>
+    <TextField
+      id="outlined-search"
+      label="검색"
+      type="search"
+      value={searchKeyword}
+      onChange={handleChange}
+      sx={{
+        mb: 2,
+        color: "yellow",
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: colors.green, // default border color
+          },
+
+          "&.Mui-focused fieldset": {
+            borderColor: colors.brown, // focused border color
+          },
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+          color: colors.brown, // focused label color
+        },
+      }}
+    />
   );
 };
 

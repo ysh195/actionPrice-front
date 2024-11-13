@@ -13,6 +13,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   const [content, setContent] = useState(comment.content);
   const [errorMessage, setErrorMessage] = useState(null);
   const logined_username = localStorage.getItem("username");
+  const role = localStorage.getItem("role");
 
   const dispatch = useDispatch();
 
@@ -30,7 +31,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleUpdateComment = async () => {
-    if (logined_username !== comment.username) {
+    if (logined_username !== comment.username && role !== "ROLE_ADMIN") {
       Swal.fire({
         title: "Error",
         icon: "error",
@@ -55,7 +56,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleDelete = async () => {
-    if (logined_username !== comment.username) {
+    if (logined_username !== comment.username && role !== "ROLE_ADMIN") {
       Swal.fire({
         title: "Error",
         icon: "error",
@@ -115,7 +116,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
                 flex: 1,
               }}
             >
-              <Typography variant="subtitle1" sx={{ color: colors.primary }}>
+              <Typography variant="subtitle1" sx={{ color: colors.green }}>
                 {comment.username}
               </Typography>
               <Typography variant="body2" color="textSecondary">
@@ -124,7 +125,8 @@ const CommentItem = ({ comment, postId, onDelete }) => {
               <Typography variant="body1" sx={{ marginTop: 2, mb: 1 }}>
                 {comment.content}
               </Typography>
-              {logined_username === comment.username && (
+              {(logined_username === comment.username ||
+                role === "ROLE_ADMIN") && (
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
                     variant="outlined"
@@ -147,12 +149,6 @@ const CommentItem = ({ comment, postId, onDelete }) => {
           </Paper>
         </>
       )}
-      {/* <Snackbar
-        open={Boolean(errorMessage)}
-        autoHideDuration={6000}
-        onClose={() => setErrorMessage(null)}
-        message={errorMessage}
-      /> */}
     </>
   );
 };

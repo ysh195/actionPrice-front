@@ -2,19 +2,21 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchPostById, fetchPostForUpdate, updatePost } from "../../redux/slices/postSlice";
+import { fetchPostForUpdate, updatePost } from "../../redux/slices/postSlice";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import PostHeader from "./PostHeader";
 import Swal from "sweetalert2";
 import { colors } from "../../assets/assest";
 
 const UpdatePostView = () => {
- const { postId, username } = useParams();
+ const { postId} = useParams();
+
+ const username = localStorage.getItem("username");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); // Loading state
+
 
   const { post } = useSelector((state) => state.post);
   const [title, setTitle] = useState(post.title || "");
@@ -23,8 +25,12 @@ const UpdatePostView = () => {
 
   console.log("check post in PostDetailPage:", post);
  useEffect(() => {
+   if (username !== post.username) {
+     alert("you are not the owner");
+     return;
+   }
    dispatch(fetchPostForUpdate({ postId, username }));
- }, [dispatch, postId, username]);
+ }, [dispatch, postId, username, post.username]);
 
   // Update title and content when post changes
   useEffect(() => {
@@ -35,6 +41,10 @@ const UpdatePostView = () => {
   }, [post]);
 
   const handleUpdatePost = async () => {
+    if (username !== post.username) {
+      alert("you are not the owner")
+      return;
+    }
     if (!title || !content) {
       setError("제목과 내용을 모두 입력하세요."); // Ensure title and content are not empty
       return;

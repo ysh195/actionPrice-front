@@ -53,7 +53,7 @@ function Navbar({ toggleSidebar }) {
       position="sticky"
       elevation={4}
       sx={{
-        backgroundColor: colors.primary,
+        backgroundColor: colors.green,
         height: 100,
         justifyContent: "center",
         color: colors.white2,
@@ -69,11 +69,10 @@ function Navbar({ toggleSidebar }) {
             to="/"
             sx={{
               flexGrow: 1,
-              display: { xs: "none", md: "flex" }, 
+              display: { xs: "none", md: "flex" },
             }}
           >
             <img src={textLogo2} alt="logo" style={{ width: "130px" }} />
-            {/* ActionPrice */}
           </Typography>
 
           {/* Menu Button for Mobile */}
@@ -109,7 +108,7 @@ function Navbar({ toggleSidebar }) {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={Link}
-                  to="api/category/:large"
+                  to="api/category"
                   sx={{ textDecoration: "none", color: "inherit" }}
                 >
                   Category
@@ -142,7 +141,7 @@ function Navbar({ toggleSidebar }) {
             </Button>
             <Button
               component={Link}
-              to="api/category/:large"
+              to="api/category"
               sx={{
                 color: "white",
                 borderRadius: "12px",
@@ -162,10 +161,14 @@ function Navbar({ toggleSidebar }) {
             >
               Contact Us
             </Button>
+          </Box>
 
-            {/* User Menu */}
+          {/* User Menu */}
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             {isLoggedIn ? (
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box 
+              // sx={{ display: "flex", alignItems: "center" }}
+              >
                 {role === "ROLE_ADMIN" && (
                   <Button
                     component={Link}

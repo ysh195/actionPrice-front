@@ -16,6 +16,7 @@ import ProductListView from "../components/Category/ProductListView.jsx";
 import PriceGraphView from "../components/Category/PriceGraphView.jsx";
 import CategoryDetail from "../components/Category/CategoryDetails.jsx";
 import Favorite_DownloadButton from "../components/Category/Favorite_DownloadButton.jsx";
+import { MarginOutlined } from "@mui/icons-material";
 
 const CategoryPage = () => {
   const { large, middle, small, rank } = useParams();
@@ -73,11 +74,13 @@ const CategoryPage = () => {
   }
 
   return (
-    <Container
+    <Box
       sx={{
-        mt: "3rem",
+        mt: "8rem",
         display: "flex",
         flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
         gap: 4,
       }}
     >
@@ -126,7 +129,7 @@ const CategoryPage = () => {
         priceData={priceData}
         countries={countries}
       />
-    </Container>
+    </Box>
   );
 };
 export default CategoryPage;

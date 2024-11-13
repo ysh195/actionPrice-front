@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import { Button, Box, Divider, Alert, Stack, Fab } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import { Button, Box, Divider } from "@mui/material";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deletePost } from "../../redux/slices/postSlice";
@@ -20,38 +20,34 @@ const PostActions = React.memo(
     const navigate = useNavigate();
 
     const logined_username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
 
     //function: handleDelete //
     const handleDelete = async () => {
-      if (!logined_username) {
-        alert("You need to be logged in to delete a post.");
-        return;
-      }
-      // Show confirmation popup
-      const confirmation = await Swal.fire({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this post!",
+      if (!logined_username)
+        return alert("You need to be logged in to delete a post.");
+
+      const { isConfirmed } = await Swal.fire({
+        title: "잠깐!",
+        text: "삭제된 게시글은 복구할 수 없습니다!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#3085d6",
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "Cancel",
+        confirmButtonText: "삭제하기!",
+        cancelButtonText: "취소",
       });
-      // Check if the user confirmed the deletion
-      if (confirmation.isConfirmed) {
+
+      if (isConfirmed) {
         const result = await dispatch(deletePost({ postId, logined_username }));
-        if (deletePost.fulfilled.match(result)) {
-          console.log("Post deleted successfully:", result.payload);
-          Swal.fire({
-            icon: "success",
-            text: "게시글이 삭제 되었습니다.",
-            timer: 2000,
-          });
-        } else {
-          console.error("Failed to delete post:", result.error);
-        }
-        navigate("/api/contact-us");
+        Swal.fire({
+          icon: result.error ? "error" : "success",
+          text: result.error
+            ? "게시글이 삭제에 실패되었습니다."
+            : "게시글이 삭제 되었습니다.",
+          timer: 2000,
+        });
+        if (!result.error) navigate("/api/contact-us");
       } else {
         console.log("Post deletion canceled.");
       }
@@ -84,7 +80,7 @@ const PostActions = React.memo(
               </Button>
             )}
           </Box>
-          {logined_username === post_owner && (
+          {(logined_username === post_owner || role === "ROLE_ADMIN") && (
             <Box>
               <Button
                 color="secondary"

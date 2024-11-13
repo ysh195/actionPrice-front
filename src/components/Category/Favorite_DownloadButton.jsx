@@ -41,12 +41,12 @@ const Favorite_DownloadButton = ({
     cursor: "pointer",
     "&:hover": {
       color: "white",
-      backgroundColor: colors.primary,
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds shadow on hover
+      backgroundColor: colors.green,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
     },
     "&:focus": {
       outline: "none", // Remove focus outline
-      boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.2)", // Optional shadow for focus
+      boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.2)",
     },
   };
 
@@ -57,34 +57,17 @@ const Favorite_DownloadButton = ({
   const handleAddFavorite = async (e) => {
     e.preventDefault();
 
-    if (favorite_name.trim() === "") {
-      setModalOpen(false);
-      setFavorite_name("");
-      Swal.fire({
-        icon: "error",
-        title: "잠깐!",
-        text: "즐겨찾기 항목의 이름을 입력해주세요.",
-      });
-      return;
+    if (!favorite_name.trim()) {
+      return showError("즐겨찾기 항목의 이름을 입력해주세요.");
     }
 
     if (!logined_username) {
-      setModalOpen(false);
-      setFavorite_name("");
-      Swal.fire({
-        icon: "error",
-        text: "로그인 하고 나서 즐겨찾기 등록이 가능합니다.",
-      });
-
-      return;
+      return showError("로그인 하고 나서 즐겨찾기 등록이 가능합니다.");
     }
 
-    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank) {
+    if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank)
       return;
-    }
 
-    let isSuccess = true;
-    
     try {
       await dispatch(
         createFavorite({
@@ -96,27 +79,35 @@ const Favorite_DownloadButton = ({
           favorite_name,
         })
       ).unwrap();
-    } catch (error) {
-      console.log("failure on adding new favorite")
-      isSuccess = false;
+      showSuccess("즐겨찾기가 추가 되었습니다.");
+    } catch {
+      showError(
+        "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요."
+      );
     }
-    
+
     setFavorite_name("");
     setModalOpen(false);
-    
+  };
+
+  const showError = (message) => {
+    setModalOpen(false);
+    setFavorite_name("");
+    Swal.fire({ icon: "error", text: message });
+  };
+
+  const showSuccess = (message) => {
     Swal.fire({
-      icon: isSuccess ? "success" : "error",
-      title: isSuccess ? "완료!" : "더 이상 추가할 수 없습니다.",
-      text: isSuccess ? "즐겨찾기가 추가 되었습니다." : "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요.",
+      icon: "success",
+      title: "완료!",
+      text: message,
       showConfirmButton: true,
-      confirmButtonText: "Go to My Page", // Button text for navigating
-      showCancelButton: true, // Show the cancel button
-      cancelButtonText: "Close", // Text for the cancel button
+      confirmButtonText: "마이페이지로 이동",
+      showCancelButton: true,
+      cancelButtonText: "닫기",
     }).then((result) => {
-      if (result.isConfirmed) {
-        // If the user clicks the "Go to My Page" button
+      if (result.isConfirmed)
         navigate(`/api/mypage/${logined_username}/wishlist`);
-      }
     });
   };
 
@@ -138,8 +129,10 @@ const Favorite_DownloadButton = ({
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
+        alignSelf: "flex-start",
         gap: 1,
+        width: "100%",
+        ml: { xs: 3, md: 10 },
       }}
     >
       <IconButton
@@ -202,13 +195,14 @@ const Favorite_DownloadButton = ({
           />
 
           <Button
-            color="primary"
             onClick={handleAddFavorite}
             sx={{
               alignSelf: "center",
               paddingX: 4,
               fontWeight: "bold",
               borderRadius: 1,
+              backgroundColor: colors.rose,
+              color: "white",
             }}
           >
             추가하시

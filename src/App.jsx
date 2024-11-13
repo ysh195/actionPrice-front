@@ -17,9 +17,9 @@ import Home from "./pages/Home";
 import "./App.css";
 import PwChange from "./components/Password/PwChange";
 import CategoryPage from "./pages/CategoryPage";
-import TermsAndConditionsOfUsePage from "./pages/TermsAndConditionsOfUsePage";
-import OperationalPolicyPage from "./pages/OperationalPolicyPage";
-import PersonalInformationProcessingPolicyPage from "./pages/PersonalInformationProcessingPolicyPage";
+import TermsAndConditionsOfUsePage from "./pages/Legal/TermsAndConditionsOfUsePage";
+import OperationalPolicyPage from "./pages/Legal/OperationalPolicyPage";
+import PersonalInformationProcessingPolicyPage from "./pages/Legal/PersonalInformationProcessingPolicyPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ function App() {
    
 
           <Route
-            path="api/category/:large/:middle?/:small?/:rank?"
+            path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryPage />}
           />
 

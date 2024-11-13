@@ -43,7 +43,7 @@ const ProductListView = ({ productList, pageNum }) => {
   };
 
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Paper sx={{ width: "90%" }}>
       <TableContainer>
         <Table aria-label="sticky table">
           <TableHead>

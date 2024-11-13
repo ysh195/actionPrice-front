@@ -114,9 +114,9 @@ const PriceGraphView = ({ timeIntervals, priceData, countries }) => {
         margin: "3rem 0",
         padding: "2rem 2rem",
         backgroundColor: "#f9f9f9",
-        border: `1px solid ${colors.rose}`,
         borderRadius: "8px",
         boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        width: "90%",
       }}
     >
       {priceData && priceData.length > 0 ? (

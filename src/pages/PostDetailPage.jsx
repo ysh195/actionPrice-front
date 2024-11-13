@@ -57,7 +57,7 @@ const PostDetailPage = () => {
     <Suspense fallback={loading ? <CircularProgress /> : null}>
       <Container
         sx={{
-          height: "100vh",
+          minHeight: "100vh",
           margin: "auto",
           marginTop: "10px",
           display: "flex",
@@ -94,7 +94,7 @@ const PostDetailPage = () => {
               isCommentFormVisible={isCommentFormVisible}
               setIsCommentFormVisible={setIsCommentFormVisible}
             />
-          
+
             {isCommentFormVisible && <CreateCommentForm postId={postId} />}
             {/* <CreateCommentForm postId={postId} /> */}
           </Box>

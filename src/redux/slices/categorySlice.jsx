@@ -55,7 +55,7 @@ export const fetchRankCategories = createAsyncThunk(
 //function: fetchProductList //
 export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
-  async ({ large, middle, small, rank, startDate, endDate, pageNum=0}) => {
+  async ({ large, middle, small, rank, startDate, endDate, pageNum = 0 }) => {
     const response = await axios.get(
       `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
       {
@@ -69,7 +69,7 @@ export const fetchProductList = createAsyncThunk(
 
 export const fetchPriceData = createAsyncThunk(
   "categories/fetchPriceData",
-  async ({ large, middle, small, rank, startDate, endDate}) => {
+  async ({ large, middle, small, rank, startDate, endDate }) => {
     const response = await axios.get(
       `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/gragh`,
       {
@@ -199,7 +199,7 @@ export const categorySlice = createSlice({
       .addCase(fetchPriceData.fulfilled, (state, action) => {
         state.loading = false;
         state.priceData = action.payload.chartDataList;
-         state.countries = action.payload.countries;
+        state.countries = action.payload.countries;
         state.timeIntervals = action.payload.timeIntervals;
       })
       .addCase(fetchPriceData.rejected, (state, action) => {

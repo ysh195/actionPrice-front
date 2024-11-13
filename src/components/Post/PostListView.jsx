@@ -25,6 +25,7 @@ const StyledTableCell = (props) => (
     }}
   />
 );
+
 //any potential issues if postList is undefined by initializing it to an empty array.
 const PostListView = ({ postList = [], pageNum }) => {
   const itemsPerPage = 10;
@@ -75,7 +76,14 @@ const PostListView = ({ postList = [], pageNum }) => {
                     },
                   }}
                 >
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      "&:hover": {
+                        fontSize: "19px", // increased font size on hover
+                        fontWeight: 600,
+                      },
+                    }}
+                  >
                     {(pageNum - 1) * itemsPerPage + index + 1}
                   </TableCell>
                   <TableCell>{formatDate(post.createdAt)}</TableCell>
@@ -91,8 +99,13 @@ const PostListView = ({ postList = [], pageNum }) => {
                         to={`/api/post/${post.postId}/detail?page=1`}
                         style={{
                           color: colors.link,
-               
                           textDecoration: "none",
+                        }}
+                        sx={{
+                          "&:hover": {
+                            fontWeight: 600,
+                            fontSize: "19px",
+                          },
                         }}
                       >
                         {post.title}

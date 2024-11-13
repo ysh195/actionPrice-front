@@ -4,13 +4,83 @@ import axios from "axios";
 import logo from "./logo.png";
 import whiteLogo from "./whiteLogo.png";
 import textLogo2 from "./textLogo2.png";
+import armut from "./images/armut.jpeg";
+import banana from "./images/banana.jpeg";
+import berry from "./images/berry.jpeg";
+import biber from "./images/biber.jpeg";
+import ceviz from "./images/ceviz.jpeg";
+import cherry from "./images/cherry.jpeg";
+import egg from "./images/egg.jpeg";
+import forgot from "./images/forgot.jpeg";
+import garlic from "./images/garlic.jpeg";
+import lemon from "./images/lemon.jpeg";
+import mixedFruit from "./images/mixedFruit.jpeg";
+import mixedVeggie from "./images/mixedVeggie.jpeg";
+import mixedveggies3 from "./images/mixedveggies3.jpeg";
+import morlahana from "./images/morlahana.jpeg";
+import nar from "./images/nar.jpeg";
+import onion from "./images/onion.jpeg";
+import onion2 from "./images/onion2.jpeg";
+import onion3 from "./images/onion3.jpeg";
+import onion4 from "./images/onion4.jpeg";
+import pineapple from "./images/pineapple.jpeg";
+import tomatobg from "./images/tomatobg.jpeg";
+import visne from "./images/visne.jpeg";
+import visne2 from "./images/visne2.jpeg";
+import watermelon from "./images/watermelon.jpeg";
+import wheat from "./images/wheat.jpeg";
+import wmelon2 from "./images/wmelon2.jpeg";
+import zuccihni from "./images/zuccihni.jpeg";
+import w1 from "./gradient/w1.jpeg";
+import w2 from "./gradient/w2.jpeg";
+import w3 from "./gradient/w3.jpeg";
+import w4 from "./gradient/w4.jpeg";
+import w5 from "./gradient/w5.jpeg";
+import w6 from "./gradient/w6.jpeg";
+import gradient3 from "./gradient/gradient3.jpeg";
 
-export { logo, whiteLogo, textLogo2 };
+import wheat2 from "./images/wheat2.jpeg";
+
+export const newImageList = [
+  { id: 1, image: armut },
+  { id: 2, image: banana },
+  { id: 3, image: berry },
+  { id: 4, image: biber },
+  { id: 5, image: ceviz },
+  { id: 6, image: cherry },
+  { id: 7, image: w6 },
+  { id: 23, image: watermelon },
+  { id: 8, image: forgot },
+  { id: 9, image: garlic },
+  { id: 17, image: onion2 },
+  { id: 10, image: lemon },
+  { id: 11, image: mixedFruit },
+  { id: 12, image: mixedVeggie },
+  { id: 13, image: mixedveggies3 },
+  { id: 14, image: morlahana },
+  { id: 15, image: nar },
+  { id: 26, image: wheat2 },
+  { id: 16, image: onion },
+
+  { id: 18, image: onion3 },
+  { id: 19, image: onion4 },
+  { id: 20, image: pineapple },
+  { id: 21, image: visne },
+  { id: 22, image: visne2 },
+  { id: 24, image: wheat },
+  { id: 25, image: wmelon2 },
+  { id: 19, image: onion4 },
+  { id: 26, image: wheat2 },
+  { id: 27, image: w1 },
+];
+
+
+
+export { logo, whiteLogo, textLogo2, tomatobg, gradient3, lemon, egg, wheat2, w1, w2, w3, w4, w5, w6,};
 
 //desc: ui colors
 export const colors = {
-  primary: "#4D766E",
-  // backgroundColor: "#F0F5F4",
+  primary: "#00403d",
 
   secondary: "#2ecc71",
   accent: "#e74c3c",
@@ -26,22 +96,25 @@ export const colors = {
 
   paperbeige: "#F7F2EF",
   disable: "#d3d3d3",
-  chart: "#0e97a9",
+
   border: "#0c1e2a",
   link: "#8C6A4A",
   // backgroundColor: "#f8f3e8",
+  // backgroundColor: "#F0F5F4",
   tableHead: "#a45f53",
-  footerTitle: "#7b482d",
+  brown: "#7b482d",
   footerText: "#a45f53",
   buttonBorder: "#d3817a",
   rose: "#d3817a",
 
-  sidebar: "#dedad7",
-  sidebarText: "#00403d",
+  green: "#00403d",
 
-  backgroundColor: "#f2eee6",
+  darkBrown:"#4B2C20",
+
+  backgroundColor: " #f8f8f8",
   gray: "#dedad7",
-  background: "#f2eee6",
+  page1: "#f2eee6",
+  tableBackground: "#faf7f2",
 };
 
 const response = await axios.get("http://localhost:8080/");
@@ -66,6 +139,8 @@ export const slideImageList = [
   { id: 7, name: "slide_meat", image: fetchedImages.slide_meat },
   // { id: 8, name: "slide_ve", image: fetchedImages.slide_ve },
 ];
+
+
 
 //desc: admin answer list
 export const adminAnswers = [

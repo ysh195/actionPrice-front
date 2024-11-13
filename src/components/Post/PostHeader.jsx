@@ -3,17 +3,17 @@ import React from "react";
 import { Typography, Divider, Box } from "@mui/material";
 //prevent unnecessary re-renders when the props have not changed.
 const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
-  const formatDate = (createdAt) => {
-    const parsedDate = new Date(createdAt);
-    if (isNaN(parsedDate)) {
-      console.error("Invalid date:", createdAt);
-      return "Invalid Date"; // Return a fallback message
-    }
-    return parsedDate.toISOString().split("T")[0]; // Return formatted date
-  };
+  //todo: edit date formatting, it gives error
+  // const formatDate = (createdAt) => {
+  //   const parsedDate = new Date(createdAt);
+  //   if (isNaN(parsedDate)) {
+  //     console.error("Invalid date:", createdAt);
+  //     return "Invalid Date"; // Return a fallback message
+  //   }
+  //   return parsedDate.toISOString().split("T")[0]; // Return formatted date
+  // };
 
   return (
-    //todo: edit date formatting, it gives error
     <div>
       <Typography variant="h5" align="center" gutterBottom>
         {title}

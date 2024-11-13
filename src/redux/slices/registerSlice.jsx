@@ -23,15 +23,12 @@ export const registerUser = createAsyncThunk(
     try {
       // console.log("Payload sent to API:", {formData});
 
-      const response = await axios.post(`${BASE_URL}/user/register`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-    );
+      const response = await axios.post(`${BASE_URL}/user/register`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       console.log("Registration successful:", response.data);
       console.log(response);
       return response.data;

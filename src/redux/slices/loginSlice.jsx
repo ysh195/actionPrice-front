@@ -75,7 +75,7 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("role");
       axios.defaults.headers.common["Authorization"] = null;
 
-      const response = await axios.post(`${BASE_URL}/user/logout`, {
+      const response = await axios.post(`${BASE_URL}/user/logout`, {},{
         headers: {
           //Authorization: `Bearer ${access_Token}`,
           "Content-Type": "application/json",

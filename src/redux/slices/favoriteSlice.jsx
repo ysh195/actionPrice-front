@@ -20,13 +20,13 @@ export const createFavorite = createAsyncThunk(
     { rejectWithValue }
   ) => {
     let access_Token = localStorage.getItem("access_token");
-     if (!access_Token) {
-       alert("You need to log in to write a post.");
-       return rejectWithValue("User not logged in");
-     }
+    if (!access_Token) {
+      alert("You need to log in to write a post.");
+      return rejectWithValue("User not logged in");
+    }
 
     try {
-           const response = await axios.post(
+      const response = await axios.post(
         `${API_URL}/category/${large}/${middle}/${small}/${rank}/favorite`,
         { logined_username, favorite_name },
         {
@@ -54,7 +54,7 @@ export const deleteFavorite = createAsyncThunk(
     try {
       let access_Token = localStorage.getItem("access_token");
       const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`,
+        `${API_URL}/category/favorite/${favoriteId}/delete`, {},
         {
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -117,9 +117,9 @@ export const favoriteSlice = createSlice({
         state.loading = false;
 
         // state.favoriteList.push(action.payload);
-         state.favoriteList = Array.isArray(action.payload)
-           ? [...action.payload] // Use spread to ensure it's a fresh array
-           : []; 
+        state.favoriteList = Array.isArray(action.payload)
+          ? [...action.payload] // Use spread to ensure it's a fresh array
+          : [];
       })
       .addCase(createFavorite.rejected, (state, action) => {
         state.loading = false;
