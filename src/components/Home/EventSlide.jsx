@@ -46,7 +46,7 @@ const DarkGreenPage = ({ slideImages }) => {
         }}
       >
         저희 서비스는 주요 시장에서 매일 수집한 다양한 필수 품목들의 가격 정보를
-        제공합니다.
+        제공합니다. 
       </Typography>
 
       <div
