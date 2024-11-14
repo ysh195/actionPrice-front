@@ -5,19 +5,39 @@ import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { colors, newImageList,  gradient3, } from "../../assets/assest";
+import { colors, newImageList, } from "../../assets/assest";
 
 const DarkGreenPage = ({ slideImages }) => {
   const settings = {
     infinite: true,
-    speed: 3000,
-    slidesToShow: 3,
+    speed: 2000,
+    slidesToShow: 5,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 2000,
     cssEase: "linear",
     pauseOnHover: false,
     arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024, // Desktop and up
+        settings: {
+          slidesToShow: 5,
+        },
+      },
+      {
+        breakpoint: 768, // Tablet
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480, // Mobile
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
 
   return (
@@ -41,12 +61,15 @@ const DarkGreenPage = ({ slideImages }) => {
           color: colors.green,
           letterSpacing: "-0.02rem",
           position: "absolute",
-          top:{xs: 1, md:"10%"},
+          top: { xs: 1, md: "10%" },
           zIndex: 1,
         }}
       >
-        저희 서비스는 주요 시장에서 매일 수집한 다양한 필수 품목들의 가격 정보를
-        제공합니다. 
+        저희는
+        <br />
+        전국의 도매 시장에서 거래되는
+        <br />
+        다양한 농수산축산물의 가격 정보를 제공합니다.
       </Typography>
 
       <div
@@ -93,7 +116,7 @@ const DarkGreenPage = ({ slideImages }) => {
               sx={{
                 position: "relative",
                 height: "350px",
-                overflow: "hidden",
+                // overflow: "hidden",
                 padding: "5px",
                 borderRadius: "15px",
                 backgroundColor: "#00403d",

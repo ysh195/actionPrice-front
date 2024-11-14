@@ -69,8 +69,8 @@ const ContactUsPage = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Typography variant="h5" gutterBottom sx={{ marginTop: 3 }}>
-        문의 상황
+      <Typography variant="h3" gutterBottom sx={{ marginTop: 3 }}>
+        고객센터
       </Typography>
       <Box
         sx={{

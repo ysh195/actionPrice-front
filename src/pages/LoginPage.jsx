@@ -179,7 +179,7 @@ const LoginPage = () => {
                 marginTop: "3px",
               }}
             >
-              해원가입 하세요
+              해원가입
             </Link>
           </Box>
         </Box>

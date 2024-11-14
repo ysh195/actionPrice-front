@@ -10,12 +10,13 @@ const ImageSection = () => {
         padding: 5,
         margin: 2,
         borderRadius: "25px",
-        minHeight: "100vh",
+        // minHeight: "100vh",
+        height: "70vh",
         display: "flex",
         backgroundImage: `url(${w2})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        overflow: "hidden",
+        // overflow: "hidden",
         backgroundColor: "#f9f7f1",
       }}
     >
@@ -40,7 +41,8 @@ const ImageSection = () => {
             fontFamily: "Noto Sans KR",
           }}
         >
-          우리의 독점 제품을 만나보세요
+          전국의 다양한 거래 정보를
+          <br />한 눈에 확인하세요.
         </Typography>
 
         <Typography
@@ -54,9 +56,8 @@ const ImageSection = () => {
             fontFamily: "Noto Sans KR",
           }}
         >
-          채소류, 축산물, 과일류, 식량작물, 수산물, 특용작물 등 다양한
-          카테고리의 가격 데이터를 여러 출처에서 수집하여 최신 시장 동향을
-          반영한 정확한 정보를 전달합니다.
+          전국의 도매 시장에서 거래되는 채소, 축산물, 과일, 식량작물, 수산물,
+          특용작물 등의 가격 데이터를 제공합니다.
         </Typography>
       </Box>
 

@@ -4,14 +4,14 @@ import axios from "axios";
 import logo from "./logo.png";
 import whiteLogo from "./whiteLogo.png";
 import textLogo2 from "./textLogo2.png";
-import armut from "./images/armut.jpeg";
+import pear from "./images/pear.jpeg";
 import banana from "./images/banana.jpeg";
 import berry from "./images/berry.jpeg";
-import biber from "./images/biber.jpeg";
-import ceviz from "./images/ceviz.jpeg";
+import pepper from "./images/pepper.jpeg";
+import walnut from "./images/walnut.jpeg";
 import cherry from "./images/cherry.jpeg";
 import egg from "./images/egg.jpeg";
-import forgot from "./images/forgot.jpeg";
+import avocado from "./images/avocado.jpeg";
 import garlic from "./images/garlic.jpeg";
 import lemon from "./images/lemon.jpeg";
 import mixedFruit from "./images/mixedFruit.jpeg";
@@ -30,7 +30,7 @@ import visne2 from "./images/visne2.jpeg";
 import watermelon from "./images/watermelon.jpeg";
 import wheat from "./images/wheat.jpeg";
 import wmelon2 from "./images/wmelon2.jpeg";
-import zuccihni from "./images/zuccihni.jpeg";
+
 import w1 from "./gradient/w1.jpeg";
 import w2 from "./gradient/w2.jpeg";
 import w3 from "./gradient/w3.jpeg";
@@ -42,15 +42,15 @@ import gradient3 from "./gradient/gradient3.jpeg";
 import wheat2 from "./images/wheat2.jpeg";
 
 export const newImageList = [
-  { id: 1, image: armut },
+  { id: 1, image: pear },
   { id: 2, image: banana },
   { id: 3, image: berry },
-  { id: 4, image: biber },
-  { id: 5, image: ceviz },
+  { id: 4, image: pepper },
+  { id: 5, image: walnut },
   { id: 6, image: cherry },
   { id: 7, image: w6 },
   { id: 23, image: watermelon },
-  { id: 8, image: forgot },
+  { id: 8, image: avocado },
   { id: 9, image: garlic },
   { id: 17, image: onion2 },
   { id: 10, image: lemon },

@@ -21,13 +21,14 @@ import TermsAndConditionsOfUsePage from "./pages/Legal/TermsAndConditionsOfUsePa
 import OperationalPolicyPage from "./pages/Legal/OperationalPolicyPage";
 import PersonalInformationProcessingPolicyPage from "./pages/Legal/PersonalInformationProcessingPolicyPage";
 
+
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(autoLogin());
   }, [dispatch]);
   return (
-    <>
+
       <AppLayout>
         <Routes>
           <Route path="/" exact element={<Home />} />
@@ -83,7 +84,7 @@ function App() {
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>
-    </>
+
   );
 }
 

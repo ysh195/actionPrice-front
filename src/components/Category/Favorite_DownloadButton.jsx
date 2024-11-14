@@ -213,7 +213,7 @@ const Favorite_DownloadButton = ({
               color: "white",
             }}
           >
-            추가하시
+            추가하기
           </Button>
         </Box>
       </Modal>

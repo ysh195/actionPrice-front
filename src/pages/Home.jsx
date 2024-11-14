@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import EventSlide from "../components/Home/EventSlide.jsx";
 import CategorySection from "../components/Home/CategorySection.jsx";
 import { slideImageList, largeCategoryList } from "../assets/assest.js";
 import ImageSection from "../components/Home/ImageSection.jsx";
-
 
 const Home = () => {
   const [categories, setCategories] = useState(largeCategoryList);
