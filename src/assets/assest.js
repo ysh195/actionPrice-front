@@ -4,79 +4,35 @@ import axios from "axios";
 import logo from "./logo.png";
 import whiteLogo from "./whiteLogo.png";
 import textLogo2 from "./textLogo2.png";
-import pear from "./images/pear.jpeg";
-import banana from "./images/banana.jpeg";
-import berry from "./images/berry.jpeg";
-import pepper from "./images/pepper.jpeg";
-import walnut from "./images/walnut.jpeg";
-import cherry from "./images/cherry.jpeg";
+
 import egg from "./images/egg.jpeg";
-import avocado from "./images/avocado.jpeg";
-import garlic from "./images/garlic.jpeg";
 import lemon from "./images/lemon.jpeg";
-import mixedFruit from "./images/mixedFruit.jpeg";
-import mixedVeggie from "./images/mixedVeggie.jpeg";
-import mixedveggies3 from "./images/mixedveggies3.jpeg";
-import morlahana from "./images/morlahana.jpeg";
-import nar from "./images/nar.jpeg";
-import onion from "./images/onion.jpeg";
-import onion2 from "./images/onion2.jpeg";
-import onion3 from "./images/onion3.jpeg";
-import onion4 from "./images/onion4.jpeg";
-import pineapple from "./images/pineapple.jpeg";
 import tomatobg from "./images/tomatobg.jpeg";
-import visne from "./images/visne.jpeg";
-import visne2 from "./images/visne2.jpeg";
-import watermelon from "./images/watermelon.jpeg";
-import wheat from "./images/wheat.jpeg";
-import wmelon2 from "./images/wmelon2.jpeg";
-
-import w1 from "./gradient/w1.jpeg";
-import w2 from "./gradient/w2.jpeg";
-import w3 from "./gradient/w3.jpeg";
-import w4 from "./gradient/w4.jpeg";
-import w5 from "./gradient/w5.jpeg";
-import w6 from "./gradient/w6.jpeg";
-import gradient3 from "./gradient/gradient3.jpeg";
-
-import wheat2 from "./images/wheat2.jpeg";
-
-export const newImageList = [
-  { id: 1, image: pear },
-  { id: 2, image: banana },
-  { id: 3, image: berry },
-  { id: 4, image: pepper },
-  { id: 5, image: walnut },
-  { id: 6, image: cherry },
-  { id: 7, image: w6 },
-  { id: 23, image: watermelon },
-  { id: 8, image: avocado },
-  { id: 9, image: garlic },
-  { id: 17, image: onion2 },
-  { id: 10, image: lemon },
-  { id: 11, image: mixedFruit },
-  { id: 12, image: mixedVeggie },
-  { id: 13, image: mixedveggies3 },
-  { id: 14, image: morlahana },
-  { id: 15, image: nar },
-  { id: 26, image: wheat2 },
-  { id: 16, image: onion },
-
-  { id: 18, image: onion3 },
-  { id: 19, image: onion4 },
-  { id: 20, image: pineapple },
-  { id: 21, image: visne },
-  { id: 22, image: visne2 },
-  { id: 24, image: wheat },
-  { id: 25, image: wmelon2 },
-  { id: 19, image: onion4 },
-  { id: 26, image: wheat2 },
-  { id: 27, image: w1 },
-];
+import w1 from "./images/w1.jpeg";
+import w2 from "./images/w2.jpeg";
+import w3 from "./images/w3.jpeg";
+import w4 from "./images/w4.jpeg";
+import w5 from "./images/w5.jpeg";
+import w6 from "./images/w6.jpeg";
+import gradient3 from "./images/gradient3.jpeg";
 
 
 
-export { logo, whiteLogo, textLogo2, tomatobg, gradient3, lemon, egg, wheat2, w1, w2, w3, w4, w5, w6,};
+export {
+  logo,
+  whiteLogo,
+  textLogo2,
+  tomatobg,
+  gradient3,
+  lemon,
+  egg,
+  w1,
+  w2,
+  w3,
+  w4,
+  w5,
+  w6,
+};
 
 //desc: ui colors
 export const colors = {
@@ -109,7 +65,7 @@ export const colors = {
 
   green: "#00403d",
 
-  darkBrown:"#4B2C20",
+  darkBrown: "#4B2C20",
 
   backgroundColor: " #f8f8f8",
   gray: "#dedad7",
@@ -130,17 +86,26 @@ export const largeCategoryList = [
 ];
 
 export const slideImageList = [
-  { id: 1, name: "slide_blue", image: fetchedImages.slide_blue },
-  { id: 2, name: "slide_cherry", image: fetchedImages.slide_cherry },
-  { id: 3, name: "slide_chicken", image: fetchedImages.slide_chicken },
-  { id: 4, name: "slide_grape", image: fetchedImages.slide_grape },
-  { id: 5, name: "slide_lab", image: fetchedImages.slide_lab },
-  { id: 6, name: "slide_lemon", image: fetchedImages.slide_lemon },
-  { id: 7, name: "slide_meat", image: fetchedImages.slide_meat },
-  // { id: 8, name: "slide_ve", image: fetchedImages.slide_ve },
+  { name: "avocado", image: fetchedImages.avocado },
+  { name: "banana", image: fetchedImages.banana },
+  { name: "berry", image: fetchedImages.berry },
+  { name: "onion3", image: fetchedImages.onion3 },
+  { name: "cTomato", image: fetchedImages.cTomato },
+  { name: "garlic", image: fetchedImages.garlic },
+  { name: "mixedFruit", image: fetchedImages.mixedFruit },
+  { name: "mixedVeggies3", image: fetchedImages.mixedVeggies3 },
+  { name: "morlahana", image: fetchedImages.morlahana },
+  { name: "nar", image: fetchedImages.nar },
+  { name: "onion", image: fetchedImages.onion },
+  { name: "cherry", image: fetchedImages.cherry },
+  { name: "pear", image: fetchedImages.pear },
+  { name: "pepper", image: fetchedImages.pepper },
+  { name: "onion2", image: fetchedImages.onion2 },
+  { name: "pineapple", image: fetchedImages.pineapple },
+  { name: "watermelon", image: fetchedImages.watermelon },
+  { name: "walnut", image: fetchedImages.walnut },
+  { name: "mixedVeggie", image: fetchedImages.mixedVeggie },
 ];
-
-
 
 //desc: admin answer list
 export const adminAnswers = [
