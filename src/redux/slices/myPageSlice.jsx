@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPrivate } from "../apiConfig";
 
 const initialState = {
   loading: false,
@@ -11,28 +11,14 @@ const initialState = {
   currentPageNum: 1,
 };
 
-const BASE_URL = "http://localhost:8080/api";
-
 //functions for deleteAccount //
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
   async (username, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      if (!access_Token) {
-        alert("You need to log in to delete your account.");
-        return rejectWithValue("User not logged in");
-      }
-      const response = await axios.post(
-        `${BASE_URL}/mypage/${username}/deleteUser`,{},
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            //todo:if error delete content part
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.post(
+        `/mypage/${username}/deleteUser`,
+        {}
       );
 
       console.log("delete user response:", response);
@@ -59,17 +45,8 @@ export const getPersonalInfo = createAsyncThunk(
   "user/personalInfo",
   async (username, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.get(
-        `${BASE_URL}/mypage/${username}/personalinfo`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            //todo:if error delete content part
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.get(
+        `/mypage/${username}/personalinfo`
       );
       console.log("personalInfo response:", response.data);
 
@@ -86,23 +63,12 @@ export const getMyPosts = createAsyncThunk(
   "posts/getMyPosts",
   async ({ username, keyword = "", pageNum = 0 }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.get(
-        `${BASE_URL}/mypage/${username}/myposts`,
-        {
-          params: {
-            keyword,
-            pageNum,
-          },
-
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            //todo:if error delete content part
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPrivate.get(`/mypage/${username}/myposts`, {
+        params: {
+          keyword,
+          pageNum,
+        },
+      });
       console.log("getMyPosts response:", response.data);
       return response.data;
     } catch (error) {

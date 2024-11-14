@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { axiosPublic } from "../apiConfig";
 
 const initialState = {
   username: "",
@@ -11,7 +12,6 @@ const initialState = {
   role: "",
 };
 
-const BASE_URL = "http://localhost:8080/api";
 
 //function for login (POST request) //
 export const login = createAsyncThunk(
@@ -19,12 +19,7 @@ export const login = createAsyncThunk(
 
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/user/login`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axiosPublic.post(`/user/login`, formData);
 
       // Get access_token from response
       const { access_token, username, role } = response.data;
@@ -48,17 +43,7 @@ export const login = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.error("Login Error:", error);
-      // Handle 401(Unauthorized) and 403(Forbidden)  error specifically
-      let errorMsg;
-      if (error.response?.status === 401) {
-        errorMsg = error.response.data;
-      } else if (error.response?.status === 403) {
-        errorMsg = "접근 권한이 없습니다. 관리자에게 문의하세요.";
-      } else {
-        errorMsg = "로그인에 실패했습니다. 정보를 확인하세요.";
-      }
-
-      return rejectWithValue(errorMsg);
+      return rejectWithValue("로그인에 실패했습니다. 정보를 확인하세요.");
     }
   }
 );
@@ -75,13 +60,7 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("role");
       axios.defaults.headers.common["Authorization"] = null;
 
-      const response = await axios.post(`${BASE_URL}/user/logout`, {},{
-        headers: {
-          //Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axiosPublic.post(`/user/logout`, {});
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {

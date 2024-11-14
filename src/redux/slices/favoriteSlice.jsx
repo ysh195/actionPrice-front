@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPrivate } from "../apiConfig";
 
 const initialState = {
   favoriteList: [],
@@ -10,8 +10,6 @@ const initialState = {
   listSize: 0,
 };
 
-const API_URL = "http://localhost:8080/api";
-
 //function: create Favorite //
 export const createFavorite = createAsyncThunk(
   "favorite/createFavorite",
@@ -19,23 +17,10 @@ export const createFavorite = createAsyncThunk(
     { large, middle, small, rank, logined_username, favorite_name },
     { rejectWithValue }
   ) => {
-    let access_Token = localStorage.getItem("access_token");
-    if (!access_Token) {
-      alert("You need to log in to write a post.");
-      return rejectWithValue("User not logged in");
-    }
-
     try {
-      const response = await axios.post(
-        `${API_URL}/category/${large}/${middle}/${small}/${rank}/favorite`,
-        { logined_username, favorite_name },
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.post(
+        `/category/${large}/${middle}/${small}/${rank}/favorite`,
+        { logined_username, favorite_name }
       );
       console.log("createFavorite response:", response.data);
       return response.data;
@@ -52,16 +37,9 @@ export const deleteFavorite = createAsyncThunk(
   "favorite/deleteFavorite",
   async (favoriteId, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.post(
-        `${API_URL}/category/favorite/${favoriteId}/delete`, {},
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.post(
+        `/category/favorite/${favoriteId}/delete`,
+        {}
       );
       if (response.data.status === "success") {
         return favoriteId; // Return favoriteId for updating the state
@@ -81,17 +59,7 @@ export const fetchFavoriteList = createAsyncThunk(
   "user/fetchFavoriteList",
   async (username, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.get(
-        `${API_URL}/mypage/${username}/wishlist`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPrivate.get(`/mypage/${username}/wishlist`);
       console.log("fetchFavoriteList:", response.data);
 
       return response.data; // Return the fetched wishlist data

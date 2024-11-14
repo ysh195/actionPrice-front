@@ -104,13 +104,9 @@ const Sidebar = () => {
       <List>
         <ListItemIcon
           onClick={toggleSidebar}
-          sx={{ color: colors.green, mt: 10, ml:2, cursor: "pointer" }}
+          sx={{ color: colors.green, mt: 10, ml: 2, cursor: "pointer" }}
         >
-          {isOpen ? (
-            <ChevronLeftIcon />
-          ) : (
-            <ChevronRightIcon />
-          )}
+          {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </ListItemIcon>
 
         <Box
@@ -231,7 +227,7 @@ const Sidebar = () => {
             </ListItem>
           </Tooltip>
           <Tooltip
-            title="내 관심 목록"
+            title="즐겨찾기 목록"
             placement="right"
             arrow
             disableHoverListener={isOpen}
@@ -244,7 +240,7 @@ const Sidebar = () => {
               <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
                 <BookmarksIcon />
               </ListItemIcon>
-              {isOpen && <ListItemText primary="내 관심 목록" />}
+              {isOpen && <ListItemText primary="즐겨찾기 목록" />}
             </ListItem>
           </Tooltip>
         </Box>

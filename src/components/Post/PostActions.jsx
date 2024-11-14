@@ -24,9 +24,6 @@ const PostActions = React.memo(
 
     //function: handleDelete //
     const handleDelete = async () => {
-      if (!logined_username)
-        return alert("You need to be logged in to delete a post.");
-
       const { isConfirmed } = await Swal.fire({
         title: "잠깐!",
         text: "삭제된 게시글은 복구할 수 없습니다!",

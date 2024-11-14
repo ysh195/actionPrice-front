@@ -65,9 +65,6 @@ const Favorites = ({ username }) => {
       if (deleteFavorite.fulfilled.match(resultAction)) {
         dispatch(fetchFavoriteList(username)); // Refresh the list after deletion
       }
-    } else {
-      // If user cancels the deletion
-      Swal.fire("취소되었습니다", "info");
     }
   };
 
@@ -88,7 +85,7 @@ const Favorites = ({ username }) => {
         gutterBottom
         sx={{ color: colors.darkBrown, mb: 5 }}
       >
-        {username}님의 관심 목록
+        {username}님의 즐겨찾기 목록
       </Typography>
 
       <Box
@@ -168,7 +165,7 @@ const Favorites = ({ username }) => {
           ))
         ) : (
           <Paper elevation={3} sx={{ padding: 3, textAlign: "center", mt: 2 }}>
-            <Typography>저장된 관심 목록이 찜한 없습니다.</Typography>
+            <Typography>저장된 즐겨찾기 목록이 없습니다.</Typography>
           </Paper>
         )}
       </Box>

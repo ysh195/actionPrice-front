@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../apiConfig";
 
 const initialState = {
   user: null,
@@ -12,8 +12,6 @@ const initialState = {
   isUsernameAvailable: true,
 };
 
-const BASE_URL = "http://localhost:8080/api";
-
 //function:  user register  //
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -23,12 +21,7 @@ export const registerUser = createAsyncThunk(
     try {
       // console.log("Payload sent to API:", {formData});
 
-      const response = await axios.post(`${BASE_URL}/user/register`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axiosPublic.post(`/user/register`, formData);
       console.log("Registration successful:", response.data);
       console.log(response);
       return response.data;

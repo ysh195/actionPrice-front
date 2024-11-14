@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPrivate, axiosPublic } from "../apiConfig";
 
 const initialState = {
   commentList: [],
@@ -10,25 +10,15 @@ const initialState = {
   listSize: 0,
 };
 
-const API_URL = "http://localhost:8080/api/post";
-
 //function: createComment //
 export const createComment = createAsyncThunk(
   "comments/createComment",
   async ({ postId, username, content }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.post(
-        `${API_URL}/${postId}/detail`,
-        { username, content },
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPrivate.post(`/post/${postId}/detail`, {
+        username,
+        content,
+      });
       console.log("create comment API Response:", response.data);
       return response.data;
     } catch (error) {
@@ -42,19 +32,11 @@ export const updateComment = createAsyncThunk(
   "comments/updateComment",
   async ({ postId, commentId, username, content }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.post(
-        `${API_URL}/${postId}/detail/${commentId}/update`,
+      const response = await axiosPrivate.post(
+        `/post/${postId}/detail/${commentId}/update`,
         {
           username,
           content,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
         }
       );
       console.log("updateComment response:", response);
@@ -73,17 +55,9 @@ export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async ({ postId, commentId, username }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.post(
-        `${API_URL}/${postId}/detail/${commentId}/delete`,
-        { username },
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.post(
+        `/post/${postId}/detail/${commentId}/delete`,
+        { username }
       );
       console.log("deleteComment response:", response.data);
       return response.data;
@@ -103,21 +77,12 @@ export const fetchComments = createAsyncThunk(
       let access_Token = localStorage.getItem("access_token");
       let response;
       if (access_Token === null) {
-        response = await axios.get(`${API_URL}/comments`, {
+        response = await axiosPublic.get(`/post/comments`, {
           params: { postId, page, size },
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
         });
       } else {
-        response = await axios.get(`${API_URL}/comments`, {
+        response = await axiosPrivate.get(`/post/comments`, {
           params: { postId, page, size },
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
         });
       }
       console.log("fetchComments response:", response.data);
@@ -135,16 +100,8 @@ export const fetchAdminAnswers = createAsyncThunk(
   "comments/fetchAdminAnswers",
   async ({ postId, answertype }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      const response = await axios.get(
-        `${API_URL}/${postId}/comment/admin/${answertype}`,
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.get(
+        `/post/${postId}/comment/admin/${answertype}`
       );
       console.log("fetchAdminAnswers response:", response.data);
       return response.data;

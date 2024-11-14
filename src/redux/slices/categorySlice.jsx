@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../apiConfig";
 
 const initialState = {
   middleCategoryList: [],
@@ -18,13 +18,11 @@ const initialState = {
   downloadMessage: null,
 };
 
-const BASE_URL = "http://localhost:8080/api";
-
 //function: Get Middle Category List //
 export const fetchMiddleCategories = createAsyncThunk(
   "categories/fetchCategories",
   async (large) => {
-    const response = await axios.get(`${BASE_URL}/category/${large}`);
+    const response = await axiosPublic.get(`/category/${large}`);
 
     return response.data;
   }
@@ -34,7 +32,7 @@ export const fetchMiddleCategories = createAsyncThunk(
 export const fetchSmallCategories = createAsyncThunk(
   "categories/fetchMiddleCategories",
   async ({ large, middle }) => {
-    const response = await axios.get(`${BASE_URL}/category/${large}/${middle}`);
+    const response = await axiosPublic.get(`/category/${large}/${middle}`);
 
     return response.data;
   }
@@ -44,8 +42,8 @@ export const fetchSmallCategories = createAsyncThunk(
 export const fetchRankCategories = createAsyncThunk(
   "categories/fetchProductRankCategories",
   async ({ large, middle, small }) => {
-    const response = await axios.get(
-      `${BASE_URL}/category/${large}/${middle}/${small}`
+    const response = await axiosPublic.get(
+      `/category/${large}/${middle}/${small}`
     );
     console.log("fetchRankCategories:", response.data);
     return response.data;
@@ -56,8 +54,8 @@ export const fetchRankCategories = createAsyncThunk(
 export const fetchProductList = createAsyncThunk(
   "categories/fetchCategoryResults",
   async ({ large, middle, small, rank, startDate, endDate, pageNum = 0 }) => {
-    const response = await axios.get(
-      `${BASE_URL}/category/${large}/${middle}/${small}/${rank}`,
+    const response = await axiosPublic.get(
+      `/category/${large}/${middle}/${small}/${rank}`,
       {
         params: { startDate, endDate, pageNum },
       }
@@ -67,11 +65,12 @@ export const fetchProductList = createAsyncThunk(
   }
 );
 
+//function: fetchPriceData //
 export const fetchPriceData = createAsyncThunk(
   "categories/fetchPriceData",
   async ({ large, middle, small, rank, startDate, endDate }) => {
-    const response = await axios.get(
-      `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/gragh`,
+    const response = await axiosPublic.get(
+      `/category/${large}/${middle}/${small}/${rank}/gragh`,
       {
         params: { startDate, endDate },
       }
@@ -89,14 +88,13 @@ export const downloadExcel = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/category/${large}/${middle}/${small}/${rank}/excel`,
+      const response = await axiosPublic.get(
+        `/category/${large}/${middle}/${small}/${rank}/excel`,
         {
           params: { startDate, endDate },
           responseType: "blob", // Important for handling binary data
         }
       );
-
       // Trigger download after the blob is received
       const url = window.URL.createObjectURL(
         new Blob([response.data], {

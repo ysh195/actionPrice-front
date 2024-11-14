@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import Swal from "sweetalert2";
+import { axiosPrivate, axiosPublic } from "../apiConfig";
 
 const initialState = {
   postList: [],
@@ -13,27 +12,38 @@ const initialState = {
   listSize: 0,
 };
 
-const API_URL = "http://localhost:8080/api";
-
 //function: createPost //
+// export const createPost = createAsyncThunk(
+//   "posts/createPost",
+//   async (postData, { rejectWithValue }) => {
+//     let access_Token = localStorage.getItem("access_token");
+//     console.log("slice post data:", postData);
+//     if (!access_Token) {
+//       console.log("there is no access token:", access_Token);
+//       alert("You need to log in to write a post.");
+//       return rejectWithValue("User not logged in");
+//     }
+//     try {
+//       const response = await axios.post(`${API_URL}/post/create`, postData, {
+//         headers: {
+//           Authorization: `Bearer ${access_Token}`,
+//           "Content-Type": "application/json",
+//           Accept: "application/json",
+//         },
+//       });
+//       console.log("post response:", response);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
-    let access_Token = localStorage.getItem("access_token");
-    console.log("slice post data:", postData);
-    if (!access_Token) {
-      console.log("there is no access token:", access_Token);
-      alert("You need to log in to write a post.");
-      return rejectWithValue("User not logged in");
-    }
     try {
-      const response = await axios.post(`${API_URL}/post/create`, postData, {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axiosPrivate.post("/post/create", postData);
       console.log("post response:", response);
       return response.data;
     } catch (error) {
@@ -48,13 +58,8 @@ export const fetchPosts = createAsyncThunk(
   async ({ pageNum = 0, keyword = "" }, { rejectWithValue }) => {
     // Default to 0 if no page is passed
     try {
-      const response = await axios.get(`${API_URL}/post/list`, {
+      const response = await axiosPublic.get("/post/list", {
         params: { pageNum, keyword },
-        headers: {
-          //todo: check header
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
       });
       console.log("Fetched posts:", response.data);
       return response.data;
@@ -65,22 +70,12 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-//TODO: CHECK IF THE HEADERS IS CORRECT
-
 //function: fetchPostForUpdate //
 export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
-    let access_Token = localStorage.getItem("access_token");
-    const response = await axios.get(
-      `${API_URL}/post/${postId}/update/${username}`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
+    const response = await axiosPrivate.get(
+      `/post/${postId}/update/${username}`
     );
     return response.data;
   }
@@ -91,40 +86,19 @@ export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      let response;
-      if (access_Token === null) {
-        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
-          params: { page },
-        });
-      } else {
-        response = await axios.get(`${API_URL}/post/${postId}/detail`, {
-          params: { page },
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        });
-      }
+      const response = await axiosPrivate.get(`/post/${postId}/detail`, {
+        params: { page },
+      });
       console.log("fetchPostById response:", response);
       return response.data;
     } catch (error) {
       console.error("Error fetching post by ID:", error); // Log the error
       if (error.response && error.response.status === 403) {
-        Swal.fire({
-          icon: "error",
-          title: "접근 금지",
-          text: "접근 권한이 없습니다.",
-        });
         return rejectWithValue("접근 권한이 없습니다.");
-      } else if (error.response.status === 401) {
-        Swal.fire({
-          icon: "error",
-          text: "다시 로그인해 주세요",
-        });
-        localStorage.removeItem("access_token");
+      } else if (error.response.status === 418) {
         return rejectWithValue("다시 로그인해 주세요");
+      } else if (error.response.status === 404) {
+        return rejectWithValue("해당 글은 없은 개시글입니다");
       }
 
       return rejectWithValue(error.response.data);
@@ -134,26 +108,14 @@ export const fetchPostById = createAsyncThunk(
 
 //function: deletePost //
 export const deletePost = createAsyncThunk(
+  //todo: add error if the logined_username !== post.username
   "posts/deletePost",
   async ({ postId, logined_username }, { rejectWithValue }) => {
     console.log("Post ID:", postId, "Logged-in Username:", logined_username);
     try {
-      let access_Token = localStorage.getItem("access_token");
-      if (!access_Token) {
-        alert("You need to log in to update a post.");
-        return;
-      }
-      const response = await axios.post(
-        `${API_URL}/post/${postId}/delete`,
-        { logined_username },
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPrivate.post(`/post/${postId}/delete`, {
+        logined_username,
+      });
       console.log("deletePost response:", response);
       return response.data;
     } catch (error) {
@@ -163,26 +125,14 @@ export const deletePost = createAsyncThunk(
   }
 );
 
-//function: updatePost //
+// //function: updatePost //
 export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
     try {
-      let access_Token = localStorage.getItem("access_token");
-      if (!access_Token) {
-        alert("You need to log in to update a post.");
-        return;
-      }
-      const response = await axios.post(
-        `${API_URL}/post/${postId}/update`,
-        postData,
-        {
-          headers: {
-            Authorization: `Bearer ${access_Token}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPrivate.post(
+        `/post/${postId}/update`,
+        postData
       );
       console.log("updatePost response:", response);
       return response.data;
@@ -278,7 +228,10 @@ const postSlice = createSlice({
       })
       .addCase(fetchPostById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload; // Set error message
+        state.error = action.payload;
+        console.log("ascdf:", action.payload);
+        state.postOwner = action.payload.username;
+        // Set error message
       });
   },
 });

@@ -61,12 +61,11 @@ const Favorite_DownloadButton = ({
       return showError("즐겨찾기 항목의 이름을 입력해주세요.");
     }
 
-    if (!logined_username) {
-      return showError("로그인 하고 나서 즐겨찾기 등록이 가능합니다.");
-    }
-
     if (!selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank)
-      return;
+      return showError(
+        "  모든 카테고리를 선택 후 즐겨찾기가 등록할 수 있습니다."
+      );
+    
 
     try {
       await dispatch(
@@ -82,7 +81,7 @@ const Favorite_DownloadButton = ({
       showSuccess("즐겨찾기가 추가 되었습니다.");
     } catch {
       showError(
-        "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다. 마이페이지에서 기존의 것을 삭제하신 뒤에 다시 시도해주세요."
+        "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다."
       );
     }
 
@@ -135,20 +134,22 @@ const Favorite_DownloadButton = ({
         ml: { xs: 3, md: 10 },
       }}
     >
-      <IconButton
-        onClick={() => setModalOpen(true)}
-        sx={commonButtonStyles}
-        aria-label="Set Favorite" // Add aria-label for accessibility
-      >
-        <StarOutlineIcon fontSize="medium" />
-        <span
-          style={{
-            fontSize: "medium",
-          }}
+      {logined_username && (
+        <IconButton
+          onClick={() => setModalOpen(true)}
+          sx={commonButtonStyles}
+          aria-label="Set Favorite" // Add aria-label for accessibility
         >
-          관심설정
-        </span>
-      </IconButton>
+          <StarOutlineIcon fontSize="medium" />
+          <span
+            style={{
+              fontSize: "medium",
+            }}
+          >
+            즐겨찾기 설정
+          </span>
+        </IconButton>
+      )}
 
       {/* Modal for Adding Favorite */}
       <Modal

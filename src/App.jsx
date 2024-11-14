@@ -44,8 +44,6 @@ function App() {
 
           <Route path="api/user/register" exact element={<RegisterPage />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
-   
-
           <Route
             path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryPage />}
@@ -55,7 +53,6 @@ function App() {
             path="api/mypage/:username/*"
             element={<ProtectedRoute element={<MyPage />} />}
           />
-
           <Route path="api/contact-us" element={<ContactUsPage />} />
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
           <Route
@@ -71,15 +68,15 @@ function App() {
             path="api/admin/userlist"
             element={<ProtectedRoute element={<AdminPage />} />}
           />
-          <Route 
+          <Route
             path="api/policies/termsAndCondition"
             element={<TermsAndConditionsOfUsePage />}
           />
-          <Route 
+          <Route
             path="api/policies/personalInfoPolicy"
             element={<PersonalInformationProcessingPolicyPage />}
           />
-          <Route 
+          <Route
             path="api/policies/operationalPolicy"
             element={<OperationalPolicyPage />}
           />

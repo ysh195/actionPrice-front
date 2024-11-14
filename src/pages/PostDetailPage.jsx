@@ -30,11 +30,12 @@ const PostDetailPage = () => {
   const page = parseInt(searchParams.get("page")) || 1;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { post, loading, error } = useSelector((state) => state.post);
+  const { post, loading, error,  } = useSelector((state) => state.post);
 
   const [isCommentFormVisible, setIsCommentFormVisible] = useState(false); // State for comment form visibility
 
   console.log("PostDetailPage is rendered");
+
   useEffect(() => {
     if (!postId) return; // Early return if no postId
     console.log("api call for fetchPostById");
