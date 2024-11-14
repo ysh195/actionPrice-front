@@ -108,7 +108,6 @@ export const fetchPostById = createAsyncThunk(
 
 //function: deletePost //
 export const deletePost = createAsyncThunk(
-  //todo: add error if the logined_username !== post.username
   "posts/deletePost",
   async ({ postId, logined_username }, { rejectWithValue }) => {
     console.log("Post ID:", postId, "Logged-in Username:", logined_username);

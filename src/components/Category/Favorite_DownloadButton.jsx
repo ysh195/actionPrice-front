@@ -65,7 +65,6 @@ const Favorite_DownloadButton = ({
       return showError(
         "  모든 카테고리를 선택 후 즐겨찾기가 등록할 수 있습니다."
       );
-    
 
     try {
       await dispatch(
@@ -80,9 +79,17 @@ const Favorite_DownloadButton = ({
       ).unwrap();
       showSuccess("즐겨찾기가 추가 되었습니다.");
     } catch {
-      showError(
-        "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다."
-      );
+      Swal.fire({
+        icon: "error",
+        text: "즐겨찾기의 최대 갯수인 10개에 도달하여 더 이상 추가할 수 없습니다.",
+        showConfirmButton: true,
+        confirmButtonText: "마이페이지로 이동",
+        showCancelButton: true,
+        cancelButtonText: "닫기",
+      }).then((result) => {
+        if (result.isConfirmed)
+          navigate(`/api/mypage/${logined_username}/wishlist`);
+      });
     }
 
     setFavorite_name("");

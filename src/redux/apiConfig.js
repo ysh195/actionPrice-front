@@ -48,7 +48,7 @@ axiosPrivate.interceptors.response.use(
         // 리프레시 토큰으로 새 액세스 토큰 요청
         // Request new access token
 
-        //todo: check the url
+    
         const response = await axios.post(
           "/auth",
           {},

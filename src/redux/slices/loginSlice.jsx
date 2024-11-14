@@ -53,8 +53,7 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      //todo check axios.get for the logout
-      //const access_Token = localStorage.getItem("access_token");
+   
       localStorage.removeItem("access_token");
       localStorage.removeItem("username");
       localStorage.removeItem("role");

@@ -52,8 +52,7 @@ export const blockUser = createAsyncThunk(
       alert("You need to log in to block a user.");
       return;
     }
-    // todo: if error accusr check empty object {}
-    //desc: {} If there's no request body, pass an empty object
+   
     try {
       const response = await axios.post(
         `${baseUrl}/admin/userlist/${username}/block`,
