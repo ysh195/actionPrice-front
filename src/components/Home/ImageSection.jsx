@@ -7,7 +7,6 @@ const ImageSection = () => {
   return (
     <Box
       sx={{
-        padding: 5,
         margin: 2,
         borderRadius: "25px",
         // minHeight: "100vh",
@@ -16,22 +15,27 @@ const ImageSection = () => {
         backgroundImage: `url(${w2})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        // overflow: "hidden",
+        overflow: "hidden",
         backgroundColor: "#f9f7f1",
       }}
     >
       {/* Text Section */}
       <Box
         sx={{
+          display: "flex",
           flexDirection: "column",
+          alignItems: "center",
+          width: "100%",
           position: "relative",
         }}
       >
         <Typography
           variant="h2"
           sx={{
-            paddingTop: 3,
-            paddingLeft: 10,
+            textAlign: "center",
+            position: "absolute",
+            top: "5%",
+            paddingRight: 10,
             fontWeight: "bold",
             letterSpacing: "-0.02rem",
             color: "#00403d",
@@ -41,14 +45,16 @@ const ImageSection = () => {
             fontFamily: "Noto Sans KR",
           }}
         >
-          전국의 다양한 거래 정보를
-          <br />한 눈에 확인하세요.
+          전국의 다양한 거래 정보를 한 눈에 확인하세요.
         </Typography>
 
         <Typography
           variant="h4"
           sx={{
-            paddingLeft: 10,
+            textAlign: "center",
+            position: "absolute",
+            top: "20%",
+            paddingRight: 10,
             width: "70%",
             fontSize: { xs: "1.2rem", ms: "1.5rem", md: "2rem" },
             lineHeight: 1.5,

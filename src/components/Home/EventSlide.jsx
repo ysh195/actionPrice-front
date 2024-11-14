@@ -5,7 +5,7 @@ import Slider from "react-slick";
 import { Box, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { colors, newImageList, } from "../../assets/assest";
+import { colors} from "../../assets/assest";
 
 const DarkGreenPage = ({ slideImages }) => {
   const settings = {
@@ -23,18 +23,23 @@ const DarkGreenPage = ({ slideImages }) => {
         breakpoint: 1024, // Desktop and up
         settings: {
           slidesToShow: 5,
+          slidesToScroll: 3,
+          infinite: true,
         },
       },
       {
         breakpoint: 768, // Tablet
         settings: {
           slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2,
         },
       },
       {
         breakpoint: 480, // Mobile
         settings: {
           slidesToShow: 1,
+          slidesToScroll: 1,
         },
       },
     ],
@@ -110,20 +115,20 @@ const DarkGreenPage = ({ slideImages }) => {
         </Slider> */}
 
         <Slider {...settings}>
-          {newImageList.map((image, index) => (
+          {slideImages.map((image, index) => (
             <Box
               key={index}
               sx={{
                 position: "relative",
                 height: "350px",
-                // overflow: "hidden",
+                overflow: "hidden",
                 padding: "5px",
                 borderRadius: "15px",
                 backgroundColor: "#00403d",
               }}
             >
               <img
-                src={`${image.image}`}
+                src={`data:image/jpeg;base64,${image.image}`}
                 alt={`Slide ${index + 1}`}
                 loading="lazy"
                 style={{
@@ -140,8 +145,7 @@ const DarkGreenPage = ({ slideImages }) => {
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  background:
-                    "linear-gradient(180deg, rgba(0, 69, 69, 0.1), rgba(0, 64, 61, 0.4))",
+                  background: "rgba(0, 0, 0, 0.15)",
                   borderRadius: "15px",
                 }}
               />
