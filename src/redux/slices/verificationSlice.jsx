@@ -18,7 +18,6 @@ const initialState = {
   userExistsMessage: "",
 };
 
-const BASE_URL = "http://localhost:8080/api";
 
 //function: check Username duplicate //
 export const checkUsername = createAsyncThunk(
@@ -26,7 +25,7 @@ export const checkUsername = createAsyncThunk(
   async ({ username }, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `${BASE_URL}/user/checkForDuplicateUsername`,
+        `/user/checkForDuplicateUsername`,
         {
           username,
         }
@@ -70,7 +69,7 @@ export const sendVerificationCode = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `${BASE_URL}/user/sendVerificationCode`,
+        `/user/sendVerificationCode`,
         formData
       );
       console.log("sendVerificationCode:", response);
@@ -99,7 +98,7 @@ export const verifyCode = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `${BASE_URL}/user/checkVerificationCode`,
+        `/user/checkVerificationCode`,
         formData
       );
       console.log("verifyCode:", response);
