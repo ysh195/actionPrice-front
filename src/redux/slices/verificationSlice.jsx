@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../apiConfig";
 
 const initialState = {
   isLoading: false,
@@ -18,23 +18,16 @@ const initialState = {
   userExistsMessage: "",
 };
 
-const BASE_URL = "http://localhost:8080/api";
 
 //function: check Username duplicate //
 export const checkUsername = createAsyncThunk(
   "auth/checkUsername",
   async ({ username }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/checkForDuplicateUsername`,
+      const response = await axiosPublic.post(
+        `/user/checkForDuplicateUsername`,
         {
           username,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json", // Specify the content type
-            Accept: "application/json", // Specify the accepted response type
-          },
         }
       );
       console.log("Slice check Username:", response.data);
@@ -54,17 +47,9 @@ export const checkEmailDup = createAsyncThunk(
   "auth/checkEmail",
   async ({ email }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/checkForDuplicateEmail`,
-        { email },
-        {
-          headers: {
-            //todo:if error delete headers
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPublic.post(`/user/checkForDuplicateEmail`, {
+        email,
+      });
       console.log("email response:", response);
       return response.data; // Assuming the API returns a message
     } catch (error) {
@@ -83,15 +68,9 @@ export const sendVerificationCode = createAsyncThunk(
   "auth/sendVerificationCode",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/sendVerificationCode`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json", // Specify the content type
-            Accept: "application/json", // Specify the accepted response type
-          },
-        }
+      const response = await axiosPublic.post(
+        `/user/sendVerificationCode`,
+        formData
       );
       console.log("sendVerificationCode:", response);
       return response.data; //인증코드가 성공적으로 발송되었습니다.
@@ -118,15 +97,9 @@ export const verifyCode = createAsyncThunk(
   "auth/verifyCode",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/checkVerificationCode`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json", // Specify the content type
-            Accept: "application/json", // Specify the accepted response type
-          },
-        }
+      const response = await axiosPublic.post(
+        `/user/checkVerificationCode`,
+        formData
       );
       console.log("verifyCode:", response);
       return response.data.resultOfVerification;

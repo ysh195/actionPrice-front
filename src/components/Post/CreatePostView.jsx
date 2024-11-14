@@ -15,7 +15,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createPost } from "../../redux/slices/postSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -67,7 +67,7 @@ const CreatePostView = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        minHeight: "100vh",
         flexDirection: "column", // Stack items vertically
       }}
     >

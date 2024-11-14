@@ -3,14 +3,15 @@ import React from "react";
 import { Typography, Divider, Box } from "@mui/material";
 //prevent unnecessary re-renders when the props have not changed.
 const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
-  const formatDate = (createdAt) => {
-    const parsedDate = new Date(createdAt);
-    if (isNaN(parsedDate)) {
-      console.error("Invalid date:", createdAt);
-      return "Invalid Date"; // Return a fallback message
-    }
-    return parsedDate.toISOString().split("T")[0]; // Return formatted date
-  };
+  //todo: edit date formatting, it gives error
+  // const formatDate = (createdAt) => {
+  //   const parsedDate = new Date(createdAt);
+  //   if (isNaN(parsedDate)) {
+  //     console.error("Invalid date:", createdAt);
+  //     return "Invalid Date"; // Return a fallback message
+  //   }
+  //   return parsedDate.toISOString().split("T")[0]; // Return formatted date
+  // };
 
   return (
     <div>
@@ -35,7 +36,7 @@ const PostHeader = React.memo(({ title, post_owner, createdAt, updatedAt }) => {
         >
           <Typography variant="subtitle1" sx={{ marginRight: 2 }}>
             작성일: {new Date(createdAt).toLocaleDateString()}
-            {/*   작성일: {formatDate(createdAt)} */}
+            {/* 작성일: {formatDate(createdAt)} */}
           </Typography>
           {updatedAt ? (
             <Typography variant="subtitle1">

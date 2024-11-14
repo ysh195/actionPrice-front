@@ -7,9 +7,6 @@ import {
   Box,
   Backdrop,
   CircularProgress,
-  Card,
-  CardContent,
-  CardActions,
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +16,7 @@ import {
 } from "../../redux/slices/favoriteSlice";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { colors } from "../../assets/assest";
 
 const Favorites = ({ username }) => {
   const dispatch = useDispatch();
@@ -44,30 +42,29 @@ const Favorites = ({ username }) => {
       cancelButtonText: "취소",
       reverseButtons: true, // Reverse the order of buttons
     });
-
     // If user confirms the deletion
     if (result.isConfirmed) {
       const resultAction = await dispatch(deleteFavorite(favoriteId));
-      if (deleteFavorite.fulfilled.match(resultAction)) {
-        console.log("Favorite deleted successfully");
 
+      // Handle success or failure
+      const message = deleteFavorite.fulfilled.match(resultAction)
+        ? {
+            title: "삭제 완료!",
+            text: "즐겨찾기가 성공적으로 삭제되었습니다.",
+            icon: "success",
+          }
+        : {
+            title: "Oops!",
+            text: "즐겨찾기 삭제에 실패했습니다. 다시 시도해 주세요.",
+            icon: "error",
+          };
+
+      // Show success/error message
+      Swal.fire(message);
+
+      if (deleteFavorite.fulfilled.match(resultAction)) {
         dispatch(fetchFavoriteList(username)); // Refresh the list after deletion
-        Swal.fire(
-          "삭제 완료!",
-          "즐겨찾기가 성공적으로 삭제되었습니다.",
-          "success"
-        ); // Success message
-      } else {
-        console.error("Failed to delete favorite:", resultAction.error);
-        Swal.fire(
-          "Oops!",
-          "즐겨찾기 삭제에 실패했습니다. 다시 시도해 주세요.",
-          "error"
-        ); // Error message
       }
-    } else {
-      // If user cancels the deletion
-      Swal.fire("취소되었습니다", "info"); // Cancellation message
     }
   };
 
@@ -75,71 +72,100 @@ const Favorites = ({ username }) => {
   if (status === "failed") return <Typography>Error: {error}</Typography>;
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Typography variant="h6" gutterBottom>
-        {username}님의 관심 목록
+
+      <Typography
+        variant="h6"
+        gutterBottom
+        sx={{ color: colors.darkBrown, mb: 5 }}
+      >
+        {username}님의 즐겨찾기 목록
       </Typography>
+
       <Box
         sx={{
-          display: "grid",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
           gap: 1,
-          gridTemplateColumns: "1fr",
-          width: "80%",
+          bgcolor: colors.paperbeige,
+          padding: 3,
+          borderRadius: 2,
+          border: `1px solid ${colors.rose}`,
+          boxShadow: 2,
+          width: { xs: "100%", md: "70%" },
+          minWidth: "500px", // Limit the width on large screens
         }}
       >
         {favoriteList && favoriteList.length > 0 ? (
           favoriteList.map((favorite, index) => (
-            <Card
+            <Box
               key={favorite.favoriteId}
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                borderRadius: 2,
-                boxShadow: 2,
-                padding: 1,
-                transition: "box-shadow 0.3s",
-                "&:hover": { boxShadow: 4 },
+                borderBottom: "1px solid #ddd",
+                padding: 0.5,
+                marginX: 3,
               }}
             >
-              <Typography variant="subtitle1" 
-              // fontWeight="bold" 
-              sx={{ ml: 1 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                 {index + 1}.
               </Typography>
-              <CardContent sx={{ flex: 1 }}>
+
+              <Box
+                sx={{
+                  flex: 1,
+                  ml: 4,
+                }}
+              >
                 <Link
                   to={favorite.favoriteURL}
                   style={{
-                    color: "inherit",
+                    color: colors.darkBrown,
                     textDecoration: "none",
                   }}
                 >
-                  <Typography variant="subtitle1">
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      "&:hover": {
+                        fontWeight: "600",
+                        fontSize: "19px",
+                      },
+                    }}
+                  >
                     {favorite.favoriteName}
                   </Typography>
                 </Link>
-              </CardContent>
-              <CardActions>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDeleteFavorite(favorite.favoriteId)}
-                >
-                  삭제
-                </Button>
-              </CardActions>
-            </Card>
+              </Box>
+
+              <Button
+                onClick={() => handleDeleteFavorite(favorite.favoriteId)}
+                sx={{
+                  color: colors.darkBrown,
+                  border: `2px solid ${colors.rose}`,
+                  "&:hover": {
+                    backgroundColor: colors.rose,
+                    color: "white",
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds shadow on hover
+                  },
+                }}
+              >
+                삭제
+              </Button>
+            </Box>
           ))
         ) : (
-          <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
-            <Typography>찜한 상품 리스트 없습니다.</Typography>
+          <Paper elevation={3} sx={{ padding: 3, textAlign: "center", mt: 2 }}>
+            <Typography>저장된 즐겨찾기 목록이 없습니다.</Typography>
           </Paper>
         )}
       </Box>

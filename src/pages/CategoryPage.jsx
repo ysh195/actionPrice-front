@@ -13,9 +13,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductList } from "../redux/slices/categorySlice.jsx";
 import ProductListView from "../components/Category/ProductListView.jsx";
-import PriceGraghView from "../components/Category/PriceGraghView.jsx";
+import PriceGraphView from "../components/Category/PriceGraphView.jsx";
 import CategoryDetail from "../components/Category/CategoryDetails.jsx";
 import Favorite_DownloadButton from "../components/Category/Favorite_DownloadButton.jsx";
+import { MarginOutlined } from "@mui/icons-material";
 
 const CategoryPage = () => {
   const { large, middle, small, rank } = useParams();
@@ -75,10 +76,12 @@ const CategoryPage = () => {
   return (
     <Box
       sx={{
-        m: 5,
+        mt: "8rem",
         display: "flex",
         flexDirection: "column",
-        gap: 2,
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 4,
       }}
     >
       <Backdrop
@@ -110,7 +113,6 @@ const CategoryPage = () => {
         logined_username={logined_username}
         selectedStartDate={selectedStartDate}
         selectedEndDate={selectedEndDate}
-
       />
 
       <ProductListView productList={productList} pageNum={pageNum} />
@@ -122,7 +124,7 @@ const CategoryPage = () => {
         variant="outlined"
         sx={{ margin: "auto" }}
       />
-      <PriceGraghView
+      <PriceGraphView
         timeIntervals={timeIntervals}
         priceData={priceData}
         countries={countries}

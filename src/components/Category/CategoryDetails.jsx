@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { largeCategoryList } from "../../assets/assest.js";
+import { colors, largeCategoryList } from "../../assets/assest.js";
 
 import { Box, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -163,88 +163,106 @@ const CategoryDetail = ({
     setSearchParams({});
     dispatch(clearProductList());
     dispatch(clearPriceData());
-    navigate(`/api/category/:large`);
+    navigate(`/api/category`);
   };
 
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-evenly",
+        flexDirection: { xs: "column", sm: "column", md: "row" },
         alignItems: "center",
-        paddingX: 2,
-        paddingY: 1,
+        justifyContent: "center",
+        gap: { xs: 4, sm: 4, md: 1 },
 
-        gap: 2,
+        width: "90%",
       }}
     >
+      {/* Category Selects */}
+      <CategorySelect
+        label="대분류를 선택하세요"
+        value={selectedLarge}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={largeCategoryList}
+        categoryType="large"
+      />
+
+      <CategorySelect
+        label="중분류를 선택하세요"
+        value={selectedMiddle}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={middleCategoryList}
+        categoryType="middle"
+      />
+
+      <CategorySelect
+        label="소분류를 선택하세요"
+        value={selectedSmall}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={smallCategoryList}
+        categoryType="small"
+      />
+
+      <CategorySelect
+        label="등급을 선택하세요"
+        value={selectedRank}
+        handleCategoryChange={handleCategoryChange}
+        categoryList={rankList}
+        categoryType="rank"
+      />
       <Box
         sx={{
           display: "flex",
-
-          gap: 2,
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          gap: { xs: 4, md: 2 },
         }}
       >
-        {/* Category Selects */}
-        <CategorySelect
-          label="대분류를 선택하세요"
-          value={selectedLarge}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={largeCategoryList}
-          categoryType="large"
-        />
-
-        <CategorySelect
-          label="중분류를 선택하세요"
-          value={selectedMiddle}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={middleCategoryList}
-          categoryType="middle"
-        />
-
-        <CategorySelect
-          label="소분류를 선택하세요"
-          value={selectedSmall}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={smallCategoryList}
-          categoryType="small"
-        />
-
-        <CategorySelect
-          label="등급을 선택하세요"
-          value={selectedRank}
-          handleCategoryChange={handleCategoryChange}
-          categoryList={rankList}
-          categoryType="rank"
-        />
-      </Box>
-      <Box sx={{ display: "flex" }}>
         <DateChange
           selectedStartDate={selectedStartDate}
           setSelectedStartDate={setSelectedStartDate}
           selectedEndDate={selectedEndDate}
           setSelectedEndDate={setSelectedEndDate}
         />
-      </Box>
-      <Box
-        sx={{
-          height: "100%",
-          display: "flex",
-        }}
-      >
-        <Button
-          color="primary"
-          disabled={
-            !selectedLarge || !selectedMiddle || !selectedSmall || !selectedRank
-          }
-          onClick={handleSearch}
-        >
-          조회
-        </Button>
-        <Button color="secondary" onClick={handleReset}>
-          초기화
-        </Button>
+
+        <Box sx={{ display: "flex", gap: 1, mt: { xs: 2, md: 0 } }}>
+          <Button
+            sx={{
+              color: "#00403d",
+              border: "1px solid #00403d",
+              cursor: "pointer",
+              "&:hover": {
+                color: "white",
+                backgroundColor: "#00403d",
+                boxShadow: "0px 4px 8px rgba(1, 2, 2, 0.2)", // Adds shadow on hover
+              },
+            }}
+            disabled={
+              !selectedLarge ||
+              !selectedMiddle ||
+              !selectedSmall ||
+              !selectedRank
+            }
+            onClick={handleSearch}
+          >
+            조회
+          </Button>
+          <Button
+            sx={{
+              color: colors.brown,
+              border: "1px solid #7b482d",
+              cursor: "pointer",
+              "&:hover": {
+                color: "white",
+                backgroundColor: colors.brown,
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)", // Adds shadow on hover
+              },
+            }}
+            onClick={handleReset}
+          >
+            초기화
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

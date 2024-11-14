@@ -33,14 +33,15 @@ const StyledTableCell = (props) => (
   />
 );
 
-
 const AdminPage = () => {
   const itemsPerPage = 10;
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
   const keyword = searchParams.get("keyword") || "";
-  const { userList, totalPageNum, error } = useSelector((state) => state.adminPage);
+  const { userList, totalPageNum, error } = useSelector(
+    (state) => state.adminPage
+  );
 
   // Fetch user list based on page number and keyword
   useEffect(() => {
@@ -76,126 +77,121 @@ const AdminPage = () => {
   return (
     <Box
       sx={{
-        m: 3,
-        p: 3,
-        borderRadius: 2,
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
-      <Typography variant="h4" sx={{ mb: 3, textAlign: "center" }}>
+      <Typography
+        variant="h4"
+        sx={{ mt: "5rem", textAlign: "center", color: colors.darkBrown }}
+      >
         사용자 목록
       </Typography>
-
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          mb: 2,
-        }}
-      >
+      <div style={{ display: "flex", alignSelf: "flex-end" }}>
         <PostSearch
           keyword={keyword}
           onSearch={handleSearch}
           onReset={handleResetSearch}
         />
-      </Box>
+      </div>
 
-      <Paper
-        sx={{ width: "100%", overflow: "hidden", bgcolor: colors.paperbeige }}
+      <TableContainer
+        sx={{
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        }}
       >
-        <TableContainer>
-          <Table aria-label="User List Table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>No</StyledTableCell>
-                <StyledTableCell>Username</StyledTableCell>
-                <StyledTableCell>Email</StyledTableCell>
-                <StyledTableCell>Posts</StyledTableCell>
-                <StyledTableCell>Comments</StyledTableCell>
-                <StyledTableCell>Authorities</StyledTableCell>
-                <StyledTableCell>Blocked</StyledTableCell>
-                <StyledTableCell>Token Reset</StyledTableCell>
-              </TableRow>
-            </TableHead>
+        <Table aria-label="User List Table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>No</StyledTableCell>
+              <StyledTableCell>Username</StyledTableCell>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Posts</StyledTableCell>
+              <StyledTableCell>Comments</StyledTableCell>
+              <StyledTableCell>Authorities</StyledTableCell>
+              <StyledTableCell>Blocked</StyledTableCell>
+              <StyledTableCell>Token Reset</StyledTableCell>
+            </TableRow>
+          </TableHead>
 
-            <TableBody>
-              {userList.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} align="center">
-                    해당 키워드로 사용자나 이메일을 찾을 수 없습니다.
+          <TableBody>
+            {userList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  해당 키워드로 사용자나 이메일을 찾을 수 없습니다.
+                </TableCell>
+              </TableRow>
+            ) : (
+              userList.map((user, index) => (
+                <TableRow
+                  key={user.username}
+                  sx={{
+                    "&:nth-of-type(even)": {
+                      backgroundColor: "#F7F2EF",
+                    },
+                    "&:hover": {
+                      backgroundColor: "#f8f8f8",
+                    },
+                  }}
+                >
+                  <TableCell>
+                    {(pageNum - 1) * itemsPerPage + index + 1}
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      to={`/api/mypage/${user.username}/myposts`}
+                      style={{ color: colors.button1 }}
+                    >
+                      {user.username}
+                    </Link>
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.postCount}</TableCell>
+                  <TableCell>{user.commentCount}</TableCell>
+                  <TableCell>{user.authorities}</TableCell>
+                  <TableCell>
+                    {user.tokenExpiresAt === null ? (
+                      "None"
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{
+                          border: `1px solid ${colors.green}`,
+                          backgroundColor: "white",
+                          color: colors.green,
+                          "&:hover": {
+                            backgroundColor: colors.green,
+                            color: "white",
+                          },
+                        }}
+                        onClick={() => handleBlockUser(user.username)}
+                      >
+                        {user.blocked ? "Unblock" : "Block"}
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {user.tokenExpiresAt === null ? (
+                      "None"
+                    ) : (
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: colors.button1 }}
+                        onClick={() => handleResetRefreshToken(user.username)}
+                      >
+                        Reset
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
-              ) : (
-                userList.map((user, index) => (
-                  <TableRow
-                    key={user.username}
-                    sx={{
-                      "&:nth-of-type(even)": {
-                        backgroundColor: "#f9f9f9",
-                      },
-                      "&:hover": {
-                        backgroundColor: "#f0f0f0",
-                      },
-                    }}
-                  >
-                    <TableCell>
-                      {(pageNum - 1) * itemsPerPage + index + 1}
-                    </TableCell>
-                    <TableCell>
-                      <Link
-                        to={`/api/mypage/${user.username}/myposts`}
-                        style={{ color: colors.button1 }}
-                      >
-                        {user.username}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.postCount}</TableCell>
-                    <TableCell>{user.commentCount}</TableCell>
-                    <TableCell>{user.authorities}</TableCell>
-                    <TableCell>
-                      {user.tokenExpiresAt === null ? (
-                        "None"
-                      ) : (
-                        <Button
-                          variant="contained"
-                          sx={{
-                            backgroundColor: user.blocked
-                              ? "#6A8B84"
-                              : "#6A8B84",
-                            color: "white", // text color
-                            "&:hover": {
-                              backgroundColor: user.blocked
-                                ? colors.hover1
-                                : colors.hover2,
-                            },
-                          }}
-                          onClick={() => handleBlockUser(user.username)}
-                        >
-                          {user.blocked ? "Unblock" : "Block"}
-                        </Button>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {user.tokenExpiresAt === null ? (
-                        "None"
-                      ) : (
-                        <Button
-                          variant="contained"
-                          sx={{ backgroundColor: colors.button1 }}
-                          onClick={() => handleResetRefreshToken(user.username)}
-                        >
-                          Reset
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Box
         sx={{

@@ -5,34 +5,72 @@ import logo from "./logo.png";
 import whiteLogo from "./whiteLogo.png";
 import textLogo2 from "./textLogo2.png";
 
-export { logo, whiteLogo, textLogo2 };
+import egg from "./images/egg.jpeg";
+import lemon from "./images/lemon.jpeg";
+import tomatobg from "./images/tomatobg.jpeg";
+import w1 from "./images/w1.jpeg";
+import w2 from "./images/w2.jpeg";
+import w3 from "./images/w3.jpeg";
+import w4 from "./images/w4.jpeg";
+import w5 from "./images/w5.jpeg";
+import w6 from "./images/w6.jpeg";
+import gradient3 from "./images/gradient3.jpeg";
+
+
+
+export {
+  logo,
+  whiteLogo,
+  textLogo2,
+  tomatobg,
+  gradient3,
+  lemon,
+  egg,
+  w1,
+  w2,
+  w3,
+  w4,
+  w5,
+  w6,
+};
 
 //desc: ui colors
 export const colors = {
-  primary: "#4D766E",
-  backgroundColor: "#F0F5F4",
-  // primary: "#538392",
+  primary: "#00403d",
+
   secondary: "#2ecc71",
   accent: "#e74c3c",
   text: "#2c3e50",
   white: "#ffffff",
   white2: "#ecf0f1",
-  // tableHead: "#4D766E",
-  tableHead: "#CB6040",
+
   button1: "#2C3E50",
   button2: "#CB6040",
   hover1: "#49557e",
-  hover2: "#D76B4C",
+  hover2: "#a45f53",
   warning: "#d32f2f",
-  // paperb: "#F9F9F9",
+
   paperbeige: "#F7F2EF",
   disable: "#d3d3d3",
-  chart: "#0e97a9",
+
   border: "#0c1e2a",
   link: "#8C6A4A",
+  // backgroundColor: "#f8f3e8",
+  // backgroundColor: "#F0F5F4",
+  tableHead: "#a45f53",
+  brown: "#7b482d",
+  footerText: "#a45f53",
+  buttonBorder: "#d3817a",
+  rose: "#d3817a",
 
-  // 0e97a9 차트
-  // 0c1e2a 테두리
+  green: "#00403d",
+
+  darkBrown: "#4B2C20",
+
+  backgroundColor: " #f8f8f8",
+  gray: "#dedad7",
+  page1: "#f2eee6",
+  tableBackground: "#faf7f2",
 };
 
 const response = await axios.get("http://localhost:8080/");
@@ -48,14 +86,25 @@ export const largeCategoryList = [
 ];
 
 export const slideImageList = [
-  { id: 1, name: "slide_blue", image: fetchedImages.slide_blue },
-  { id: 2, name: "slide_cherry", image: fetchedImages.slide_cherry },
-  { id: 3, name: "slide_chicken", image: fetchedImages.slide_chicken },
-  { id: 4, name: "slide_grape", image: fetchedImages.slide_grape },
-  { id: 5, name: "slide_lab", image: fetchedImages.slide_lab },
-  { id: 6, name: "slide_lemon", image: fetchedImages.slide_lemon },
-  { id: 7, name: "slide_meat", image: fetchedImages.slide_meat },
-  // { id: 8, name: "slide_ve", image: fetchedImages.slide_ve },
+  { name: "avocado", image: fetchedImages.avocado },
+  { name: "banana", image: fetchedImages.banana },
+  { name: "berry", image: fetchedImages.berry },
+  { name: "onion3", image: fetchedImages.onion3 },
+  { name: "cTomato", image: fetchedImages.cTomato },
+  { name: "garlic", image: fetchedImages.garlic },
+  { name: "mixedFruit", image: fetchedImages.mixedFruit },
+  { name: "mixedVeggies3", image: fetchedImages.mixedVeggies3 },
+  { name: "morlahana", image: fetchedImages.morlahana },
+  { name: "nar", image: fetchedImages.nar },
+  { name: "onion", image: fetchedImages.onion },
+  { name: "cherry", image: fetchedImages.cherry },
+  { name: "pear", image: fetchedImages.pear },
+  { name: "pepper", image: fetchedImages.pepper },
+  { name: "onion2", image: fetchedImages.onion2 },
+  { name: "pineapple", image: fetchedImages.pineapple },
+  { name: "watermelon", image: fetchedImages.watermelon },
+  { name: "walnut", image: fetchedImages.walnut },
+  { name: "mixedVeggie", image: fetchedImages.mixedVeggie },
 ];
 
 //desc: admin answer list

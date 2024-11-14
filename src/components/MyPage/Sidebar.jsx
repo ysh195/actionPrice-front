@@ -39,53 +39,57 @@ const Sidebar = () => {
   const toggleAccountMenu = () => setIsAccountOpen(!isAccountOpen);
 
   const handleLogout = async () => {
-    const confirmation = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: "로그아웃 하시겠습니까?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "로그아웃",
       cancelButtonText: "취소",
     });
-    if (confirmation.isConfirmed) {
+    if (isConfirmed) {
       dispatch(logoutUser());
       navigate("/api/user/login");
     }
   };
 
   const handleDeleteAccount = async () => {
-    const confirmation = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: "계정을 삭제하시겠습니까?",
-      text: "삭제된 계정은 복구할 수 없습니다.",
+      text: "삭제한 계정은 복구할 수 없습니다.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "삭제하기",
       cancelButtonText: "취소",
     });
-    if (confirmation.isConfirmed) {
-      const result = await dispatch(deleteAccount(username));
-      if (deleteAccount.fulfilled.match(result)) {
-        Swal.fire({
+
+    if (!isConfirmed) return;
+
+    const result = await dispatch(deleteAccount(username));
+    const message = deleteAccount.fulfilled.match(result)
+      ? {
           text: "계정이 성공적으로 삭제되었습니다",
           icon: "success",
           timer: 3000,
-        });
-        navigate("/api/user/login");
-      } else {
-        Swal.fire({
+        }
+      : {
           icon: "error",
           title: "Oops...",
           text: "계정 삭제에 실패하였습니다. 다시 시도해 주세요.",
           showConfirmButton: true,
-        });
-      }
-    }
+        };
+
+    Swal.fire(message);
+
+    if (deleteAccount.fulfilled.match(result)) navigate("/api/user/login");
   };
 
   return (
     <Box
       open={isOpen}
       sx={{
-        backgroundColor: colors.primary,
+        // backgroundColor: "#dedad7",
+
+        // border: `1px solid ${colors.rose}`,
         padding: 2,
         height: "100%",
         position: "fixed",
@@ -94,45 +98,47 @@ const Sidebar = () => {
         left: 0,
         width: isOpen ? 210 : 90,
         flexShrink: 0,
-        color: "#fff",
-        zIndex:2
+        zIndex: 2,
       }}
     >
       <List>
-        <ListItemIcon onClick={toggleSidebar} sx={{ color: "#fff" }}>
+        <ListItemIcon
+          onClick={toggleSidebar}
+          sx={{ color: colors.green, mt: 10, ml: 2, cursor: "pointer" }}
+        >
           {isOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </ListItemIcon>
 
         <Box
           sx={{
-            
-            mt: "3rem",
+            mt: "2rem",
           }}
         >
           <Divider />
           <Typography
             variant="body2"
             sx={{
-              color: "rgb(137, 135, 135)",
+              color: colors.rose,
+              fontWeight: 600,
               margin: isOpen ? "10px 1rem" : "16px 0.5rem",
             }}
           >
             Profile
           </Typography>
           <Divider />
-
           <ListItem
             component="button"
             sx={{
-              color: "#fff",
+              color: colors.green,
               cursor: "pointer !important",
               backgroundColor: "transparent",
+              mt: 2,
             }}
           >
-            <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+            <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
               <BadgeIcon onClick={toggleSidebar} />
             </ListItemIcon>
-            {isOpen && <Typography variant="body2">{username}</Typography>}
+            {isOpen && <Typography variant="body2">{username}님</Typography>}
           </ListItem>
           <Tooltip
             title="계정"
@@ -144,12 +150,12 @@ const Sidebar = () => {
               component="button"
               onClick={toggleAccountMenu}
               sx={{
-                color: "#fff",
+                color: colors.green,
                 cursor: "pointer !important",
                 backgroundColor: "transparent",
               }}
             >
-              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+              <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
                 <ManageAccountsIcon />
               </ListItemIcon>
               {isOpen && (
@@ -173,12 +179,14 @@ const Sidebar = () => {
                   onClick={handleDeleteAccount}
                   sx={{
                     pl: 4,
-                    color: "#fff",
+                    color: colors.green,
                     cursor: "pointer !important",
                     backgroundColor: "transparent",
                   }}
                 >
-                  <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+                  <ListItemIcon
+                    sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}
+                  >
                     <PersonRemoveIcon />
                   </ListItemIcon>
                   {isOpen && <ListItemText primary="계정 삭제" />}
@@ -193,7 +201,8 @@ const Sidebar = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "rgb(137, 135, 135)",
+              color: colors.rose,
+              fontWeight: 600,
               margin: isOpen ? "10px 1rem" : "16px 0.5rem",
             }}
           >
@@ -209,16 +218,16 @@ const Sidebar = () => {
             <ListItem
               component={Link}
               to={`/api/mypage/${username}/myposts`}
-              sx={{ color: "white" }}
+              sx={{ color: colors.green, mt: 2 }}
             >
-              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+              <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
                 <ChatIcon />
               </ListItemIcon>
               {isOpen && <ListItemText primary="나의 게시글" />}
             </ListItem>
           </Tooltip>
           <Tooltip
-            title="내 관심 목록"
+            title="즐겨찾기 목록"
             placement="right"
             arrow
             disableHoverListener={isOpen}
@@ -226,12 +235,12 @@ const Sidebar = () => {
             <ListItem
               component={Link}
               to={`/api/mypage/${username}/wishlist`}
-              sx={{ color: "white" }}
+              sx={{ color: colors.green }}
             >
-              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+              <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
                 <BookmarksIcon />
               </ListItemIcon>
-              {isOpen && <ListItemText primary="내 관심 목록" />}
+              {isOpen && <ListItemText primary="즐겨찾기 목록" />}
             </ListItem>
           </Tooltip>
         </Box>
@@ -239,7 +248,7 @@ const Sidebar = () => {
         {/* Spacer between menu and logout */}
         <Box sx={{ flexGrow: 1 }} />
 
-        <Box sx={{  mt: "20rem" }}>
+        <Box sx={{ mt: "20rem" }}>
           <Tooltip
             title="로그아웃"
             placement="right"
@@ -249,12 +258,12 @@ const Sidebar = () => {
             <ListItem
               onClick={handleLogout}
               sx={{
-                color: "#fff",
+                color: colors.green,
                 cursor: "pointer !important",
                 backgroundColor: "transparent",
               }}
             >
-              <ListItemIcon sx={{ color: "#fff", ml: isOpen ? 1 : 0 }}>
+              <ListItemIcon sx={{ color: colors.green, ml: isOpen ? 1 : 0 }}>
                 <LogoutIcon />
               </ListItemIcon>
               {isOpen && <ListItemText primary="로그아웃" />}

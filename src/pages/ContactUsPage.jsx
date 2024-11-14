@@ -69,8 +69,8 @@ const ContactUsPage = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Typography variant="h5" gutterBottom sx={{ marginTop: 3 }}>
-        문의 상황
+      <Typography variant="h3" gutterBottom sx={{ marginTop: 3 }}>
+        고객센터
       </Typography>
       <Box
         sx={{
@@ -84,7 +84,7 @@ const ContactUsPage = () => {
         <Button
           variant="contained"
           onClick={() => navigate("/api/post/create")}
-          sx={{ backgroundColor: colors.primary }}
+          sx={{ backgroundColor: colors.green }}
         >
           문의하기
         </Button>

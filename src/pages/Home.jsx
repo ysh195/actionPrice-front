@@ -3,18 +3,18 @@ import React, { useEffect, useState } from "react";
 import EventSlide from "../components/Home/EventSlide.jsx";
 import CategorySection from "../components/Home/CategorySection.jsx";
 import { slideImageList, largeCategoryList } from "../assets/assest.js";
-import Test from "../test/Test.jsx";
+import ImageSection from "../components/Home/ImageSection.jsx";
 
 const Home = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(largeCategoryList);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [slideImages, setSlideImages] = useState([]);
 
+  // Fetch images from the database
   const fetchImages = async () => {
     try {
       setSlideImages(slideImageList);
-      setCategories(largeCategoryList);
     } catch (error) {
       console.error("Error fetching images:", error);
       setError("Failed to load images.");
@@ -28,16 +28,15 @@ const Home = () => {
   }, []);
 
   return (
-
-      <div>
-        <EventSlide slideImages={slideImages} error={error} loading={loading} />
-        <CategorySection
-          categories={categories}
-          error={error}
-          loading={loading}
-        />
-      </div>
-    
+    <>
+      <EventSlide slideImages={slideImages} error={error} loading={loading} />
+      <ImageSection />
+      <CategorySection
+        categories={categories}
+        error={error}
+        loading={loading}
+      />
+    </>
   );
 };
 

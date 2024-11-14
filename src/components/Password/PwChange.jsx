@@ -349,14 +349,14 @@ const PwChange = () => {
           }}
         >
           <Typography variant="body2" sx={{ fontSize: "0.8rem" }}>
-            계장이 있으신가요?
+            계정이 있으신가요?{" "}
           </Typography>
 
           <Link
             to="/api/user/login"
             style={{ color: colors.button2, fontSize: "0.8rem" }}
           >
-            로그인 하세요
+            로그인
           </Link>
         </Box>
       </Card>

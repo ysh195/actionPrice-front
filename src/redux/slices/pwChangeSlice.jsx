@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { axiosPublic } from "../apiConfig";
 
 const initialState = {
   loading: false,
@@ -15,24 +15,15 @@ const initialState = {
   passwordChangeMessage: "",
 };
 
-const BASE_URL = "http://localhost:8080/api";
-
 //function for checkUserExists //
 export const checkUserExists = createAsyncThunk(
   "user/checkUserExists",
 
   async ({ username }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/checkUserExists`,
-        { username },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPublic.post(`/user/checkUserExists`, {
+        username,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -50,15 +41,9 @@ export const sendVerificationCodeForChangingPW = createAsyncThunk(
   "user/sendVerificationCodeForChangingPW",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/sendVerificationCodeForChangingPW`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
+      const response = await axiosPublic.post(
+        `/user/sendVerificationCodeForChangingPW`,
+        formData
       );
       return response.data; // Success message from the server
     } catch (error) {
@@ -80,20 +65,10 @@ export const changePassword = createAsyncThunk(
   "user/changePassword",
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/user/changePassword`,
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            //todo" if error, delete header
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-        }
-      );
+      const response = await axiosPublic.post(`/user/changePassword`, {
+        username,
+        password,
+      });
       return response.data; // Expecting a success message if password change is successful
     } catch (error) {
       return rejectWithValue("Changing password failed. Please try again.");

@@ -2,29 +2,43 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchPostById, fetchPostForUpdate, updatePost } from "../../redux/slices/postSlice";
+import { fetchPostForUpdate, updatePost } from "../../redux/slices/postSlice";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import PostHeader from "./PostHeader";
 import Swal from "sweetalert2";
 import { colors } from "../../assets/assest";
 
 const UpdatePostView = () => {
- const { postId, username } = useParams();
+  const { postId } = useParams();
+
+  const username = localStorage.getItem("username");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); // Loading state
 
   const { post } = useSelector((state) => state.post);
   const [title, setTitle] = useState(post.title || "");
   const [content, setContent] = useState(post.content || "");
 
-
   console.log("check post in PostDetailPage:", post);
- useEffect(() => {
-   dispatch(fetchPostForUpdate({ postId, username }));
- }, [dispatch, postId, username]);
+useEffect(() => {
+  const checkPermissions = async () => {
+    if (username !== post.username) {
+      await Swal.fire({
+        icon: "error",
+        text: "권한이 없습니다.",
+        timer: 2000,
+      });
+      navigate("/api/contact-us");
+    } else {
+      dispatch(fetchPostForUpdate({ postId, username }));
+    }
+  };
+
+  checkPermissions();
+}, [dispatch, postId, username, post.username]);
+
 
   // Update title and content when post changes
   useEffect(() => {
@@ -35,12 +49,19 @@ const UpdatePostView = () => {
   }, [post]);
 
   const handleUpdatePost = async () => {
+    if (username !== post.username) {
+      return Swal.fire({
+        icon: "error",
+        text: "권한이 없습니다.",
+        timer: 2000,
+      }).then(() => navigate("/api/contact-us"));
+    }
     if (!title || !content) {
       setError("제목과 내용을 모두 입력하세요."); // Ensure title and content are not empty
       return;
     }
 
-    const postData = { title, content, username:post.username };
+    const postData = { title, content, username: post.username };
     try {
       const result = await dispatch(
         updatePost({ postId: Number(postId), postData })
@@ -82,7 +103,7 @@ const UpdatePostView = () => {
         <Typography variant="h5" gutterBottom>
           게시글 수정
         </Typography>
-        <PostHeader post_owner={username} createdAt={post.createdAt} />
+        <PostHeader post_owner={post.username} createdAt={post.createdAt} />
         <TextField
           label="제목"
           value={title}

@@ -17,9 +17,10 @@ import Home from "./pages/Home";
 import "./App.css";
 import PwChange from "./components/Password/PwChange";
 import CategoryPage from "./pages/CategoryPage";
-import TermsAndConditionsOfUsePage from "./pages/TermsAndConditionsOfUsePage";
-import OperationalPolicyPage from "./pages/OperationalPolicyPage";
-import PersonalInformationProcessingPolicyPage from "./pages/PersonalInformationProcessingPolicyPage";
+import TermsAndConditionsOfUsePage from "./pages/Legal/TermsAndConditionsOfUsePage";
+import OperationalPolicyPage from "./pages/Legal/OperationalPolicyPage";
+import PersonalInformationProcessingPolicyPage from "./pages/Legal/PersonalInformationProcessingPolicyPage";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ function App() {
     dispatch(autoLogin());
   }, [dispatch]);
   return (
-    <>
+
       <AppLayout>
         <Routes>
           <Route path="/" exact element={<Home />} />
@@ -44,10 +45,8 @@ function App() {
 
           <Route path="api/user/register" exact element={<RegisterPage />} />
           <Route path="api/user/changePassword" exact element={<PwChange />} />
-   
-
           <Route
-            path="api/category/:large/:middle?/:small?/:rank?"
+            path="api/category/:large?/:middle?/:small?/:rank?"
             element={<CategoryPage />}
           />
 
@@ -55,7 +54,6 @@ function App() {
             path="api/mypage/:username/*"
             element={<ProtectedRoute element={<MyPage />} />}
           />
-
           <Route path="api/contact-us" element={<ContactUsPage />} />
           <Route path="api/post/:postId/detail" element={<PostDetailPage />} />
           <Route
@@ -71,22 +69,22 @@ function App() {
             path="api/admin/userlist"
             element={<ProtectedRoute element={<AdminPage />} />}
           />
-          <Route 
+          <Route
             path="api/policies/termsAndCondition"
             element={<TermsAndConditionsOfUsePage />}
           />
-          <Route 
+          <Route
             path="api/policies/personalInfoPolicy"
             element={<PersonalInformationProcessingPolicyPage />}
           />
-          <Route 
+          <Route
             path="api/policies/operationalPolicy"
             element={<OperationalPolicyPage />}
           />
           <Route path="*" element={<h1> 404 Not Found </h1>} />
         </Routes>
       </AppLayout>
-    </>
+
   );
 }
 
