@@ -31,11 +31,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleUpdateComment = async () => {
-<<<<<<< HEAD
-    if (logined_username !== comment.username &&  role !== "ROLE_ADMIN") {
-=======
     if (logined_username !== comment.username && role !== "ROLE_ADMIN") {
->>>>>>> 315c8cb544ce85e1b29b9847ee25353ab493b5ad
       Swal.fire({
         title: "Error",
         icon: "error",
@@ -60,11 +56,7 @@ const CommentItem = ({ comment, postId, onDelete }) => {
   };
 
   const handleDelete = async () => {
-<<<<<<< HEAD
-    if (logined_username !== comment.username &&  role !== "ROLE_ADMIN") {
-=======
     if (logined_username !== comment.username && role !== "ROLE_ADMIN") {
->>>>>>> 315c8cb544ce85e1b29b9847ee25353ab493b5ad
       Swal.fire({
         title: "Error",
         icon: "error",
@@ -133,12 +125,8 @@ const CommentItem = ({ comment, postId, onDelete }) => {
               <Typography variant="body1" sx={{ marginTop: 2, mb: 1 }}>
                 {comment.content}
               </Typography>
-<<<<<<< HEAD
-              {(logined_username === comment.username || role === "ROLE_ADMIN") && (
-=======
               {(logined_username === comment.username ||
                 role === "ROLE_ADMIN") && (
->>>>>>> 315c8cb544ce85e1b29b9847ee25353ab493b5ad
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
                     variant="outlined"
