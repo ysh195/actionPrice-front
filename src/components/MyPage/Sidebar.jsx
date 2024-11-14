@@ -55,7 +55,7 @@ const Sidebar = () => {
   const handleDeleteAccount = async () => {
     const { isConfirmed } = await Swal.fire({
       title: "계정을 삭제하시겠습니까?",
-      text: "삭제된 계정은 복구할 수 없습니다.",
+      text: "삭제한 계정은 복구할 수 없습니다.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "삭제하기",
