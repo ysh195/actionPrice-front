@@ -1,26 +1,92 @@
-/* eslint-disable no-unused-vars */
-// src/pages/AdminPage.js
+// /* eslint-disable no-unused-vars */
+// // src/pages/AdminPage.js
+
+// import React, { useEffect, useState } from "react";
+// import Paper from "@mui/material/Paper";
+// import Table from "@mui/material/Table";
+// import TableBody from "@mui/material/TableBody";
+// import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+// import TableContainer from "@mui/material/TableContainer";
+// import TableHead from "@mui/material/TableHead";
+// import TableRow from "@mui/material/TableRow";
+// import { colors } from "../../assets/assest.js";
+
+// import { Link, useSearchParams } from "react-router-dom";
+// import { Box, Pagination, Typography } from "@mui/material";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   fetchUserList,
+//   blockUser,
+//   resetRefreshToken,
+// } from "../../redux/slices/adminPageSlice";
+// import { Button } from "@mui/material";
+// import PostSearch from "../Post/PostSearch.jsx";
+
+// const StyledTableCell = (props) => (
+//   <TableCell
+//     {...props}
+//     sx={{
+//       fontWeight: "bold",
+//       backgroundColor: colors.tableHead,
+//       color: "white",
+//     }}
+//   />
+// );
+
+// const AdminPage = () => {
+//   const itemsPerPage = 10;
+//   const dispatch = useDispatch();
+//   const [searchParams, setSearchParams] = useSearchParams();
+//   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
+//   const keyword = searchParams.get("keyword") || "";
+//   const { userList, totalPageNum, error } = useSelector(
+//     (state) => state.adminPage
+//   );
+
+//   // Fetch user list based on page number and keyword
+//   useEffect(() => {
+//     dispatch(fetchUserList({ pageNum: pageNum - 1, keyword }));
+//   }, [dispatch, pageNum, keyword]);
+
+//   //function: Handle search submission //
+//   const handleSearch = (searchKeyword) => {
+//     setSearchParams({ keyword: searchKeyword, pageNum: 1 }); // Reset to page 1 on new search
+//     console.log("api call for fetchUserList-handleSearch submission");
+//     dispatch(fetchUserList({ pageNum: 0, keyword: searchKeyword })); // Fetch user list with new keyword
+//   };
+//   //function: handleResetSearch  submission //
+//   const handleResetSearch = () => {
+//     setSearchParams({ pageNum: 1 }); // Reset to the first page
+//   };
+
+//   const handlePageChange = (event, value) => {
+//     if (value < 1) return; // Prevent navigating to less than page 1
+//     setSearchParams({ pageNum: value, keyword });
+//   };
+
+//   const handleBlockUser = (username) => {
+//     dispatch(blockUser(username));
+//   };
+
+//   const handleResetRefreshToken = (username) => {
+//     dispatch(resetRefreshToken(username));
+//   };
 
 import React, { useEffect, useState } from "react";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { colors } from "../../assets/assest.js";
+import { colors } from "../assets/assest.js";
 
 import { Link, useSearchParams } from "react-router-dom";
 import { Box, Pagination, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUserList,
-  blockUser,
-  resetRefreshToken,
-} from "../../redux/slices/adminPageSlice";
 import { Button } from "@mui/material";
-import PostSearch from "../Post/PostSearch.jsx";
+import PostSearch from "../components/Post/PostSearch.jsx";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const StyledTableCell = (props) => (
   <TableCell
@@ -35,26 +101,54 @@ const StyledTableCell = (props) => (
 
 const AdminPage = () => {
   const itemsPerPage = 10;
-  const dispatch = useDispatch();
+  const [userList, setUserList] = useState([]);
+  const [totalPageNum, setTotalPageNum] = useState(0);
+  const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const pageNum = parseInt(searchParams.get("pageNum")) || 1;
   const keyword = searchParams.get("keyword") || "";
-  const { userList, totalPageNum, error } = useSelector(
-    (state) => state.adminPage
-  );
+
+  const baseUrl = "http://localhost:8080/api";
 
   // Fetch user list based on page number and keyword
   useEffect(() => {
-    dispatch(fetchUserList({ pageNum: pageNum - 1, keyword }));
-  }, [dispatch, pageNum, keyword]);
+    const fetchUserList = async () => {
+      try {
+        let access_Token = localStorage.getItem("access_token");
+        console.log("go adminPage - access_Token", access_Token);
+        const response = await axios.get(`${baseUrl}/admin/userlist`, {
+          params: { pageNum: pageNum - 1, keyword },
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+        console.log("fetchUserList:", response.data);
+        setUserList(response.data.userList);
+        setTotalPageNum(response.data.totalPageNum);
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          Swal.fire({
+            icon: "error",
+            title: "접근 금지",
+            text: "접근 권한이 없습니다.",
+          });
+          setError("접근 권한이 없습니다.");
+        } else {
+          setError(error.response.data);
+        }
+      }
+    };
 
-  //function: Handle search submission //
+    fetchUserList();
+  }, [pageNum, keyword]);
+
   const handleSearch = (searchKeyword) => {
     setSearchParams({ keyword: searchKeyword, pageNum: 1 }); // Reset to page 1 on new search
     console.log("api call for fetchUserList-handleSearch submission");
-    dispatch(fetchUserList({ pageNum: 0, keyword: searchKeyword })); // Fetch user list with new keyword
   };
-  //function: handleResetSearch  submission //
+
   const handleResetSearch = () => {
     setSearchParams({ pageNum: 1 }); // Reset to the first page
   };
@@ -64,12 +158,70 @@ const AdminPage = () => {
     setSearchParams({ pageNum: value, keyword });
   };
 
-  const handleBlockUser = (username) => {
-    dispatch(blockUser(username));
+  const handleBlockUser = async (username) => {
+    try {
+      let access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to block a user.");
+        return;
+      }
+
+      const response = await axios.post(
+        `${baseUrl}/admin/userlist/${username}/block`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (!response.data || !response.data.message) {
+        throw new Error("Unexpected response format, check {}");
+      }
+      setUserList((prevUserList) =>
+        prevUserList.map((user) =>
+          user.username === username
+            ? { ...user, blocked: response.data.isBlocked }
+            : user
+        )
+      );
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      alert(error.message || "Failed to block user");
+    }
   };
 
-  const handleResetRefreshToken = (username) => {
-    dispatch(resetRefreshToken(username));
+  const handleResetRefreshToken = async (username) => {
+    try {
+      let access_Token = localStorage.getItem("access_token");
+      if (!access_Token) {
+        alert("You need to log in to reset refresh token.");
+        return;
+      }
+
+      const response = await axios.post(
+        `${baseUrl}/admin/userlist/${username}/reset`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (!response.data || !response.data.message) {
+        throw new Error("No message returned from the server.");
+      }
+      alert(response.data.message);
+    } catch (error) {
+      console.error("Error resetting refresh token:", error);
+      alert(error.message || "Failed to reset refresh token");
+    }
   };
 
   if (error) return <Typography color="error">{`Error: ${error}`}</Typography>;

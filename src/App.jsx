@@ -3,7 +3,7 @@ import PostDetailPage from "./pages/PostDetailPage";
 import UpdatePostView from "./components/Post/UpdatePostView";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { autoLogin } from "./redux/slices/loginSlice";
-import AdminPage from "./components/Admin/AdminPage";
+import AdminPage from "./pages/AdminPage";
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
 import { useDispatch } from "react-redux";

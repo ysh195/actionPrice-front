@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import axios from "axios";
 import logo from "./logo.png";
 import whiteLogo from "./whiteLogo.png";
@@ -15,8 +13,6 @@ import w4 from "./images/w4.jpeg";
 import w5 from "./images/w5.jpeg";
 import w6 from "./images/w6.jpeg";
 import gradient3 from "./images/gradient3.jpeg";
-
-
 
 export {
   logo,
@@ -83,28 +79,6 @@ export const largeCategoryList = [
   { id: 4, name: "식량작물", image: fetchedImages.crop },
   { id: 5, name: "수산물", image: fetchedImages.fish },
   { id: 6, name: "특용작물", image: fetchedImages.scrop },
-];
-
-export const slideImageList = [
-  { name: "avocado", image: fetchedImages.avocado },
-  { name: "banana", image: fetchedImages.banana },
-  { name: "berry", image: fetchedImages.berry },
-  { name: "onion3", image: fetchedImages.onion3 },
-  { name: "cTomato", image: fetchedImages.cTomato },
-  { name: "garlic", image: fetchedImages.garlic },
-  { name: "mixedFruit", image: fetchedImages.mixedFruit },
-  { name: "mixedVeggies3", image: fetchedImages.mixedVeggies3 },
-  { name: "morlahana", image: fetchedImages.morlahana },
-  { name: "nar", image: fetchedImages.nar },
-  { name: "onion", image: fetchedImages.onion },
-  { name: "cherry", image: fetchedImages.cherry },
-  { name: "pear", image: fetchedImages.pear },
-  { name: "pepper", image: fetchedImages.pepper },
-  { name: "onion2", image: fetchedImages.onion2 },
-  { name: "pineapple", image: fetchedImages.pineapple },
-  { name: "watermelon", image: fetchedImages.watermelon },
-  { name: "walnut", image: fetchedImages.walnut },
-  { name: "mixedVeggie", image: fetchedImages.mixedVeggie },
 ];
 
 //desc: admin answer list

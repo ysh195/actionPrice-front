@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+ 
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
@@ -17,37 +16,27 @@ import {
   Box,
 } from "@mui/material";
 import { colors } from "../../assets/assest.js";
-import { verifyCode } from "../../redux/slices/verificationSlice";
-import {
-  checkUserExists,
-  sendVerificationCodeForChangingPW,
-  changePassword,
-} from "../../redux/slices/PwChangeSlice";
+import { axiosPublic } from "../../redux/apiConfig.js";
 
 const PwChange = () => {
   const [errors, setErrors] = useState({});
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const {
-    userExists,
-    loading,
-    userVerificationStatus,
-    userVerificationMessage,
-    passwordChangeStatus,
-    passwordChangeMessage,
-  } = useSelector((state) => state.pwChange);
-
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     email: "",
     verificationCode: "",
   });
+  const [userExists, setUserExists] = useState(false);
+  const [userVerificationStatus, setUserVerificationStatus] = useState(null);
+  const [userVerificationMessage, setUserVerificationMessage] = useState("");
+  const [passwordChangeStatus, setPasswordChangeStatus] = useState(null);
+  const [passwordChangeMessage, setPasswordChangeMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleKeyDown = (e) => {
     if (e.key === " ") {
@@ -92,10 +81,17 @@ const PwChange = () => {
     const { username } = formData;
     if (validateInput("username", username)) return;
 
+    setLoading(true);
     try {
-      await dispatch(checkUserExists({ username })).unwrap();
+      const response = await axiosPublic.post(`/user/checkUserExists`, {
+        username,
+      });
+      setUserExists(response.data === "the user exists");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setUserExists(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,18 +105,22 @@ const PwChange = () => {
       });
       return;
     }
+    setLoading(true);
     try {
-      const result = await dispatch(
-        sendVerificationCodeForChangingPW(formData)
-      ).unwrap();
+      const result = await axiosPublic.post(
+        `/user/sendVerificationCodeForChangingPW`,
+        formData
+      );
       setIsCodeSent(true);
-      Swal.fire({ text: result, icon: "success", timer: 2000 });
+      Swal.fire({ text: result.data, icon: "success", timer: 2000 });
     } catch (error) {
       Swal.fire({
         title: "없는 사용자 입니다.",
         icon: "error",
-        text: error,
+        text: error.response?.data || "인증 코드를 전송하는 중 오류가 발생했습니다.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,25 +133,38 @@ const PwChange = () => {
       }));
       return;
     }
+
+    setLoading(true);
     try {
-      const verifyCodeResult = await dispatch(verifyCode(formData)).unwrap();
-      setIsCodeVerified(verifyCodeResult === "인증이 성공했습니다.");
-      Swal.fire({ text: verifyCodeResult });
+      const response = await axiosPublic.post(
+        `/user/checkVerificationCode`,
+        formData
+      );
+      console.log(response);
+      const verificationMessage = response.data;
+      setIsCodeVerified(verificationMessage === "인증이 성공했습니다.");
+      Swal.fire({ text: verificationMessage });
     } catch (error) {
       setIsCodeVerified(false);
       Swal.fire({
         icon: "error",
         text: "유효하지 않은 인증 코드입니다. 다시 시도해 주세요.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleChangePw = async (e) => {
     e.preventDefault();
+
     if (Object.values(errors).some((error) => error)) return;
 
+    setLoading(true);
     try {
-      await dispatch(changePassword(formData)).unwrap();
+      const result = await axiosPublic.post(`/user/changePassword`, formData);
+      setPasswordChangeStatus("success");
+      setPasswordChangeMessage(result.data);
       Swal.fire({
         icon: "success",
         text: "비밀번호가 성공적으로 변경되었습니다.",
@@ -159,10 +172,14 @@ const PwChange = () => {
       });
       navigate("/api/user/login");
     } catch (error) {
+      setPasswordChangeStatus("error");
+      setPasswordChangeMessage(error.response?.data || "비밀번호 변경에 실패했습니다.");
       Swal.fire({
         icon: "error",
-        text: "비밀번호 변경에 실패했습니다. 다시 시도해 주세요.",
+        text: passwordChangeMessage,
       });
+    } finally {
+      setLoading(false);
     }
   };
 

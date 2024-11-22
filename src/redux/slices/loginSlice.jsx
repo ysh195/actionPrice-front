@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { axiosPublic } from "../apiConfig";
+import { axiosPublic, axiosPrivate } from "../apiConfig";
 
 const initialState = {
   username: "",
@@ -53,13 +53,20 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-   
+      let access_Token = localStorage.getItem("access_token");
+      
       localStorage.removeItem("access_token");
       localStorage.removeItem("username");
       localStorage.removeItem("role");
       axios.defaults.headers.common["Authorization"] = null;
 
-      const response = await axiosPublic.post(`/user/logout`, {});
+      const response = await axios.post(`/user/logout`, {
+        headers: {
+          Authorization: `Bearer ${access_Token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {

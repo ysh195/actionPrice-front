@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { logoutUser } from "./loginSlice";
+import { useDispatch } from "react-redux";
 import { axiosPrivate } from "../apiConfig";
+import axios from "axios";
 
 const initialState = {
   loading: false,
@@ -12,34 +15,72 @@ const initialState = {
 };
 
 //functions for deleteAccount //
+// export const deleteAccount = createAsyncThunk(
+//   "user/deleteUser",
+//   async (username, { rejectWithValue }) => {
+//     try {
+//       const response = await axiosPrivate.post(
+//         `/mypage/${username}/deleteUser`,
+//         {}
+//       );
+
+//       console.log("delete user response:", response);
+//       if (response.status === 200) {
+//         console.log("delete account successful");
+//         localStorage.removeItem("access_token");
+//         localStorage.removeItem("username");
+//         localStorage.removeItem("role");
+
+//         return response.data;
+//       } else {
+//         // Handle unexpected status
+//         return rejectWithValue("계정 삭제에 실패했습니다. 다시 시도해 주세요.");
+//       }
+//     } catch (error) {
+//       return rejectWithValue(
+//         error.response?.data?.message || "Error deleting account"
+//       );
+//     }
+//   }
+// );
 export const deleteAccount = createAsyncThunk(
   "user/deleteUser",
   async (username, { rejectWithValue }) => {
-    try {
-      const response = await axiosPrivate.post(
-        `/mypage/${username}/deleteUser`,
-        {}
-      );
+    const dispatch = useDispatch();
 
-      console.log("delete user response:", response);
-      if (response.status === 200) {
-        console.log("delete account successful");
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("username");
-        localStorage.removeItem("role");
+    try{
+      let access_Token = localStorage.getItem("access_token");
+      
+      dispatch(logoutUser());
 
-        return response.data;
-      } else {
-        // Handle unexpected status
-        return rejectWithValue("계정 삭제에 실패했습니다. 다시 시도해 주세요.");
+      try {
+        const response = await axios.post(
+          `/mypage/${username}/deleteUser`, {
+            headers: {
+              Authorization: `Bearer ${access_Token}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          });
+  
+        console.log("delete user response:", response);
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          // Handle unexpected status
+          return rejectWithValue("계정 삭제에 실패했습니다. 다시 시도해 주세요.");
+        }
+      } catch (error) {
+        return rejectWithValue(
+          error.response?.data?.message || "Error deleting account"
+        );
       }
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Error deleting account"
-      );
+    } catch (e){
+      e.response?.data?.message || "Error deleting account"
     }
   }
 );
+
 //functions for getPersonalInfo //
 export const getPersonalInfo = createAsyncThunk(
   "user/personalInfo",

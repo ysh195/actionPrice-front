@@ -1,18 +1,12 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
+ 
 import React, { useState } from "react";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../redux/slices/registerSlice";
-import {
-  checkUsername,
-  sendVerificationCode,
-  verifyCode,
-} from "../redux/slices/verificationSlice";
 import Swal from "sweetalert2";
-
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   Container,
   Card,
@@ -24,7 +18,100 @@ import {
   IconButton,
 } from "@mui/material";
 import { colors } from "../assets/assest";
+import { axiosPublic } from "../redux/apiConfig";
 
+const verifyCode = createAsyncThunk(
+  "auth/verifyCode",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axiosPublic.post(
+        `/user/checkVerificationCode`,
+        formData
+      );
+      console.log("verifyCode:", response);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "유효하지 않은 인증 코드입니다. 다시 시도해 주세요."
+      );
+    }
+  }
+);
+
+export const sendVerificationCode = createAsyncThunk(
+  "auth/sendVerificationCode",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axiosPublic.post(
+        `/user/sendVerificationCode`,
+        formData
+      );
+      console.log("sendVerificationCode:", response);
+      return response.data; //인증코드가 성공적으로 발송되었습니다.
+    } catch (error) {
+      console.log("send Verification error:", error);
+      const errorCode = error.response?.status; // Get the error status code
+      let errorMessage;
+      if (errorCode === 409) {
+        errorMessage = "해당 이메일은 이미 사용 중입니다.";
+      } else if (errorCode === 400) {
+        errorMessage = "해당 이메일은 존재하지 않습니다.";
+      } else {
+        errorMessage =
+          error.response?.data ||
+          "인증 코드를 전송하는 중 오류가 발생했습니다.";
+      }
+
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+const checkUsername = createAsyncThunk(
+  "auth/checkUsername",
+  async ({ username }, { rejectWithValue }) => {
+    try {
+      const response = await axiosPublic.post(
+        `/user/checkForDuplicateUsername`,
+        {
+          username,
+        }
+      );
+      console.log("Slice check Username:", response.data);
+
+      return response.data; //"Username is available";
+    } catch (error) {
+      console.error("Slice Error response:", error.response);
+      return rejectWithValue(
+        error.response?.data || "오류가 발생했습니다. 다시 시도해 주세요."
+      );
+    }
+  }
+);
+
+const registerUser = createAsyncThunk(
+  "auth/register",
+
+  async (formData, { rejectWithValue }) => {
+    console.log("Slice formData:", formData);
+    try {
+      // console.log("Payload sent to API:", {formData});
+
+      const response = await axiosPublic.post(`/user/register`, formData);
+      console.log("Registration successful:", response.data);
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error("Registration error:", error);
+      return rejectWithValue(
+        error.response?.data ||
+          error.message ||
+          "오류가 발생했습니다. 다시 시도해 주세요."
+      );
+    }
+  }
+);
 
 
 const RegisterPage = () => {
@@ -39,10 +126,10 @@ const RegisterPage = () => {
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading } = useSelector((state) => state.verification);
 
   const handleKeyDown = (e) => {
     if (e.key === " ") {
@@ -118,6 +205,8 @@ const RegisterPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     Swal.fire({
       title: "잠시 기다려 주세요...",
       text: "인증 코드가 전송 중이며 최대 30초가 걸릴 수 있습니다.",
@@ -144,6 +233,8 @@ const RegisterPage = () => {
         showConfirmButton: true,
       });
     }
+
+    setIsLoading(false);
   };
 
   const handleVerifyCode = async (e) => {
@@ -157,10 +248,12 @@ const RegisterPage = () => {
     }
     try {
       const verifyCodeResult = await dispatch(verifyCode(formData)).unwrap();
+      console.log(verifyCodeResult);
+
       setIsCodeVerified(verifyCodeResult === "인증이 성공했습니다.");
       Swal.fire({
         text: verifyCodeResult,
-        icon: "success",
+        icon: (verifyCodeResult === "인증이 성공했습니다.") ? "success" : "error",
         showConfirmButton: false,
         timer: 2000,
       });
