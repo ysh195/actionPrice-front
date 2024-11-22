@@ -48,9 +48,8 @@ axiosPrivate.interceptors.response.use(
         // 리프레시 토큰으로 새 액세스 토큰 요청
         // Request new access token
 
-    
         const response = await axios.post(
-          "/auth",
+          "http://localhost:8080/api/auth/refresh",
           {},
           {
             headers: { Authorization: `Bearer ${accessToken}` },

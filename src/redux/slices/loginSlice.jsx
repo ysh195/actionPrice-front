@@ -53,6 +53,8 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
+      let baseUrl = "http://localhost:8080/api";
+
       let access_Token = localStorage.getItem("access_token");
       
       localStorage.removeItem("access_token");
@@ -60,13 +62,16 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("role");
       axios.defaults.headers.common["Authorization"] = null;
 
-      const response = await axios.post(`/user/logout`, {
-        headers: {
-          Authorization: `Bearer ${access_Token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+      const response = await axios.post(`${baseUrl}/user/logout`,
+        {},
+        {
+            headers: {
+            Authorization: `Bearer ${access_Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
       console.log("logoutUser response status:", response.status);
 
       if (response.status === 200) {

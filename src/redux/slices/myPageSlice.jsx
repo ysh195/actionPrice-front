@@ -55,7 +55,9 @@ export const deleteAccount = createAsyncThunk(
 
       try {
         const response = await axios.post(
-          `/mypage/${username}/deleteUser`, {
+          `/mypage/${username}/deleteUser`,
+          {},
+          {
             headers: {
               Authorization: `Bearer ${access_Token}`,
               "Content-Type": "application/json",
