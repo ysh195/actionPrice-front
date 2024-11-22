@@ -37,12 +37,13 @@ axiosPrivate.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 액세스 토큰 만료 시 401 상태 확인
-    // Check for 401 error, and that this request hasn't been retried
+    // 액세스 토큰 만료 시 418 상태 확인
+    // Check for 418 error, and that this request hasn't been retried
     if (error.response.status === 418 && !originalRequest._retry) {
+      console.log("엑세스 토큰 만료됨. 재발급 진행");
       originalRequest._retry = true;
 
-      const accessToken = localStorage.getItem("access_token");
+      let accessToken = localStorage.getItem("access_token");
 
       try {
         // 리프레시 토큰으로 새 액세스 토큰 요청
@@ -52,11 +53,16 @@ axiosPrivate.interceptors.response.use(
           "http://localhost:8080/api/auth/refresh",
           {},
           {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
           }
         );
         // 새 토큰을 로컬 스토리지에 저장
-        const newAccessToken = response.data.accessToken;
+        const newAccessToken = response.data;
+        console.log("newAccessToken", newAccessToken);
         localStorage.setItem("access_token", newAccessToken);
         // 실패했던 원래 요청을 새 토큰으로 재시도
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
@@ -75,7 +81,7 @@ axiosPrivate.interceptors.response.use(
           localStorage.removeItem("role");
 
           // Redirect to login page
-          window.location.href = "http://localhost:8080/";
+          window.location.href = "http://localhost:3000/";
         });
       }
     } else if (error.response.status === 403) {
