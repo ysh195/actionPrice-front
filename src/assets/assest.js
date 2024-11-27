@@ -83,7 +83,10 @@ export const largeCategoryList = [
 
 //desc: admin answer list
 export const adminAnswers = [
-  { id: 1, answerType: "AI", text: "It's an answer by chat-gpt" },
+  {
+    id: 1,
+    answerType: "AI",
+  },
   {
     id: 2,
     answerType: "RECEIVED_INQUIRY",
