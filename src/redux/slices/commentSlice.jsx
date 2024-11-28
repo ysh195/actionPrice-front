@@ -15,7 +15,7 @@ export const createComment = createAsyncThunk(
   "comments/createComment",
   async ({ postId, username, content }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(`/post/${postId}/detail/createComment`, {
+      const response = await axiosPrivate.post(`/post/${postId}/detail`, {
         username,
         content,
       });
