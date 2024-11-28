@@ -69,16 +69,13 @@ export const colors = {
   tableBackground: "#faf7f2",
 };
 
-const response = await axios.get("http://localhost:8080/");
-const fetchedImages = response.data.images;
-
 export const largeCategoryList = [
-  { id: 1, name: "채소류", image: fetchedImages.ve },
-  { id: 2, name: "축산물", image: fetchedImages.meat },
-  { id: 3, name: "과일류", image: fetchedImages.fruit },
-  { id: 4, name: "식량작물", image: fetchedImages.crop },
-  { id: 5, name: "수산물", image: fetchedImages.fish },
-  { id: 6, name: "특용작물", image: fetchedImages.scrop },
+  { id: 1, name: "채소류", image: "src/assets/images/home/ve.jpg" },
+  { id: 2, name: "축산물", image: "src/assets/images/home/meat.jpg" },
+  { id: 3, name: "과일류", image: "src/assets/images/home/fruit.jpg" },
+  { id: 4, name: "식량작물", image: "src/assets/images/home/crop.jpg" },
+  { id: 5, name: "수산물", image: "src/assets/images/home/fish.jpg" },
+  { id: 6, name: "특용작물", image: "src/assets/images/home/scrop.jpg" },
 ];
 
 //desc: admin answer list

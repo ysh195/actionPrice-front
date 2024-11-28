@@ -93,7 +93,7 @@ const CategorySection = ({ categories, loading, error }) => {
             >
               <CardMedia
                 component="img"
-                image={`data:image/jpeg;base64,${category.image}`}
+                image={category.image}
                 alt={category.name}
                 sx={{
                   height: 300,
