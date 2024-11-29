@@ -94,6 +94,7 @@ const CategorySection = ({ categories, loading, error }) => {
               <CardMedia
                 component="img"
                 image={category.image}
+                loading="lazy"
                 alt={category.name}
                 sx={{
                   height: 300,
