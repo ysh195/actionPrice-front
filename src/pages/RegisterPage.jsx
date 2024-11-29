@@ -25,7 +25,7 @@ const verifyCode = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `/user/checkVerificationCode`,
+        `/user/verificationCode/checking`,
         formData
       );
       console.log("verifyCode:", response);
@@ -44,7 +44,7 @@ export const sendVerificationCode = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `/user/sendVerificationCode`,
+        `/user/verificationCode/sending`,
         formData
       );
       console.log("sendVerificationCode:", response);
@@ -73,7 +73,7 @@ const checkUsername = createAsyncThunk(
   async ({ username }, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(
-        `/user/checkForDuplicateUsername`,
+        `/user/duplicationChecking`,
         {
           username,
         }

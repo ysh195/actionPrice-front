@@ -19,7 +19,7 @@ export const createFavorite = createAsyncThunk(
   ) => {
     try {
       const response = await axiosPrivate.post(
-        `/category/${large}/${middle}/${small}/${rank}/favorite`,
+        `/category/favorite/${large}/${middle}/${small}/${rank}`,
         { logined_username, favorite_name }
       );
       console.log("createFavorite response:", response.data);
@@ -37,8 +37,8 @@ export const deleteFavorite = createAsyncThunk(
   "favorite/deleteFavorite",
   async (favoriteId, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(
-        `/category/favorite/${favoriteId}/delete`,
+      const response = await axiosPrivate.delete(
+        `/category/favorite/${favoriteId}`,
         {}
       );
       if (response.data.status === "success") {

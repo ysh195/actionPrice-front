@@ -20,7 +20,7 @@ const initialState = {
 //   async (username, { rejectWithValue }) => {
 //     try {
 //       const response = await axiosPrivate.post(
-//         `/mypage/${username}/deleteUser`,
+//         `/myPage/${username}/deleteUser`,
 //         {}
 //       );
 
@@ -54,8 +54,8 @@ export const deleteAccount = createAsyncThunk(
       dispatch(logoutUser());
 
       try {
-        const response = await axios.post(
-          `/mypage/${username}/deleteUser`,
+        const response = await axios.delete(
+          `/myPage/${username}`,
           {},
           {
             headers: {
@@ -89,7 +89,7 @@ export const getPersonalInfo = createAsyncThunk(
   async (username, { rejectWithValue }) => {
     try {
       const response = await axiosPrivate.get(
-        `/mypage/${username}/personalinfo`
+        `/myPage/${username}/personalinfo`
       );
       console.log("personalInfo response:", response.data);
 
@@ -106,7 +106,7 @@ export const getMyPosts = createAsyncThunk(
   "posts/getMyPosts",
   async ({ username, keyword = "", pageNum = 0 }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.get(`/mypage/${username}/myposts`, {
+      const response = await axiosPrivate.get(`/myPage/${username}/myposts`, {
         params: {
           keyword,
           pageNum,

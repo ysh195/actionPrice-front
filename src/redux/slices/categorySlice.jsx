@@ -70,7 +70,7 @@ export const fetchPriceData = createAsyncThunk(
   "categories/fetchPriceData",
   async ({ large, middle, small, rank, startDate, endDate }) => {
     const response = await axiosPublic.get(
-      `/category/${large}/${middle}/${small}/${rank}/gragh`,
+      `/category/gragh/${large}/${middle}/${small}/${rank}`,
       {
         params: { startDate, endDate },
       }
@@ -89,7 +89,7 @@ export const downloadExcel = createAsyncThunk(
   ) => {
     try {
       const response = await axiosPublic.get(
-        `/category/${large}/${middle}/${small}/${rank}/excel`,
+        `/category/excel/${large}/${middle}/${small}/${rank}`,
         {
           params: { startDate, endDate },
           responseType: "blob", // Important for handling binary data

@@ -15,7 +15,7 @@ export const createComment = createAsyncThunk(
   "comments/createComment",
   async ({ postId, username, content }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(`/post/${postId}/detail`, {
+      const response = await axiosPrivate.post(`/post/${postId}/comment`, {
         username,
         content,
       });
@@ -32,8 +32,8 @@ export const updateComment = createAsyncThunk(
   "comments/updateComment",
   async ({ postId, commentId, username, content }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(
-        `/post/${postId}/detail/${commentId}/update`,
+      const response = await axiosPrivate.patch(
+        `/post/${postId}/comment/${commentId}`,
         {
           username,
           content,
@@ -55,8 +55,8 @@ export const deleteComment = createAsyncThunk(
   "comments/deleteComment",
   async ({ postId, commentId, username }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(
-        `/post/${postId}/detail/${commentId}/delete`,
+      const response = await axiosPrivate.delete(
+        `/post/${postId}/comment/${commentId}`,
         { username }
       );
       console.log("deleteComment response:", response.data);
@@ -98,10 +98,10 @@ export const fetchComments = createAsyncThunk(
 //function: Get admin Answers //
 export const fetchAdminAnswers = createAsyncThunk(
   "comments/fetchAdminAnswers",
-  async ({ postId, answertype }, { rejectWithValue }) => {
+  async ({ answerType }, { rejectWithValue }) => {
     try {
       const response = await axiosPrivate.get(
-        `/post/${postId}/comment/admin/${answertype}`
+        `/admin/comment/${answerType}`
       );
       console.log("fetchAdminAnswers response:", response.data);
       return response.data;

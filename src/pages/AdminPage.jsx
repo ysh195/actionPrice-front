@@ -116,7 +116,7 @@ const AdminPage = () => {
       try {
         let access_Token = localStorage.getItem("access_token");
         console.log("go adminPage - access_Token", access_Token);
-        const response = await axios.get(`${baseUrl}/admin/userlist`, {
+        const response = await axios.get(`${baseUrl}/admin/userList`, {
           params: { pageNum: pageNum - 1, keyword },
           headers: {
             Authorization: `Bearer ${access_Token}`,
@@ -166,8 +166,8 @@ const AdminPage = () => {
         return;
       }
 
-      const response = await axios.post(
-        `${baseUrl}/admin/userlist/${username}/block`,
+      const response = await axios.patch(
+        `${baseUrl}/admin/userList/${username}/block`,
         {},
         {
           headers: {
@@ -202,8 +202,8 @@ const AdminPage = () => {
         return;
       }
 
-      const response = await axios.post(
-        `${baseUrl}/admin/userlist/${username}/reset`,
+      const response = await axios.patch(
+        `${baseUrl}/admin/userList/${username}/reset`,
         {},
         {
           headers: {

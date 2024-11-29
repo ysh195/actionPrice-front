@@ -83,7 +83,7 @@ const PwChange = () => {
 
     setLoading(true);
     try {
-      const response = await axiosPublic.post(`/user/checkUserExists`, {
+      const response = await axiosPublic.post(`/user/password`, {
         username,
       });
       setUserExists(response.data === "the user exists");
@@ -108,7 +108,7 @@ const PwChange = () => {
     setLoading(true);
     try {
       const result = await axiosPublic.post(
-        `/user/sendVerificationCodeForChangingPW`,
+        `/user/password/verificationCode/sending/forPW`,
         formData
       );
       setIsCodeSent(true);
@@ -137,7 +137,7 @@ const PwChange = () => {
     setLoading(true);
     try {
       const response = await axiosPublic.post(
-        `/user/checkVerificationCode`,
+        `/user/verificationCode/checking`,
         formData
       );
       console.log(response);
@@ -162,7 +162,7 @@ const PwChange = () => {
 
     setLoading(true);
     try {
-      const result = await axiosPublic.post(`/user/changePassword`, formData);
+      const result = await axiosPublic.patch(`/user/password/changing`, formData);
       setPasswordChangeStatus("success");
       setPasswordChangeMessage(result.data);
       Swal.fire({

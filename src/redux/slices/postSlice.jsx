@@ -43,7 +43,7 @@ export const createPost = createAsyncThunk(
   "posts/createPost",
   async (postData, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post("/post/create", postData);
+      const response = await axiosPrivate.post("/post", postData);
       console.log("post response:", response);
       return response.data;
     } catch (error) {
@@ -75,7 +75,7 @@ export const fetchPostForUpdate = createAsyncThunk(
   "post/fetchPostForUpdate",
   async ({ postId, username }) => {
     const response = await axiosPrivate.get(
-      `/post/${postId}/update/${username}`
+      `/post/${postId}/username/${username}`
     );
     return response.data;
   }
@@ -86,7 +86,7 @@ export const fetchPostById = createAsyncThunk(
   "posts/fetchPostDetails",
   async ({ postId, page = 1 }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.get(`/post/${postId}/detail`, {
+      const response = await axiosPrivate.get(`/post/${postId}`, {
         params: { page },
       });
       console.log("fetchPostById response:", response);
@@ -112,7 +112,7 @@ export const deletePost = createAsyncThunk(
   async ({ postId, logined_username }, { rejectWithValue }) => {
     console.log("Post ID:", postId, "Logged-in Username:", logined_username);
     try {
-      const response = await axiosPrivate.post(`/post/${postId}/delete`, {
+      const response = await axiosPrivate.delete(`/post/${postId}`, {
         logined_username,
       });
       console.log("deletePost response:", response);
@@ -129,8 +129,8 @@ export const updatePost = createAsyncThunk(
   "posts/updatePost",
   async ({ postId, postData }, { rejectWithValue }) => {
     try {
-      const response = await axiosPrivate.post(
-        `/post/${postId}/update`,
+      const response = await axiosPrivate.patch(
+        `/post/${postId}`,
         postData
       );
       console.log("updatePost response:", response);
